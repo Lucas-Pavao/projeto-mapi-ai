@@ -1,0 +1,13 @@
+pandas
+numpy
+sqlalchemy
+psycopg2-binary
+scikit-learn
+xgboost
+tensorflow
+fastapi
+uvicorn
+python-dotenv
+joblib
+geopandas
+shapely
