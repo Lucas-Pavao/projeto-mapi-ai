@@ -1,87 +1,93 @@
-# MAPI AI - Sistema de Predição de Inundações
+# Projeto MAPI - Inteligência Artificial (AI) 🧠🌊
 
-O **MAPI AI** é uma solução avançada de inteligência artificial voltada para a predição de riscos de inundação em tempo real. O sistema integra dados meteorológicos, níveis de maré e sensores fluviais para fornecer alertas precoces e análises de probabilidade de alagamento, auxiliando na gestão de riscos e resposta a desastres.
+O **MAPI AI** é o componente de inteligência do ecossistema MAPI, responsável pela predição de riscos de inundação em tempo real. Utilizando modelos de Machine Learning avançados, o sistema analisa dados históricos e em tempo real de sensores, marés e meteorologia para fornecer alertas precoces e análises de probabilidade.
 
-## 🚀 Tecnologias Escolhidas
+## 🛠️ Tecnologias Escolhidas
 
-O projeto utiliza uma stack moderna voltada para ciência de dados e performance:
+- **Linguagem:** Python 3.10+
+- **Machine Learning:** XGBoost (Classificação), TensorFlow (LSTM para séries temporais), Scikit-learn
+- **API Framework:** FastAPI (Inferência de alta performance)
+- **Manipulação de Dados:** Pandas, NumPy, Geopandas
+- **Banco de Dados:** PostgreSQL com SQLAlchemy
+- **Gerenciamento de Modelos:** Joblib
 
--   **Linguagem:** Python 3.10+
--   **Manipulação de Dados:** Pandas, NumPy, Geopandas
--   **Machine Learning:** XGBoost (Classificação de Risco), Scikit-learn, TensorFlow (Modelagem de Séries Temporais)
--   **API Framework:** FastAPI (Inferência de alta performance)
--   **Servidor Web:** Uvicorn
--   **Banco de Dados:** PostgreSQL com SQLAlchemy
--   **Gerenciamento de Modelos:** Joblib
--   **Geolocalização:** Shapely
+## ✨ Funcionalidades / Features
 
-## 📁 Estrutura do Projeto
+- 🧠 **Predição em Tempo Real:** Endpoints de inferência de baixa latência para risco de inundação.
+- 🔄 **Pipeline de Treinamento:** Sistema automatizado para retreinamento de modelos com novos dados históricos.
+- 📈 **Feature Engineering:** Criação de variáveis temporais, cíclicas e geográficas para aumentar a precisão.
+- 🗺️ **Análise Espacial:** Integração com Geopandas para processamento de dados georreferenciados.
 
-A arquitetura do projeto é modular, facilitando a manutenção e escalabilidade:
+## 📂 Estrutura de Pastas
 
 ```text
 projeto-mapi-ai/
 ├── mapi_ai/                # Core da aplicação
-│   ├── app.py              # API FastAPI para inferência em tempo real
-│   ├── trainer.py          # Pipeline automatizado de treinamento
-│   ├── data_engineering.py # ETL e carregamento de dados do banco
-│   ├── feature_engineering.py # Criação de features cíclicas e temporais
-│   ├── models.py           # Definição das arquiteturas de modelos (XGBoost/LSTM)
-│   └── config.py           # Configurações globais e variáveis de ambiente
-├── models/                 # Armazenamento de modelos treinados (.joblib, .h5)
-├── main.py                 # Ponto de entrada principal do sistema
+│   ├── app.py              # API FastAPI para inferência
+│   ├── trainer.py          # Pipeline de treinamento automatizado
+│   ├── data_engineering.py # ETL e carregamento de dados
+│   ├── feature_engineering.py # Transformação e criação de features
+│   ├── models.py           # Definição das arquiteturas de modelos
+│   └── config.py           # Configurações e variáveis de ambiente
+├── models/                 # Modelos treinados (.joblib, .h5)
+├── main.py                 # Ponto de entrada (CLI para treino ou serviço)
 ├── requirements.txt        # Dependências do projeto
-└── .env                    # Configurações de ambiente (Banco de dados, etc.)
+└── README.md               # Documentação principal
 ```
 
-## 🛠️ Como Rodar a Aplicação
+## 📋 Pré-requisitos
 
-### 1. Preparação do Ambiente
-Certifique-se de ter o Python instalado. Recomendamos o uso de um ambiente virtual:
+- Python 3.10 ou superior.
+- Banco de Dados PostgreSQL configurado.
+- Pip instalado.
 
-```bash
-# Criar ambiente virtual
-python -m venv .venv
+## 🚀 Como instalar e rodar
 
-# Ativar no Linux/macOS
-source .venv/bin/activate
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com/Lucas-Pavao/projeto-mapi-ai.git
+   cd projeto-mapi-ai
+   ```
 
-# Ativar no Windows
-.venv\Scripts\activate
-```
+2. **Crie e ative um ambiente virtual:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # No Windows: .venv\Scripts\activate
+   ```
 
-### 2. Instalação de Dependências
-Instale todas as bibliotecas necessárias:
+3. **Instale as dependências:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+4. **Configure as variáveis de ambiente:**
+   Crie um arquivo `.env` com as credenciais do banco:
+   ```env
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_NAME=mapi_db
+   DB_USER=seu_usuario
+   DB_PASS=sua_senha
+   ```
 
-### 3. Configuração
-Crie um arquivo `.env` na raiz do projeto com as credenciais do seu banco de dados PostgreSQL:
+5. **Treine o modelo (opcional se já houver um):**
+   ```bash
+   python main.py --mode train
+   ```
 
-```env
-DB_HOST=localhost
-DB_PORT=5432
-DB_NAME=mapi_db
-DB_USER=seu_usuario
-DB_PASS=sua_senha
-```
+6. **Inicie a API de Inferência:**
+   ```bash
+   python main.py --mode serve
+   ```
 
-### 4. Treinamento do Modelo
-Antes de rodar a API, é necessário treinar o modelo com os dados históricos:
+## 🤝 Como contribuir
 
-```bash
-python main.py --mode train
-```
+1. Faça um **Fork** do projeto.
+2. Crie uma **Branch** para sua modificação (`git checkout -b feature/melhoria-modelo`).
+3. Faça o **Commit** de suas alterações (`git commit -m 'Improve: ajuste hiperparâmetros'`).
+4. Faça o **Push** para a sua Branch (`git push origin feature/melhoria-modelo`).
+5. Abra um **Pull Request**.
 
-### 5. Execução da API de Inferência
-Para iniciar o servidor e disponibilizar os endpoints de predição:
+## 📄 Licença
 
-```bash
-python main.py --mode serve
-```
-A API estará disponível em `http://localhost:8000`. Você pode acessar a documentação interativa (Swagger UI) em `http://localhost:8000/docs`.
-
----
-Desenvolvido como parte do ecossistema MAPI.
+Este projeto está sob a licença **MIT**.
