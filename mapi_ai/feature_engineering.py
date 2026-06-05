@@ -4,6 +4,8 @@ from mapi_ai.config import TIDE_THRESHOLD
 
 def create_lags(df: pd.DataFrame, col: str, lags: list):
     """Creates lag features for a specific column."""
+    if col not in df.columns:
+        return df
     for lag in lags:
         df[f'{col}_lag_{lag}h'] = df[col].shift(periods=int(lag * 4)) # Assuming 15min intervals (4 per hour)
     return df
@@ -22,7 +24,10 @@ def extract_cyclic_features(df: pd.DataFrame):
 
 def add_tide_features(df: pd.DataFrame, tide_col='tide_level'):
     """Adds tide-related features like boolean high tide and normalized tide."""
-    df['is_high_tide'] = (df[tide_col] > TIDE_THRESHOLD).astype(int)
+    if tide_col in df.columns:
+        df['is_high_tide'] = (df[tide_col] > TIDE_THRESHOLD).astype(int)
+    else:
+        df['is_high_tide'] = 0 # Fallback if tide data is missing
     # Simple normalization (min-max or similar can be applied later with StandardScaler)
     return df
 

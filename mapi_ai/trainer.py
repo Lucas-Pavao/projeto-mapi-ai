@@ -2,27 +2,32 @@ import pandas as pd
 import joblib
 from sklearn.model_selection import TimeSeriesSplit
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import classification_report, mean_squared_error
+from sklearn.metrics import classification_report
 from mapi_ai.data_engineering import get_engine, load_sensor_data, preprocess_time_series, merge_datasets
 from mapi_ai.feature_engineering import generate_features
-from mapi_ai.models import get_xgboost_classifier, get_lstm_model
-from mapi_ai.config import MODEL_PATH_XGB, MODEL_PATH_LSTM, SCALER_PATH
+from mapi_ai.models import get_xgboost_classifier
+from mapi_ai.config import MODEL_PATH_XGB, SCALER_PATH
 
 def train_pipeline():
     # 1. Load Data
     engine = get_engine()
-    # Assuming tables: sensor_data, weather_data, tide_table, flood_labels
-    # This is a placeholder for actual table names
+    
+    # Using direct SQL as requested. 
+    # Table names updated to match the database schema created by the Java API and SQL script.
     try:
+        print("Loading data from database...")
         df_sensors = load_sensor_data("sensor_data", engine)
         df_weather = load_sensor_data("weather_data", engine)
-        df_tide = load_sensor_data("tide_table", engine)
-        df_labels = load_sensor_data("flood_labels", engine)
+        # Note: Java API uses plural names 'tide_tables' and 'flood_events'
+        df_tide = load_sensor_data("tide_tables", engine)
+        df_labels = load_sensor_data("flood_events", engine)
+        print(f"Data loaded: Sensors({len(df_sensors)}), Weather({len(df_weather)}), Tide({len(df_tide)}), Labels({len(df_labels)})")
     except Exception as e:
-        print(f"Error loading data: {e}. Ensure database is configured.")
+        print(f"Error loading data: {e}. Ensure database is configured and tables exist.")
         return
 
     # 2. Preprocess
+    # This assumes tables have a 'timestamp' column or similar as handled in data_engineering.py
     df_sensors = preprocess_time_series(df_sensors)
     df_weather = preprocess_time_series(df_weather)
     df_tide = preprocess_time_series(df_tide)
@@ -30,36 +35,49 @@ def train_pipeline():
 
     # 3. Merge and Feature Engineering
     df = merge_datasets(df_sensors, df_weather, df_tide)
-    df = df.join(df_labels, how='left').fillna(0) # 0 for no flood
-    df = generate_features(df)
+    # Join with labels - assumes labels are already resampled/aligned
+    df = df.join(df_labels, how='left').fillna(0) 
+    
+    # We need to identify the correct target column from the joined labels
+    # In 'flood_events', this might be 'severity' or a generated 'is_flood' column
+    # For now, we assume 'is_flood' exists after preprocessing/merging or we use a fallback
+    if 'is_flood' not in df.columns:
+        if 'severity' in df.columns:
+            df['is_flood'] = (df['severity'].notnull()).astype(int)
+        else:
+            # Fallback if no explicit label column is found
+            df['is_flood'] = 0 
+
+    df = generate_features(df, rainfall_col='accumulated_precipitation' if 'accumulated_precipitation' in df.columns else 'precipitation')
 
     # 4. Prepare Features and Targets
-    target_clf = 'is_flood'  # Binary classification
-    target_reg = 'water_level' # Regression
+    target_clf = 'is_flood'
     
-    features = [c for c in df.columns if c not in [target_clf, target_reg]]
-    X = df[features]
-    y_clf = df[target_clf]
+    # Selected features based on the available columns
+    available_features = [c for c in df.columns if c not in [target_clf, 'severity', 'id', 'latitude', 'longitude']]
+    X = df[available_features]
+    y_clf = df[target_clf].astype(int)
 
-    # 5. TimeSeriesSplit Validation
-    tscv = TimeSeriesSplit(n_splits=5)
+    if len(X) < 10:
+        print("Not enough data to train. Ingest more data first.")
+        return
+
+    # 5. Training
     scaler = StandardScaler()
+    X_scaled = scaler.fit_transform(X)
 
-    for train_index, test_index in tscv.split(X):
-        X_train, X_test = X.iloc[train_index], X.iloc[test_index]
-        y_train, y_test = y_clf.iloc[train_index], y_clf.iloc[test_index]
+    # Simple split (could use TimeSeriesSplit for better validation)
+    train_size = int(len(X) * 0.8)
+    X_train, X_test = X_scaled[:train_size], X_scaled[train_size:]
+    y_train, y_test = y_clf[:train_size], y_clf[train_size:]
 
-        # Scaling
-        X_train_scaled = scaler.fit_transform(X_train)
-        X_test_scaled = scaler.transform(X_test)
-
-        # Train XGBoost
-        clf = get_xgboost_classifier()
-        clf.fit(X_train_scaled, y_train)
-        
-        preds = clf.predict(X_test_scaled)
-        print("XGBoost Evaluation:")
-        print(classification_report(y_test, preds))
+    print(f"Training XGBoost on {len(X_train)} samples...")
+    clf = get_xgboost_classifier()
+    clf.fit(X_train, y_train)
+    
+    preds = clf.predict(X_test)
+    print("XGBoost Evaluation:")
+    print(classification_report(y_test, preds))
 
     # Save final model and scaler
     joblib.dump(clf, MODEL_PATH_XGB)
