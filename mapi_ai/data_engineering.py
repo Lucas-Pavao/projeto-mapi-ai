@@ -23,7 +23,8 @@ def preprocess_time_series(df: pd.DataFrame, time_col='timestamp'):
     df = df.set_index(time_col).sort_index()
     
     # Resample and interpolate
-    df = df.resample(RESAMPLE_INTERVAL).mean()
+    # Use numeric_only=True to skip non-numeric columns like sensor IDs during aggregation
+    df = df.resample(RESAMPLE_INTERVAL).mean(numeric_only=True)
     df = df.interpolate(method='linear')
     
     return df
