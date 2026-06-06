@@ -93,6 +93,11 @@ python main.py --mode train
 python main.py --mode serve
 ```
 
+### 4. Docker Compose (Ecossistema Completo)
+Para rodar todo o ecossistema MAPI (Edge, API, AI e Front) de forma orquestrada, utilize o Docker Compose centralizado no repositório da API. Este método garante que todas as dependências de rede e banco de dados sejam configuradas automaticamente.
+
+- **Guia de Orquestração:** [MAPI API - Docker Compose Context](https://github.com/Lucas-Pavao/projeto-mapi-api/tree/feature/docs-readme-refactor)
+
 ## 🔌 Endpoints Principais
 
 - `GET /health`: Diagnóstico de saúde do modelo e status de carregamento.
