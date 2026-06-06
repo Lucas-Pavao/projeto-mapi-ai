@@ -1,111 +1,131 @@
-# Projeto MAPI - Inteligência Artificial (AI) 🧠🌊
+# MAPI AI - Inteligência Artificial e Predição 🧠🌊
 
-O **MAPI AI** é o componente de inteligência do ecossistema MAPI, responsável pela análise de dados e predição de riscos de inundação em tempo real. Este repositório contém o pipeline de Machine Learning, desde a engenharia de dados até a disponibilização de modelos via API de alta performance.
+O **MAPI AI** é o componente de inteligência do ecossistema MAPI, responsável pela análise avançada de séries temporais e predição de riscos de inundação urbana em tempo real.
 
-## 📖 Descrição do Projeto
+## 🌐 Ecossistema MAPI
 
-O objetivo principal deste projeto é transformar dados brutos de sensores de nível de rio, pluviômetros (chuva) e tábuas de maré em insights acionáveis. Através de modelos preditivos, o sistema estima a probabilidade de transbordamento e inundações urbanas, permitindo que autoridades e cidadãos recebam alertas antecipados.
+Este projeto atua como um **microserviço especializado de inferência síncrona**:
+
+```text
+  [ MAPI Edge ] (Python / MQTT) 📡
+        │   (Pulsações Telemétricas e Inteligência de Borda)
+        ▼
+  [  MAPI API  ] (Java 21 / Spring Boot / TimescaleDB) 🌊🚀
+        │ ▲
+        │ │ (Dados em Tempo Real via HTTP POST / Resposta com Probabilidade e Risco)
+        ▼ │ <-- (Este Serviço interage aqui de forma síncrona)
+  [  MAPI AI  ] (Python / FastAPI / XGBoost & LSTM) 🧠
+        │
+        │ (Consumo da REST API e Exibição Geoespacial)
+        ▼
+  [ MAPI Front ] (React 19 / MapLibre GL) 💻✨
+```
+
+### Interdependência de Fluxo:
+
+1. **Fase de Treinamento (Batch):** O MAPI AI conecta-se ao banco de dados do MAPI API para ler dados históricos consolidados.
+2. **Fase de Inferência (Tempo Real):** O MAPI API envia um HTTP POST para o MAPI AI com o estado atual dos sensores. O serviço calcula a predição e retorna o nível de risco imediatamente.
+
+### Componentes do Ecossistema
+Para o funcionamento completo, o MAPI é dividido em quatro componentes principais:
+- **[MAPI AI](https://github.com/Lucas-Pavao/projeto-mapi-ai) (Este Repositório):** Microserviço de inferência para predição de riscos de inundação.
+- **[MAPI API](https://github.com/Lucas-Pavao/projeto-mapi-api) (Backend):** Orquestrador central, ingestão MQTT e persistência temporal em TimescaleDB.
+- **[MAPI Edge](https://github.com/Lucas-Pavao/projeto-mapi-sensores) (Sensores):** Produtor de dados primários e inteligência de borda (Fog Computing).
+- **[MAPI Front](https://github.com/Lucas-Pavao/projeto-mapi-front) (Dashboard):** Interface geoespacial para monitoramento e alertas em tempo real.
 
 ## 🛠️ Tecnologias Escolhidas
 
-- **Linguagem:** [Python 3.10+](https://www.python.org/)
-- **API Framework:** [FastAPI](https://fastapi.tiangolo.com/) para inferência de baixa latência.
-- **Machine Learning:** 
-  - **XGBoost:** Para classificação robusta de risco.
-  - **TensorFlow (LSTM):** Para análise de séries temporais e tendências.
-  - **Scikit-learn:** Para pré-processamento e métricas de avaliação.
-- **Manipulação de Dados:** Pandas, NumPy e Geopandas para análise espacial.
-- **Banco de Dados:** PostgreSQL com SQLAlchemy para persistência e ETL.
-- **Servidor:** Uvicorn.
-- **Containerização:** Docker.
+| Categoria | Tecnologia | Justificativa Técnica |
+| :--- | :--- | :--- |
+| **Linguagem** | Python 3.10+ | Padrão para ciência de dados e frameworks estáveis de ML. |
+| **Framework API** | FastAPI | Alta performance assíncrona e tipagem com Pydantic. |
+| **Machine Learning** | XGBoost, TensorFlow (LSTM), Scikit-learn | Gradient Boosting para dados tabulares rápidos e LSTM para memória temporal. |
+| **Manipulação de Dados** | Pandas, NumPy, Geopandas | Tratamento de DataFrames e cálculos de proximidade geométrica. |
+| **Containerização** | Docker | Isolamento completo das dependências nativas C++ de ML. |
 
 ## 📂 Estrutura de Pastas
 
 ```text
-projeto-mapi-ai/
-├── mapi_ai/                # Core da aplicação
-│   ├── app.py              # API FastAPI para inferência (Servidor de Predição)
-│   ├── trainer.py          # Script de treinamento dos modelos
-│   ├── data_engineering.py # ETL e conexão com banco de dados
-│   ├── feature_engineering.py # Criação de variáveis preditivas
-│   ├── models.py           # Definição das classes/arquiteturas de ML
-│   └── config.py           # Variáveis de ambiente e hiperparâmetros
-├── models/                 # Modelos serializados (.joblib, .h5)
-├── main.py                 # CLI para gerenciar treino e execução
-├── requirements.txt        # Dependências Python
-├── Dockerfile              # Configuração de containerização
-└── README.md               # Documentação principal
+.
+├── Dockerfile                  # Definição do container de runtime
+├── main.py                     # Entrypoint (CLI para treino e serviço)
+├── mapi_ai/                    # Código-fonte do módulo
+│   ├── app.py                  # Definição dos endpoints FastAPI
+│   ├── config.py               # Configurações e variáveis de ambiente
+│   ├── data_engineering.py     # Pipeline de ETL e extração do banco
+│   ├── feature_engineering.py  # Transformações e criação de features
+│   ├── models.py               # Arquiteturas dos modelos (LSTM/XGB)
+│   └── trainer.py              # Orquestrador do treinamento
+├── models/                     # Artefatos binários dos modelos (.joblib, .h5)
+└── requirements.txt            # Dependências Python
 ```
 
-## 🔄 Comunicação entre Sistemas
+## 🔄 Comunicação entre Sistemas e Fluxo de Dados
 
-O ecossistema MAPI é composto por dois serviços principais que trabalham de forma síncrona:
-
-1.  **MAPI API (Main Backend):** Gerencia usuários, dispositivos, notificações e armazena os dados históricos no PostgreSQL.
-2.  **MAPI AI (Este serviço):** Atua como um microserviço especializado em processamento numérico e predição.
-
-### Fluxo de Dados:
-- **Treinamento:** O `MAPI AI` conecta-se diretamente ao banco de dados PostgreSQL mantido pelo `MAPI API` para ler dados históricos e realizar o treinamento do modelo.
-- **Inferência (Tempo Real):** Quando o `MAPI API` recebe novos dados de sensores, ele faz uma requisição **HTTP POST** para o endpoint `/v1/predict/flood` deste serviço, enviando o estado atual dos sensores.
-- **Resposta:** Este serviço processa os dados, aplica o modelo de ML e retorna um JSON contendo a probabilidade (0 a 1) e o nível de risco (LOW, MEDIUM, HIGH).
+- **Treinamento:** Executa o ETL em `data_engineering.py`, puxando as séries históricas do PostgreSQL da API Central (TimescaleDB).
+- **Inferência:** A API faz uma requisição HTTP POST para `/v1/predict/flood`. O serviço processa o payload e devolve um JSON padronizado com o nível de risco (`LOW`, `MEDIUM`, `HIGH`).
 
 ## 🚀 Como Rodar a Aplicação
 
-### 1. Instalação Local (Desenvolvimento)
+### 1. Configuração do Ambiente
+Crie um arquivo `.env` baseado nas variáveis lidas em `mapi_ai/config.py`:
+```bash
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=mapi_db
+DB_USER=postgres
+DB_PASS=postgres
+```
 
-**Pré-requisitos:** Python 3.10+, PostgreSQL.
+### 2. Instalação Local
+```bash
+# Criar ambiente virtual
+python -m venv .venv
+source .venv/bin/activate  # Linux/macOS
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone https://github.com/Lucas-Pavao/projeto-mapi-ai.git
-    cd projeto-mapi-ai
-    ```
+# Instalar dependências
+pip install -r requirements.txt
+```
 
-2.  **Ambiente Virtual:**
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # Windows: .venv\Scripts\activate
-    ```
+### 3. Execução
+O projeto possui dois modos de operação via `main.py`:
 
-3.  **Dependências:**
-    ```bash
-    pip install -r requirements.txt
-    ```
+**Modo de Treinamento:**
+```bash
+python main.py --mode train
+```
 
-4.  **Configuração:**
-    Crie um arquivo `.env` na raiz:
-    ```env
-    DATABASE_URL=postgresql://user:pass@localhost:5432/mapi_db
-    MODEL_PATH=models/flood_model.joblib
-    ```
+**Modo de Serviço (API):**
+```bash
+python main.py --mode serve
+```
 
-5.  **Execução:**
-    ```bash
-    # Para rodar a API de predição
-    python main.py --mode serve
+### 4. Docker Compose (Ecossistema Completo)
+Para rodar todo o ecossistema MAPI (Edge, API, AI e Front) de forma orquestrada, utilize o Docker Compose centralizado no repositório da API. Este método garante que todas as dependências de rede e banco de dados sejam configuradas automaticamente.
 
-    # Para treinar o modelo com dados do banco
-    python main.py --mode train
-    ```
-
-### 2. Rodando via Docker (Produção)
-
-Se preferir rodar em containers:
-
-1.  **Build da imagem:**
-    ```bash
-    docker build -t mapi-ai .
-    ```
-
-2.  **Execução do container:**
-    ```bash
-    docker run -p 8000:8000 --env-file .env mapi-ai
-    ```
+- **Guia de Orquestração:** [MAPI API - Docker Compose Context](https://github.com/Lucas-Pavao/projeto-mapi-api/tree/feature/docs-readme-refactor)
 
 ## 🔌 Endpoints Principais
 
-- `GET /health`: Verifica a saúde do serviço e se o modelo está carregado.
-- `POST /v1/predict/flood`: Recebe dados de sensores e retorna a predição de risco.
+- `GET /health`: Diagnóstico de saúde do modelo e status de carregamento.
+- `POST /v1/predict/flood`: Envio dos payloads de sensores e retorno dos riscos calculados.
 
----
-Desenvolvido por **Lucas Pavão** como parte do ecossistema MAPI.
+**Exemplo de Payload de Entrada:**
+```json
+{
+  "station_id": "ANA-12345",
+  "lat": -8.05,
+  "lon": -34.90,
+  "current_rainfall": 12.5,
+  "rainfall_3h_accumulated": 45.0,
+  "rainfall_6h_accumulated": 60.0,
+  "rainfall_12h_accumulated": 80.0,
+  "rainfall_24h_accumulated": 100.0,
+  "tide_level": 2.1,
+  "timestamp": "2026-06-05T14:30:00Z"
+}
+```
+
+## 📄 Licença
+
+Este projeto está sob a licença **MIT**.
