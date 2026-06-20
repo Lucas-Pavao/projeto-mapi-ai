@@ -23,8 +23,8 @@ except Exception as e:
 try:
     from tensorflow.keras.models import load_model
     if os.path.exists(MODEL_PATH_LSTM):
-        lstm_model = load_model(MODEL_PATH_LSTM)
-        print("LSTM Regressor loaded successfully.")
+        lstm_model = load_model(MODEL_PATH_LSTM, compile=False)
+        print("LSTM Regressor loaded successfully (without compile for inference).")
     else:
         lstm_model = None
         print("Warning: LSTM model file not found.")
@@ -151,7 +151,7 @@ def predict_river_level_lstm(data: PredictionInput, X_current: pd.DataFrame):
         return None
 
 @app.post("/v1/predict/flood")
-async def predict_flood(data: PredictionInput):
+def predict_flood(data: PredictionInput):
     if model is None or scaler is None:
         raise HTTPException(status_code=503, detail="Model not loaded. Please train the model.")
     

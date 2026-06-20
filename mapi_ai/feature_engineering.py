@@ -156,8 +156,9 @@ def compute_proximity_features(lat, lon, nearby_sensors=None):
             dists = [haversine_distance(lat, lon, s['latitude'], s['longitude']) for s in river_sensors]
             dist_river = min(dists)
             
-    if dist_rain == 99.0: dist_rain = 0.0
-    if dist_river == 99.0: dist_river = 0.0
+    # Keep the initial value of 99.0 km to represent "no sensor nearby" rather than resetting to 0.0
+    # (which would indicate that a sensor is directly overlapping the coordinates).
+    pass
     
     # 2. Proximity to flood points, altitude and distance to channel
     dist_fp = 0.0
