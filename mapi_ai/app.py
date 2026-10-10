@@ -170,6 +170,8 @@ def predict_flood(data: PredictionInput):
         response = {
             "flood_probability": float(prob),
             "risk_level": risk_level,
+            # ADR 0007 §3 (projeto-mapi-api): sem artefato versionado até a Fase 4, a versão é "unversioned".
+            "model_version": "unversioned",
             "station_id": data.station_id,
             "timestamp": data.timestamp
         }
