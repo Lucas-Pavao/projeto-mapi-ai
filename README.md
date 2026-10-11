@@ -7,8 +7,8 @@ O **MAPI AI** é o componente de inteligência do ecossistema MAPI, responsável
 Este projeto atua como um **microserviço especializado de inferência síncrona**:
 
 ```text
-  [ MAPI Edge ] (Python / MQTT) 📡
-        │   (Pulsações Telemétricas e Inteligência de Borda)
+  [ Agências: APAC, ANA, Cemaden, TabuaMare, Open-Meteo, CKAN Recife ]
+        │   (coleta por jobs agendados na própria API)
         ▼
   [  MAPI API  ] (Java 21 / Spring Boot / TimescaleDB) 🌊🚀
         │ ▲
@@ -27,10 +27,12 @@ Este projeto atua como um **microserviço especializado de inferência síncrona
 2. **Fase de Inferência (Tempo Real):** O MAPI API envia um HTTP POST para o MAPI AI com o estado atual dos sensores. O serviço calcula a predição e retorna o nível de risco imediatamente.
 
 ### Componentes do Ecossistema
-Para o funcionamento completo, o MAPI é dividido em quatro componentes principais:
+
+> O antigo MAPI Edge (Python/MQTT, repositório projeto-mapi-sensores) foi descontinuado; a coleta agora é feita pela MAPI API.
+
+Para o funcionamento completo, o MAPI é dividido em três componentes principais:
 - **[MAPI AI](https://github.com/Lucas-Pavao/projeto-mapi-ai) (Este Repositório):** Microserviço de inferência para predição de riscos de inundação.
-- **[MAPI API](https://github.com/Lucas-Pavao/projeto-mapi-api) (Backend):** Orquestrador central, ingestão MQTT e persistência temporal em TimescaleDB.
-- **[MAPI Edge](https://github.com/Lucas-Pavao/projeto-mapi-sensores) (Sensores):** Produtor de dados primários e inteligência de borda (Fog Computing).
+- **[MAPI API](https://github.com/Lucas-Pavao/projeto-mapi-api) (Backend):** Orquestrador central: coleta agendada das agências (APAC, ANA, Cemaden, TabuaMare, Open-Meteo, CKAN), persistência temporal em TimescaleDB e REST.
 - **[MAPI Front](https://github.com/Lucas-Pavao/projeto-mapi-front) (Dashboard):** Interface geoespacial para monitoramento e alertas em tempo real.
 
 ## 🛠️ Tecnologias Escolhidas
@@ -101,9 +103,9 @@ python main.py --mode serve
 ```
 
 ### 4. Docker Compose (Ecossistema Completo)
-Para rodar todo o ecossistema MAPI (Edge, API, AI e Front) de forma orquestrada, utilize o Docker Compose centralizado no repositório da API. Este método garante que todas as dependências de rede e banco de dados sejam configuradas automaticamente.
+Para rodar todo o ecossistema MAPI (API, AI e Front) de forma orquestrada, utilize o Docker Compose centralizado no repositório da API. Este método garante que todas as dependências de rede e banco de dados sejam configuradas automaticamente.
 
-- **Guia de Orquestração:** [MAPI API - Docker Compose Context](https://github.com/Lucas-Pavao/projeto-mapi-api/tree/feature/docs-readme-refactor)
+- **Guia de Orquestração:** [MAPI API - Docker Compose Context](https://github.com/Lucas-Pavao/projeto-mapi-api)
 
 ## 🔌 Endpoints Principais
 
