@@ -51,7 +51,9 @@ class NearbySensorInput(BaseModel):
     lat: float = None
     lon: float = None
     value: float
-    unit: str
+    # O backend repassa leituras de sensor com unidade nula (ex.: régua de rio da APAC sem unidade cadastrada);
+    # a unidade não entra em nenhuma feature, então não pode derrubar a previsão com 422 de validação.
+    unit: Optional[str] = None
     type: str
     distanceKm: float = None
     distance_km: float = None
