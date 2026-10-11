@@ -98,3 +98,10 @@ def test_endpoint_sucesso_envia_versao_e_status(client):
     assert j["model_validation_status"] == "NOT_VALIDATED"
     assert j["risk_level"] == "LOW"
     assert "imputed_features" not in j
+
+
+def test_sensor_proximo_sem_unidade_nao_derruba_previsao(client):
+    sensor = {"sensor_id": "APAC-RIO-260790119H", "latitude": -8.11, "longitude": -35.01,
+              "value": 1.2, "unit": None, "type": "RIVER_LEVEL", "distance_km": 0.4}
+    r = client.post("/v1/predict/flood", json=PAYLOAD | {"nearby_sensors": [sensor]})
+    assert r.status_code == 200, r.text
