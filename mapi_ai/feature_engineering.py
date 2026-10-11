@@ -227,6 +227,14 @@ def generate_features(df: pd.DataFrame, rainfall_col='rainfall'):
     df = add_tide_features(df)
     return df.dropna()
 
+class MissingFeaturesError(ValueError):
+    """Features de entrada ausentes ou nulas na inferência (ADR 0007 §3 do backend: 422 com missing_features)."""
+
+    def __init__(self, missing_features):
+        self.missing_features = list(missing_features)
+        super().__init__("Dados insuficientes para a previsão: " + ", ".join(self.missing_features))
+
+
 def prepare_scenario_features(df: pd.DataFrame, is_training=True):
     """
     Enhanced feature engineering pipeline for scenario labels.
@@ -245,21 +253,29 @@ def prepare_scenario_features(df: pd.DataFrame, is_training=True):
         if old_col in df.columns and new_col not in df.columns:
             df[new_col] = df[old_col]
             
-    # 2. Fill missing columns with defaults
+    # 2. Colunas obrigatórias. Na inferência NÃO há imputação: feature ausente ou nula
+    #    vira MissingFeaturesError (a API responde 422 com missing_features, ADR 0007 §3).
+    #    Imputar 0.0 em silêncio fabricava chuva, maré e rio zerados (F2-BACK-12 / F4-IA-08).
+    #    O treino mantém o preenchimento legado com 0.0 (fora do escopo desta tarefa).
     required_cols = [
-        'latitude', 'longitude', 'current_rainfall', 
-        'rainfall_3h_accumulated', 'rainfall_6h_accumulated', 
-        'rainfall_12h_accumulated', 'rainfall_24h_accumulated', 
+        'latitude', 'longitude', 'current_rainfall',
+        'rainfall_3h_accumulated', 'rainfall_6h_accumulated',
+        'rainfall_12h_accumulated', 'rainfall_24h_accumulated',
         'tide_level', 'river_level',
-        'wind_speed', 'temperature', 'apparent_temperature', 
-        'humidity', 'pressure', 'wave_height', 
+        'wind_speed', 'temperature', 'apparent_temperature',
+        'humidity', 'pressure', 'wave_height',
         'wave_period', 'wave_direction', 'solar_radiation'
     ]
-    for col in required_cols:
-        if col not in df.columns:
-            df[col] = 0.0
-        else:
-            df[col] = df[col].fillna(0.0)
+    if not is_training:
+        missing = [c for c in required_cols if c not in df.columns or df[c].isna().any()]
+        if missing:
+            raise MissingFeaturesError(missing)
+    else:
+        for col in required_cols:
+            if col not in df.columns:
+                df[col] = 0.0
+            else:
+                df[col] = df[col].fillna(0.0)
 
     # 3. Add tide threshold feature
     df['is_high_tide'] = (df['tide_level'] > TIDE_THRESHOLD).astype(int)

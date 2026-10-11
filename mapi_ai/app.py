@@ -4,11 +4,13 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from contextlib import asynccontextmanager
+from typing import Optional
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from mapi_ai.config import MODEL_PATH_XGB, MODEL_PATH_LSTM, SCALER_PATH, TIDE_THRESHOLD
-from mapi_ai.feature_engineering import prepare_scenario_features, SpatialMetadataCache
+from mapi_ai.feature_engineering import prepare_scenario_features, SpatialMetadataCache, MissingFeaturesError
 
 # Load models at startup
 try:
@@ -66,19 +68,19 @@ class PredictionInput(BaseModel):
     rainfall_12h_accumulated: float
     rainfall_24h_accumulated: float
     tide_level: float
-    river_level: float = 0.0
+    river_level: Optional[float] = None
     timestamp: str
     
-    # Optional weather and environment fields with default values
-    wind_speed: float = 0.0
-    temperature: float = 0.0
-    apparent_temperature: float = 0.0
-    humidity: float = 0.0
-    pressure: float = 0.0
-    wave_height: float = 0.0
-    wave_period: float = 0.0
-    wave_direction: float = 0.0
-    solar_radiation: float = 0.0
+    # Campos meteorologicos sem valor padrao: ausentes => 422 com missing_features (sem imputacao, ADR 0007 par. 3)
+    wind_speed: Optional[float] = None
+    temperature: Optional[float] = None
+    apparent_temperature: Optional[float] = None
+    humidity: Optional[float] = None
+    pressure: Optional[float] = None
+    wave_height: Optional[float] = None
+    wave_period: Optional[float] = None
+    wave_direction: Optional[float] = None
+    solar_radiation: Optional[float] = None
     
     # Proximity sensor readings
     nearby_sensors: list[NearbySensorInput] = []
@@ -95,7 +97,8 @@ def prepare_features_for_inference(data: PredictionInput):
     data_dict['longitude'] = data_dict['longitude'] if data_dict['longitude'] is not None else data_dict['lon']
     
     if data_dict['latitude'] is None or data_dict['longitude'] is None:
-        raise ValueError("Latitude and longitude are required.")
+        missing = [k for k in ('latitude', 'longitude') if data_dict[k] is None]
+        raise MissingFeaturesError(missing)
         
     df = pd.DataFrame([data_dict])
     X = prepare_scenario_features(df, is_training=False)
@@ -156,7 +159,13 @@ def predict_flood(data: PredictionInput):
         raise HTTPException(status_code=503, detail="Model not loaded. Please train the model.")
     
     try:
-        X = prepare_features_for_inference(data)
+        try:
+            X = prepare_features_for_inference(data)
+        except MissingFeaturesError as e:
+            return JSONResponse(
+                status_code=422,
+                content={"detail": str(e), "missing_features": e.missing_features},
+            )
         X_scaled = scaler.transform(X)
         
         prob = model.predict_proba(X_scaled)[0][1]
@@ -172,6 +181,8 @@ def predict_flood(data: PredictionInput):
             "risk_level": risk_level,
             # ADR 0007 §3 (projeto-mapi-api): sem artefato versionado até a Fase 4, a versão é "unversioned".
             "model_version": "unversioned",
+            # ADR 0007 Emenda 1: os artefatos atuais nao tem avaliacao pre-registrada positiva.
+            "model_validation_status": "NOT_VALIDATED",
             "station_id": data.station_id,
             "timestamp": data.timestamp
         }
