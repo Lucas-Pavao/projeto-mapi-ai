@@ -1,0 +1,10 @@
+{
+  "fonte": "INMET, Normal Climatológica do Brasil 1991-2020, Precipitação Acumulada Mensal e Anual (mm)",
+  "url": "https://portal.inmet.gov.br/uploads/normais/Normal-Climatologica-PREC.xlsx",
+  "acesso": "2026-10-11",
+  "sha256_xlsx": "903ba7d92d6c155b60349aaf314df20cb5592270c71d37734b849b94ce5e8c19",
+  "estacao": "82900 RECIFE (CURADO), PE",
+  "mm_por_mes": {"1": 106.6, "2": 127.0, "3": 197.2, "4": 268.9, "5": 317.1, "6": 390.5,
+                 "7": 314.8, "8": 186.7, "9": 93.3, "10": 52.8, "11": 39.0, "12": 61.6},
+  "ano_mm": 2155.5
+}
