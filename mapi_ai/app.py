@@ -5,9 +5,11 @@ import pandas as pd
 from datetime import datetime
 from contextlib import asynccontextmanager
 from typing import Optional
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict, field_validator, model_validator
 
 from mapi_ai.config import MODEL_PATH_XGB, MODEL_PATH_LSTM, SCALER_PATH, TIDE_THRESHOLD
 from mapi_ai.feature_engineering import prepare_scenario_features, SpatialMetadataCache, MissingFeaturesError
@@ -198,6 +200,88 @@ def predict_flood(data: PredictionInput):
     except Exception as e:
         print(f"Prediction Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- Simulacao do balde M1a (ADR 0014): a formula vive so em avaliacao/balde.py ---
+from dataclasses import asdict
+from typing import Literal
+from avaliacao.balde import Params, Ponto, simular_ponto
+
+
+class BucketPoint(BaseModel):
+    slug: str = Field(min_length=1)
+    area_m2: float = Field(gt=0, allow_inf_nan=False)  # area contribuinte no snap_m padrao de Params
+    z_curva_m: list[float] = Field(min_length=2)
+    v_curva_m3: list[float] = Field(min_length=2)
+    rua_rel_m: float = Field(allow_inf_nan=False)
+
+    @model_validator(mode="after")
+    def _curva_valida(self):
+        z = np.asarray(self.z_curva_m, dtype=float)
+        v = np.asarray(self.v_curva_m3, dtype=float)
+        if len(z) != len(v):
+            raise ValueError("z_curva_m e v_curva_m3 devem ter o mesmo tamanho")
+        if not (np.isfinite(z).all() and np.isfinite(v).all()):
+            raise ValueError("curva com valor nao finito")
+        if np.any(np.diff(z) <= 0):
+            raise ValueError("z_curva_m deve ser estritamente crescente")
+        if np.any(np.diff(v) < 0) or v[0] < 0:
+            raise ValueError("v_curva_m3 deve ser nao negativa e nao decrescente")
+        return self
+
+
+class BucketParams(BaseModel):
+    model_config = ConfigDict(extra="forbid")  # C, iT_mm_h, hcrit_mm e snap_m sao fixos: enviar => 422
+    f: Literal[0.0, 0.2, 0.4, 0.6, 0.8, 1.0] = 1.0
+    curve_scale: float = Field(default=1.0, ge=0.7, le=1.3)
+
+
+class BucketInput(BaseModel):
+    P_mm_h: list[float] = Field(min_length=1, max_length=72)
+    point: BucketPoint
+    params: BucketParams = BucketParams()
+
+    @field_validator("P_mm_h")
+    @classmethod
+    def _p_valida(cls, v):
+        a = np.asarray(v, dtype=float)
+        if not np.isfinite(a).all() or (a < 0).any():
+            raise ValueError("P_mm_h deve ser finito e >= 0")
+        return v
+
+
+@app.exception_handler(RequestValidationError)
+async def _validacao(request: Request, exc: RequestValidationError):
+    if request.url.path != "/v1/simulate/bucket":
+        return await request_validation_exception_handler(request, exc)
+    # NaN/Inf no corpo quebram a serializacao do campo "input" no handler padrao: omite input e ctx.
+    erros = [{"type": e["type"], "loc": list(e["loc"]), "msg": e["msg"]} for e in exc.errors()]
+    return JSONResponse(status_code=422, content={"detail": erros})
+
+
+@app.post("/v1/simulate/bucket")
+def simulate_bucket(data: BucketInput):
+    """Simulacao ilustrativa (nao e previsao). Sem mare, sem escrita (ADR 0014)."""
+    base = Params()
+    p = base.com(f=data.params.f, curve_scale=data.params.curve_scale)
+    pt = Ponto(
+        slug=data.point.slug,
+        area_m2={p.snap_m: data.point.area_m2},
+        z_curva_m=np.asarray(data.point.z_curva_m, dtype=float),
+        v_curva_m3=np.asarray(data.point.v_curva_m3, dtype=float),
+        rua_rel_m=data.point.rua_rel_m,
+    )
+    h, fora = simular_ponto(np.asarray(data.P_mm_h, dtype=float), pt, p)
+    cruz = np.flatnonzero(h >= p.hcrit_mm)
+    return {
+        "h_mm": h.tolist(),
+        "n_fora_da_curva": int(fora),
+        "hmax_mm": float(h.max()),
+        "t_cross_h": int(cruz[0]) if cruz.size else None,
+        "params_usados": asdict(p),
+        "model": "M1a",
+        "illustrative": True,
+    }
+
 
 @app.get("/health")
 async def health():

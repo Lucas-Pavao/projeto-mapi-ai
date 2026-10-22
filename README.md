@@ -111,6 +111,9 @@ Para rodar todo o ecossistema MAPI (API, AI e Front) de forma orquestrada, utili
 
 - `GET /health`: Diagnóstico de saúde do modelo e status de carregamento.
 - `POST /v1/predict/flood`: Envio dos payloads de sensores e retorno dos riscos calculados.
+- `POST /v1/simulate/bucket`: simulação ilustrativa (não é previsão) do balde M1a, que chama `avaliacao/balde.py` sem cópia da fórmula (ADR 0014 do backend). Sem maré, sem escrita em disco/banco.
+  - Entrada: `P_mm_h` (1 a 72 valores horários, finitos, >= 0); `point` (`slug`, `area_m2` no `snap_m` padrão, `z_curva_m` estritamente crescente, `v_curva_m3` não decrescente e do mesmo tamanho, `rua_rel_m`); `params` opcional só com `f` em {0, 0.2, 0.4, 0.6, 0.8, 1.0} e `curve_scale` em [0.7, 1.3]. `C`, `iT_mm_h`, `hcrit_mm` e `snap_m` são fixos em `Params`; enviar qualquer um deles ou valor fora da faixa devolve 422.
+  - Saída: `h_mm[]`, `n_fora_da_curva`, `hmax_mm`, `t_cross_h` (índice da primeira hora com `h >= hcrit_mm`, ou `null`), `params_usados`, `model = "M1a"`, `illustrative = true`.
 
 **Exemplo de Payload de Entrada:**
 ```json
