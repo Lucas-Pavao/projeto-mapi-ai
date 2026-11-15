@@ -1,0 +1,176 @@
+{
+  "bloco": "AI",
+  "etapas": "1-7",
+  "data": "2026-11-15",
+  "repositorio": "projeto-mapi-ai",
+  "branch": "feat/in1165",
+  "le": "projeto-mapi-api/docs/handoff/etapa0.json",
+  "model_version": "xgb_v2",
+  "artifact": "models/xgb_v2.joblib",
+  "metadata": "models/metadata.json",
+  "training_data": "SYNTHETIC",
+  "training_data_note": "DADOS SINTÉTICOS — experimento controlado — reports/synthetic_ground_truth.md",
+  "rain_source": "MEASURED (Cemaden PED, point_rain_accum_v chuva-ponto-v4)",
+  "features_em_ordem": [
+    "current_rainfall",
+    "rainfall_3h_accumulated",
+    "rainfall_6h_accumulated",
+    "rainfall_12h_accumulated",
+    "rainfall_24h_accumulated",
+    "tide_level",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "latitude",
+    "longitude"
+  ],
+  "unidades": {
+    "current_rainfall": "mm",
+    "rainfall_3h_accumulated": "mm",
+    "rainfall_6h_accumulated": "mm",
+    "rainfall_12h_accumulated": "mm",
+    "rainfall_24h_accumulated": "mm",
+    "tide_level": "m (NR DHN)",
+    "hour_sin": "adimensional",
+    "hour_cos": "adimensional",
+    "month_sin": "adimensional",
+    "month_cos": "adimensional",
+    "latitude": "graus",
+    "longitude": "graus"
+  },
+  "features_derivadas_no_servico": {
+    "hour_sin/hour_cos/month_sin/month_cos": "calculadas do campo timestamp do payload, em hora local de Recife; timestamp sem fuso é tratado como UTC"
+  },
+  "limiares": {
+    "medium": 0.0159,
+    "high": 0.2441,
+    "criterios": {
+      "high": "maior limiar com recall >= 0.8 na validação (melhor precisão)",
+      "medium": "maior limiar com recall >= 0.95 na validação: nível de atenção, aceita mais alarmes falsos para quase não perder alagamento"
+    },
+    "escolhidos_em": "validação",
+    "probabilidades": "raw"
+  },
+  "regra_de_risco": "HIGH se p >= high; MEDIUM se p >= medium; senão LOW",
+  "calibracao": {
+    "usada": false,
+    "metodo": "sigmoid (Platt)",
+    "criterio": "ECE de validação > 0,05 (0,047: não aplicada)"
+  },
+  "contrato_predicao": {
+    "rota": "POST /v1/predict/flood",
+    "inalterado": [
+      "flood_probability",
+      "risk_level (LOW|MEDIUM|HIGH)",
+      "model_version",
+      "model_validation_status",
+      "station_id",
+      "timestamp",
+      "MissingFeaturesError -> HTTP 422 com missing_features"
+    ],
+    "mudou": {
+      "model_version": "de 'unversioned' para 'xgb_v2' quando há models/metadata.json",
+      "entrada": "o v2 usa só as 12 features acima; os campos meteorológicos (wind_speed etc.) continuam aceitos e são ignorados; ausência deles não gera mais 422 no caminho v2"
+    },
+    "campos_novos_por_adicao": {
+      "thresholds": "{medium, high, source: metadata|legacy}",
+      "rain_source": "MEASURED",
+      "training_data": "SYNTHETIC",
+      "synthetic_warning": "texto, presente só quando training_data = SYNTHETIC",
+      "calibrated": "bool",
+      "top_contributors": "[{feature_id, contribution (probabilidade, SHAP), value, unit}] — 3 maiores |contribuição|"
+    }
+  },
+  "metricas_teste": {
+    "nunca_alaga": {
+      "pr_auc": 0.063,
+      "roc_auc": 0.5,
+      "brier": 0.059
+    },
+    "regra_chuva3h>9mm": {
+      "pr_auc": 0.46,
+      "roc_auc": 0.856,
+      "brier": 0.048
+    },
+    "logistica": {
+      "pr_auc": 0.8,
+      "roc_auc": 0.928,
+      "brier": 0.049
+    },
+    "arvore_rasa": {
+      "pr_auc": 0.67,
+      "roc_auc": 0.925,
+      "brier": 0.057
+    },
+    "xgb_v2": {
+      "pr_auc": 0.764,
+      "roc_auc": 0.923,
+      "brier": 0.037
+    },
+    "xgb_v2_sem_local": {
+      "pr_auc": 0.792,
+      "roc_auc": 0.934,
+      "brier": 0.049
+    },
+    "xgb_v2_reanalise": {
+      "pr_auc": 0.318,
+      "roc_auc": 0.797,
+      "brier": 0.15
+    },
+    "xgb_v2_calibrado": {
+      "pr_auc": 0.764,
+      "roc_auc": 0.923,
+      "brier": 0.026
+    }
+  },
+  "ablacoes": {
+    "cemaden_x_reanalise_delta_pr_auc": {
+      "delta_pr_auc": 0.4461,
+      "ic95_lo": 0.3358,
+      "ic95_hi": 0.5476,
+      "significativo": true
+    },
+    "com_x_sem_local_delta_pr_auc": {
+      "delta_pr_auc": -0.0278,
+      "ic95_lo": -0.0609,
+      "ic95_hi": -0.004,
+      "significativo": true
+    },
+    "xgb_x_logistica_delta_pr_auc": {
+      "delta_pr_auc": -0.0354,
+      "ic95_lo": -0.0695,
+      "ic95_hi": -0.0057,
+      "significativo": true
+    }
+  },
+  "xai": {
+    "shap_top5_global": [
+      "rainfall_3h_accumulated",
+      "rainfall_24h_accumulated",
+      "current_rainfall",
+      "tide_level",
+      "rainfall_12h_accumulated"
+    ],
+    "concordancia_shap_lime_jaccard_top5": 0.526,
+    "concordancia_shap_lime_spearman": 0.5322,
+    "estabilidade_lime_10_sementes": 0.6095,
+    "delecao_k1": {
+      "SHAP": 0.1126,
+      "LIME": 0.1044,
+      "aleatorio": 0.0162
+    },
+    "planoB_shap_recupera": [
+      "rainfall_3h_accumulated",
+      "rainfall_24h_accumulated",
+      "current_rainfall",
+      "tide_level"
+    ],
+    "planoB_spearman_shap": 0.84
+  },
+  "para_a_etapa_8": {
+    "backend": "ler thresholds/model_version/rain_source/training_data/synthetic_warning/top_contributors da resposta da IA (por adição); limiares vêm do metadata via resposta, não fixos no Java",
+    "front": "mostrar faixa com o limiar, aviso de sintético visível e as 3 top_contributors em unidade física"
+  },
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
+}

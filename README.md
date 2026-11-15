@@ -134,3 +134,74 @@ Para rodar todo o ecossistema MAPI (API, AI e Front) de forma orquestrada, utili
 ## 📄 Licença
 
 Este projeto está sob a licença **MIT**.
+
+
+## Projeto final IN1165 (Advanced ML & Explainable AI, CIn/UFPE)
+
+> **DADOS SINTÉTICOS — experimento controlado.** As features são horas reais; o rótulo é gerado por fórmula conhecida
+> (`reports/synthetic_ground_truth.md`), porque não há registro real de alagamento suficiente. DADOS DA REDE
+> OBSERVACIONAL DO CEMADEN/MCTIC.
+
+### Reproduzir
+
+```bash
+python -m venv .venv && . .venv/bin/activate
+pip install -r requirements.txt
+jupyter nbconvert --to notebook --execute --inplace notebooks/in1165_projeto_final.ipynb   # ou "Run All" no Jupyter
+```
+
+Passo a passo, sem notebook:
+
+```bash
+python -m mapi_ai.build_labels          # rótulo real: 0 positivos a 500 m -> Plano B
+python -m mapi_ai.synthetic             # dataset sintético (5 000 horas reais)
+python -m mapi_ai.dataset_report        # reports/dataset_summary.json
+python -m mapi_ai.trainer --synthetic   # XGBoost v2 e ablações -> models/
+python -m mapi_ai.baselines             # logística e árvore rasa
+python -m mapi_ai.evaluate              # métricas, calibração, limiares -> models/metadata.json
+python -m mapi_ai.xai.run_all           # SHAP, LIME, contrafactuais
+python -m mapi_ai.xai.evaluate_explanations
+pytest
+```
+
+Os dados vêm de `data/in1165/`, extraídos do banco do projeto-mapi-api (`python -m mapi_ai.sources`, só para regenerar).
+Semente 42 em tudo; o gzip é gravado com `mtime=0`, então o SHA-256 do dataset é estável.
+
+### Estrutura de `reports/`
+
+| Arquivo | Conteúdo |
+|---|---|
+| `dataset_summary.json` | rótulo real, decisão do Plano B, dataset, split, SHA-256 das fontes |
+| `synthetic_ground_truth.md` / `.json` | fórmula geradora e de onde vem cada escala |
+| `metrics.csv`, `significance.csv` | modelos no teste; IC 95% por bootstrap pareado |
+| `baseline_tree.txt`, `baselines.json` | regras da árvore e coeficientes da logística |
+| `xai_cases.json` | SHAP e LIME dos casos TP/FN/FP; contrafactuais |
+| `explanation_eval.csv` / `.json` | concordância, estabilidade, deleção, comparação com a fórmula |
+| `figures/` | confusão, PR, ROC, calibração, SHAP, LIME, deleção, árvore |
+
+### Resultados (teste, sintético)
+
+| Modelo | PR-AUC | ROC-AUC | Recall (HIGH) | Precisão (HIGH) | Brier |
+|---|---|---|---|---|---|
+| nunca_alaga | 0.063 | 0.5 | 0.0 | 0.0 | 0.059 |
+| logistica | 0.8 | 0.928 | 0.794 | 0.505 | 0.049 |
+| arvore_rasa | 0.67 | 0.925 | 0.825 | 0.374 | 0.057 |
+| xgb_v2 | 0.764 | 0.923 | 0.778 | 0.426 | 0.037 |
+| xgb_v2_calibrado | 0.764 | 0.923 | 0.778 | 0.426 | 0.026 |
+| xgb_v2_sem_local | 0.792 | 0.934 | 0.778 | 0.48 | 0.049 |
+| xgb_v2_reanalise | 0.318 | 0.797 | 0.714 | 0.139 | 0.15 |
+
+Limiares (validação): MEDIUM = 0.0159, HIGH = 0.2441.
+SHAP recupera as 4 features da fórmula no top-4 e na ordem verdadeira; LIME, 3 de 4.
+
+### Limitações conhecidas
+
+- **Rótulo:** 0 ocorrências a 500 m e nenhuma com hora no CKAN; tudo é sintético. O "recall" de qualquer rótulo real
+  futuro será recall sobre o que foi notificado.
+- **Fórmula logística:** favorece a regressão logística, que vence o XGBoost aqui.
+- **Fonte da chuva:** o rótulo vem da chuva medida (Cemaden), então a ablação contra a reanálise favorece o Cemaden por
+  construção.
+- **Correlação entre os acumulados de chuva (1 a 24 h):** SHAP intervencional e LIME podem dividir ou trocar o crédito
+  entre eles.
+- **Calibração:** o critério pré-fixado (ECE de validação > 0,05) não aplicou o Platt; no teste o calibrado teria
+  Brier menor.
