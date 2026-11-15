@@ -1,0 +1,257 @@
+{
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "rows_explained": [
+    41,
+    66,
+    75,
+    77,
+    98,
+    129,
+    150,
+    187,
+    188,
+    192,
+    222,
+    320,
+    352,
+    358,
+    363,
+    401,
+    450,
+    455,
+    456,
+    461,
+    479,
+    482,
+    484,
+    513,
+    532,
+    544,
+    554,
+    555,
+    625,
+    668,
+    670,
+    693,
+    704,
+    717,
+    725,
+    731,
+    735,
+    739,
+    742,
+    745,
+    760,
+    781,
+    794,
+    805,
+    884,
+    899,
+    910,
+    914,
+    917,
+    958
+  ],
+  "n_rows": 50,
+  "positives_among_rows": 3,
+  "table": [
+    {
+      "metrica": "concordancia_jaccard_top5_shap_lime",
+      "media": 0.526,
+      "desvio": 0.1755,
+      "n": 50
+    },
+    {
+      "metrica": "concordancia_spearman_shap_lime",
+      "media": 0.5322,
+      "desvio": 0.2432,
+      "n": 50
+    },
+    {
+      "metrica": "estabilidade_lime_jaccard_top5_10_sementes",
+      "media": 0.6095,
+      "desvio": 0.1042,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_SHAP_k1",
+      "media": 0.1126,
+      "desvio": 0.1487,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_SHAP_k2",
+      "media": 0.1627,
+      "desvio": 0.1677,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_SHAP_k3",
+      "media": 0.1761,
+      "desvio": 0.1726,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_SHAP_k4",
+      "media": 0.1786,
+      "desvio": 0.1752,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_SHAP_k5",
+      "media": 0.1794,
+      "desvio": 0.1732,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_LIME_k1",
+      "media": 0.1044,
+      "desvio": 0.1457,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_LIME_k2",
+      "media": 0.1446,
+      "desvio": 0.1747,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_LIME_k3",
+      "media": 0.1487,
+      "desvio": 0.1768,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_LIME_k4",
+      "media": 0.1489,
+      "desvio": 0.1742,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_LIME_k5",
+      "media": 0.151,
+      "desvio": 0.1765,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_aleatório_k1",
+      "media": 0.0162,
+      "desvio": 0.0238,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_aleatório_k2",
+      "media": 0.0379,
+      "desvio": 0.0551,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_aleatório_k3",
+      "media": 0.0535,
+      "desvio": 0.0718,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_aleatório_k4",
+      "media": 0.0744,
+      "desvio": 0.1001,
+      "n": 50
+    },
+    {
+      "metrica": "delecao_queda_prob_aleatório_k5",
+      "media": 0.0877,
+      "desvio": 0.1152,
+      "n": 50
+    },
+    {
+      "metrica": "planoB_spearman_shap_vs_formula",
+      "media": 0.8404,
+      "desvio": null,
+      "n": 12
+    },
+    {
+      "metrica": "planoB_spearman_lime_vs_formula",
+      "media": 0.803,
+      "desvio": null,
+      "n": 12
+    },
+    {
+      "metrica": "planoB_shap_top4_verdadeiras_de_4",
+      "media": 4,
+      "desvio": null,
+      "n": 4
+    },
+    {
+      "metrica": "planoB_lime_top4_verdadeiras_de_4",
+      "media": 3,
+      "desvio": null,
+      "n": 4
+    }
+  ],
+  "plan_b": {
+    "true_ranking": {
+      "rainfall_3h_accumulated": 0.7242,
+      "rainfall_24h_accumulated": 0.3823,
+      "current_rainfall": 0.2925,
+      "tide_level": 0.0386,
+      "rainfall_12h_accumulated": 0.0,
+      "rainfall_6h_accumulated": 0.0,
+      "hour_sin": 0.0,
+      "hour_cos": 0.0,
+      "month_sin": 0.0,
+      "month_cos": 0.0,
+      "latitude": 0.0,
+      "longitude": 0.0
+    },
+    "shap_global_ranking": {
+      "rainfall_3h_accumulated": 0.09297,
+      "rainfall_24h_accumulated": 0.05293,
+      "current_rainfall": 0.02124,
+      "tide_level": 0.01867,
+      "rainfall_12h_accumulated": 0.01775,
+      "hour_cos": 0.0118,
+      "hour_sin": 0.01118,
+      "rainfall_6h_accumulated": 0.00709,
+      "month_sin": 0.00591,
+      "month_cos": 0.0059,
+      "longitude": 0.00586,
+      "latitude": 0.00534
+    },
+    "lime_global_ranking": {
+      "rainfall_3h_accumulated": 0.22414,
+      "rainfall_24h_accumulated": 0.06377,
+      "current_rainfall": 0.03653,
+      "rainfall_12h_accumulated": 0.01633,
+      "tide_level": 0.01567,
+      "hour_cos": 0.01026,
+      "month_sin": 0.00931,
+      "longitude": 0.0084,
+      "month_cos": 0.0072,
+      "rainfall_6h_accumulated": 0.00718,
+      "latitude": 0.00583,
+      "hour_sin": 0.005
+    },
+    "shap_top4_contains_true": 4,
+    "lime_top4_contains_true": 3,
+    "spearman_shap_vs_truth": 0.8404128189727395,
+    "spearman_lime_vs_truth": 0.802968683473954,
+    "shap_order_of_true_features": [
+      "rainfall_3h_accumulated",
+      "rainfall_24h_accumulated",
+      "current_rainfall",
+      "tide_level"
+    ],
+    "lime_order_of_true_features": [
+      "rainfall_3h_accumulated",
+      "rainfall_24h_accumulated",
+      "current_rainfall",
+      "tide_level"
+    ],
+    "true_features": [
+      "rainfall_3h_accumulated",
+      "rainfall_24h_accumulated",
+      "current_rainfall",
+      "tide_level"
+    ]
+  }
+}

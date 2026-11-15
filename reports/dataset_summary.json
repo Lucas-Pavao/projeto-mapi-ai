@@ -50,7 +50,7 @@
   },
   "dataset": {
     "path": "data/in1165/dataset.csv.gz",
-    "sha256": "5c20d270dbe06cd67079bd9e8e924bb902b83ab10448ab576c5a362428d73430",
+    "sha256": "5372507c241007bcd9f1d4f50337e6772847a43bb3ca676a39bc337ffcb65888",
     "rows": 5000,
     "positives": 385,
     "positive_rate": 0.077,
@@ -139,9 +139,9 @@
     "b0": -5.056295958599229,
     "true_features_ranked": [
       "rainfall_3h_accumulated",
+      "rainfall_24h_accumulated",
       "current_rainfall",
-      "tide_level",
-      "rainfall_24h_accumulated"
+      "tide_level"
     ]
   },
   "sources_sha256": {

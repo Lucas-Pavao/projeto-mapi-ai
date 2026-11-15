@@ -39,7 +39,9 @@ TARGET_POSITIVE_RATE = 0.08
 # (1,5; 2,5; 0,8; 3,0) a hora seca tinha 4,3% de positivos (rótulo quase ruído); com (6; 10; 2; 6) fica 0,5% no seco e
 # ~28% nas horas de evento FORTE. A comparação está no PROGRESSO.md.
 COEF = {"current_rainfall": 6.0, "rainfall_3h_accumulated": 10.0, "rainfall_24h_accumulated": 2.0, "tide_x_rain": 6.0}
-TRUE_FEATURES = ["rainfall_3h_accumulated", "current_rainfall", "tide_level", "rainfall_24h_accumulated"]
+# Ordem pela ATRIBUIÇÃO medida no teste (|termo − média| na escala do logit, xai/evaluate_explanations.py), não pelos
+# coeficientes: a chuva de 24 h tem coeficiente menor que a de 1 h, mas varia muito mais e pesa mais na prática.
+TRUE_FEATURES = ["rainfall_3h_accumulated", "rainfall_24h_accumulated", "current_rainfall", "tide_level"]
 
 
 def anchors(events: pd.DataFrame, cem: pd.DataFrame, tide: pd.Series) -> dict:
@@ -150,7 +152,7 @@ def build(seed: int = C.SEED) -> tuple[pd.DataFrame, dict]:
 def write(sample: pd.DataFrame, truth: dict) -> None:
     keep = (["timestamp", "slug", "stratum", "event_id", "station_id", "station_distance_m", "p_true", C.LABEL]
             + C.FEATURES + [f + "_rea" for f in C.RAIN_FEATURES])
-    sample[keep].to_csv(C.DATASET_CSV, index=False)
+    sample[keep].to_csv(C.DATASET_CSV, index=False, compression=C.GZIP)
     truth["dataset_sha256"] = hashlib.sha256(C.DATASET_CSV.read_bytes()).hexdigest()
     C.REPORTS_DIR.mkdir(exist_ok=True)
     (C.REPORTS_DIR / "synthetic_ground_truth.json").write_text(json.dumps(truth, indent=2, ensure_ascii=False))
@@ -180,8 +182,10 @@ P1h, P3h e P24h são a chuva **medida** (Cemaden, série do ponto) em mm; maré 
 | wet3 | {a['wet3_mm']:.2f} mm | quantil 95% da chuva de 3 h ("está chovendo" para a interação maré × chuva) |
 | b0 | {truth['b0']:.3f} | resolvido por bisseção para {TARGET_POSITIVE_RATE:.0%} de positivos esperados na amostra |
 
-Coeficientes (escolhidos antes de treinar, `[sem fonte]` como valor físico): {COEF}. Com (1,5; 2,5; 0,8; 3,0) a hora seca tinha 4,3% de positivos e o rótulo virava ruído. Ordem de importância verdadeira
-(pela fórmula): **chuva de 3 h > chuva de 1 h > maré (só com chuva) > chuva de 24 h**. Não entram na fórmula: chuva de 6 h e
+Coeficientes (escolhidos antes de treinar, `[sem fonte]` como valor físico): {COEF}. Com (1,5; 2,5; 0,8; 3,0) a hora seca tinha 4,3% de positivos e o rótulo virava ruído. Ordem de importância verdadeira,
+medida como atribuição de cada termo nos dados do teste (|termo − média|, escala do logit;
+`mapi_ai/xai/evaluate_explanations.py`): **chuva de 3 h > chuva de 24 h > chuva de 1 h > maré (só com chuva)**. A ordem dos
+coeficientes é outra (3 h > 1 h > maré > 24 h): a chuva de 24 h tem coeficiente menor, mas varia muito mais entre as horas. Não entram na fórmula: chuva de 6 h e
 12 h (correlacionadas com 3 h e 24 h), hora, mês, latitude e longitude.
 
 ## Amostra

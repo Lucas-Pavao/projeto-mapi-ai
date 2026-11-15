@@ -54,7 +54,7 @@ def extract() -> None:
                    rain_6h_mm AS rainfall_6h_accumulated, rain_12h_mm AS rainfall_12h_accumulated,
                    rain_24h_mm AS rainfall_24h_accumulated, station_id, station_distance_m, n_valid
             FROM point_rain_accum_v WHERE rule_version = 'chuva-ponto-v4' ORDER BY slug, hour_end_utc"""), cx)
-        cem.to_csv(C.CEMADEN_HOURLY, index=False)
+        cem.to_csv(C.CEMADEN_HOURLY, index=False, compression=C.GZIP)
 
         rea = pd.read_sql(text("""
             SELECT p.slug, h.hour_end_utc, h.value AS precipitation
@@ -64,18 +64,18 @@ def extract() -> None:
             WHERE h.source = 'OPEN_METEO_ARCHIVE' AND h.variable = 'precipitation'"""), cx)
         rea["hour_end_utc"] = pd.to_datetime(rea["hour_end_utc"], utc=True)
         rea = _accumulate(rea, "precipitation").drop(columns=["precipitation"])
-        rea.to_csv(C.REANALYSIS_HOURLY, index=False)
+        rea.to_csv(C.REANALYSIS_HOURLY, index=False, compression=C.GZIP)
 
         tide = pd.read_sql(text("""
             SELECT hour_end_utc, value AS tide_level FROM observation_hourly_v
             WHERE source = 'TIDE_PE02_HOURLY' AND variable = 'tide_height_hourly' ORDER BY hour_end_utc"""), cx)
-        tide.to_csv(C.TIDE_HOURLY, index=False)
+        tide.to_csv(C.TIDE_HOURLY, index=False, compression=C.GZIP)
 
         occ = pd.read_sql(text("""
             SELECT id, occurred_from, occurred_to, temporal_precision, cobrade_text, geocoded_lat, geocoded_lon,
                    geocode_level, neighborhood, event_type
             FROM flood_occurrence ORDER BY occurred_from"""), cx)
-        occ.to_csv(C.OCCURRENCES, index=False)
+        occ.to_csv(C.OCCURRENCES, index=False, compression=C.GZIP)
     print(f"Extraído: {len(cem)} horas Cemaden, {len(rea)} horas reanálise, {len(tide)} horas de maré, "
           f"{len(occ)} ocorrências, {len(points)} pontos -> {C.DATA_DIR}")
 

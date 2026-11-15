@@ -23,8 +23,10 @@ P1h, P3h e P24h são a chuva **medida** (Cemaden, série do ponto) em mm; maré 
 | wet3 | 7.40 mm | quantil 95% da chuva de 3 h ("está chovendo" para a interação maré × chuva) |
 | b0 | -5.056 | resolvido por bisseção para 8% de positivos esperados na amostra |
 
-Coeficientes (escolhidos antes de treinar, `[sem fonte]` como valor físico): {'current_rainfall': 6.0, 'rainfall_3h_accumulated': 10.0, 'rainfall_24h_accumulated': 2.0, 'tide_x_rain': 6.0}. Com (1,5; 2,5; 0,8; 3,0) a hora seca tinha 4,3% de positivos e o rótulo virava ruído. Ordem de importância verdadeira
-(pela fórmula): **chuva de 3 h > chuva de 1 h > maré (só com chuva) > chuva de 24 h**. Não entram na fórmula: chuva de 6 h e
+Coeficientes (escolhidos antes de treinar, `[sem fonte]` como valor físico): {'current_rainfall': 6.0, 'rainfall_3h_accumulated': 10.0, 'rainfall_24h_accumulated': 2.0, 'tide_x_rain': 6.0}. Com (1,5; 2,5; 0,8; 3,0) a hora seca tinha 4,3% de positivos e o rótulo virava ruído. Ordem de importância verdadeira,
+medida como atribuição de cada termo nos dados do teste (|termo − média|, escala do logit;
+`mapi_ai/xai/evaluate_explanations.py`): **chuva de 3 h > chuva de 24 h > chuva de 1 h > maré (só com chuva)**. A ordem dos
+coeficientes é outra (3 h > 1 h > maré > 24 h): a chuva de 24 h tem coeficiente menor, mas varia muito mais entre as horas. Não entram na fórmula: chuva de 6 h e
 12 h (correlacionadas com 3 h e 24 h), hora, mês, latitude e longitude.
 
 ## Amostra
@@ -45,6 +47,6 @@ A amostra super-representa chuva forte em relação ao clima; métricas valem pa
 - O rótulo é função da chuva **medida**. A ablação Cemaden × reanálise mede quanta informação sobre a chuva medida no
   local a reanálise preserva; por construção favorece o Cemaden e não prova que o Cemaden prevê alagamento real melhor.
 - Ruído do rótulo = sorteio de Bernoulli; não há erro de notificação simulado.
-- SHA-256 do dataset: `5c20d270dbe06cd67079bd9e8e924bb902b83ab10448ab576c5a362428d73430`.
+- SHA-256 do dataset: `5372507c241007bcd9f1d4f50337e6772847a43bb3ca676a39bc337ffcb65888`.
 
 DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC

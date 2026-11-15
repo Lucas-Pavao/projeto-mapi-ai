@@ -34,7 +34,7 @@
   "training_data_note": "DADOS SINTÉTICOS — experimento controlado — reports/synthetic_ground_truth.md",
   "rain_source": "MEASURED",
   "rain_source_detail": "Cemaden PED, point_rain_accum_v chuva-ponto-v4 (projeto-mapi-api ADRs 0021-0023)",
-  "dataset_sha256": "5c20d270dbe06cd67079bd9e8e924bb902b83ab10448ab576c5a362428d73430",
+  "dataset_sha256": "5372507c241007bcd9f1d4f50337e6772847a43bb3ca676a39bc337ffcb65888",
   "seed": 42,
   "split": {
     "train": {
@@ -62,7 +62,7 @@
     "scikit-learn": "1.9.0",
     "numpy": "2.4.6",
     "pandas": "3.0.3",
-    "code_commit": "d02601e"
+    "code_commit": "a4589ae"
   },
   "variants": {
     "xgb_v2": {

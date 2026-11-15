@@ -56,5 +56,8 @@ SPLIT = (0.60, 0.20, 0.20)
 # Piso de positivos reais para um classificador supervisionado (prompt IN1165, Etapa 1).
 MIN_REAL_POSITIVES = 30
 
+# gzip com mtime=0: sem isso o cabeçalho grava a hora da escrita e o SHA-256 muda a cada geração com o mesmo conteúdo.
+GZIP = {"method": "gzip", "mtime": 0}
+
 SYNTHETIC_TAG = "DADOS SINTÉTICOS — experimento controlado"
 ATTRIBUTION = "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
