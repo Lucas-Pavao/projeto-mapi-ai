@@ -1,0 +1,147 @@
+{
+  "modelVersion": "xgb_v2",
+  "trainingData": "SYNTHETIC",
+  "rainSource": "MEASURED",
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "synthetic": {
+    "n": 5000,
+    "positiveRate": 0.077,
+    "seed": 42
+  },
+  "thresholds": {
+    "medium": 0.0159,
+    "high": 0.2441,
+    "criteria": {
+      "high": "maior limiar com recall >= 0.8 na validação (melhor precisão)",
+      "medium": "maior limiar com recall >= 0.95 na validação: nível de atenção, aceita mais alarmes falsos para quase não perder alagamento"
+    }
+  },
+  "calibration": {
+    "used": false,
+    "valEceRaw": 0.0473,
+    "criterion": "aplicar se ECE de validação > 0,05"
+  },
+  "split": {
+    "train": {
+      "rows": 3000,
+      "positives": 250,
+      "from": "2021-10-01 09:00:00+00:00",
+      "to": "2024-07-03 14:00:00+00:00"
+    },
+    "validation": {
+      "rows": 1000,
+      "positives": 72,
+      "from": "2024-07-04 08:00:00+00:00",
+      "to": "2025-07-31 00:00:00+00:00"
+    },
+    "test": {
+      "rows": 1000,
+      "positives": 63,
+      "from": "2025-07-31 01:00:00+00:00",
+      "to": "2026-10-07 03:00:00+00:00"
+    }
+  },
+  "rows": [
+    {
+      "id": "nunca_alaga",
+      "name": "Nunca alaga",
+      "prAuc": 0.063,
+      "rocAuc": 0.5,
+      "brier": 0.0594
+    },
+    {
+      "id": "regra",
+      "name": "Regra: chuva 3 h > 9 mm",
+      "prAuc": 0.4598,
+      "rocAuc": 0.8559,
+      "brier": 0.048
+    },
+    {
+      "id": "logistica",
+      "name": "Regressão logística",
+      "prAuc": 0.7998,
+      "rocAuc": 0.9285,
+      "brier": 0.0489
+    },
+    {
+      "id": "arvore_rasa",
+      "name": "Árvore rasa",
+      "prAuc": 0.6703,
+      "rocAuc": 0.9255,
+      "brier": 0.0567
+    },
+    {
+      "id": "xgb_v2",
+      "name": "xgb_v2 (em produção)",
+      "prAuc": 0.7644,
+      "rocAuc": 0.9228,
+      "brier": 0.0367
+    },
+    {
+      "id": "xgb_v2_sem_local",
+      "name": "xgb_v2 sem lat/lon",
+      "prAuc": 0.7923,
+      "rocAuc": 0.9341,
+      "brier": 0.0487
+    },
+    {
+      "id": "xgb_v2_reanalise",
+      "name": "xgb_v2 com reanálise",
+      "prAuc": 0.3184,
+      "rocAuc": 0.7972,
+      "brier": 0.1502
+    },
+    {
+      "id": "xgb_v2_calibrado",
+      "name": "xgb_v2 calibrado",
+      "prAuc": 0.7644,
+      "rocAuc": 0.9228,
+      "brier": 0.0263
+    }
+  ],
+  "ablations": [
+    {
+      "label": "Chuva medida (Cemaden) × reanálise",
+      "delta": 0.4461,
+      "lo": 0.3358,
+      "hi": 0.5476
+    },
+    {
+      "label": "Com × sem latitude/longitude",
+      "delta": -0.0278,
+      "lo": -0.0609,
+      "hi": -0.004
+    },
+    {
+      "label": "xgb_v2 × regressão logística",
+      "delta": -0.0354,
+      "lo": -0.0695,
+      "hi": -0.0057
+    }
+  ],
+  "xai": {
+    "top5": [
+      "Chuva acumulada em 3 horas",
+      "Chuva acumulada em 24 horas",
+      "Chuva atual",
+      "Nível da maré",
+      "Chuva acumulada em 12 horas"
+    ],
+    "jaccard": 0.526,
+    "spearman": 0.5322,
+    "lime10": 0.6095,
+    "delShap": 0.1126,
+    "delLime": 0.1044,
+    "delRandom": 0.0162,
+    "planBSpearman": 0.8404
+  },
+  "sources": {
+    "metrics.csv": "e40437bed19ea226cee7d0c3167e3865546ba93e3b8213a6d4deb5b4698b66f4",
+    "significance.csv": "fca0f455b6c671a2b5be61854d55509f91f58db8f891e97a856334002e74194d",
+    "explanation_eval.json": "90740e311b664d0921fe09ebf5c55a3db67fb04fa232101d15c5fcc139df0d7f",
+    "xai_cases.json": "5ee74798001b47b8ba510367560ec29de00228b0e20f320d8e7439f16f86adab",
+    "metadata.json": "82087cbaba83807f0863e9e0934277a1039dac5c448c6c76fff9a3f91ba1be0d",
+    "dataset_summary.json": "1be09f426169f8f626c2fe45d49894b90028b6fb9c40bdc616aa352840829006"
+  },
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
+}
