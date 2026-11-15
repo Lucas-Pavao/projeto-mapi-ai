@@ -1,0 +1,309 @@
+{
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "model_version": "xgb_v2",
+  "shap_base_value": 0.15187275640006218,
+  "threshold_high": 0.2441,
+  "global_shap_mean_abs": {
+    "rainfall_3h_accumulated": 0.0921,
+    "rainfall_24h_accumulated": 0.04685,
+    "current_rainfall": 0.01999,
+    "tide_level": 0.01423,
+    "rainfall_12h_accumulated": 0.01328,
+    "hour_cos": 0.00876,
+    "hour_sin": 0.00756,
+    "month_sin": 0.0062,
+    "month_cos": 0.00607,
+    "rainfall_6h_accumulated": 0.00584,
+    "longitude": 0.00481,
+    "latitude": 0.00386
+  },
+  "additivity_checked": true,
+  "cases": {
+    "TP": {
+      "index_in_test": 361,
+      "timestamp": "2026-03-01 12:00:00+00:00",
+      "slug": "AGAMENON_DERBY",
+      "stratum": "FORTE",
+      "y_true": 1,
+      "probability": 0.9993625283241272,
+      "p_true_generator": 0.9999999149024064,
+      "features": {
+        "current_rainfall": 33.25275039114915,
+        "rainfall_3h_accumulated": 74.54806329603319,
+        "rainfall_6h_accumulated": 74.9412249416945,
+        "rainfall_12h_accumulated": 74.9412249416945,
+        "rainfall_24h_accumulated": 75.1412249416945,
+        "tide_level": 0.4428,
+        "hour_sin": 0.7071067811865476,
+        "hour_cos": -0.7071067811865475,
+        "month_sin": 1.0,
+        "month_cos": 6.123233995736766e-17,
+        "latitude": -8.052554,
+        "longitude": -34.894371
+      },
+      "shap": {
+        "rainfall_3h_accumulated": 0.46917,
+        "current_rainfall": 0.17539,
+        "rainfall_24h_accumulated": 0.11964,
+        "rainfall_6h_accumulated": 0.03277,
+        "rainfall_12h_accumulated": 0.02635,
+        "hour_sin": 0.01843,
+        "month_sin": 0.00689,
+        "latitude": 0.00352,
+        "tide_level": -0.0033,
+        "month_cos": -0.00165,
+        "hour_cos": 0.00153,
+        "longitude": -0.00125
+      },
+      "lime": {
+        "rules": [
+          {
+            "rule": "rainfall_3h_accumulated > 2.99",
+            "weight": 0.40369,
+            "feature": "rainfall_3h_accumulated"
+          },
+          {
+            "rule": "rainfall_24h_accumulated > 31.62",
+            "weight": 0.11046,
+            "feature": "rainfall_24h_accumulated"
+          },
+          {
+            "rule": "current_rainfall > 0.60",
+            "weight": 0.05507,
+            "feature": "current_rainfall"
+          },
+          {
+            "rule": "rainfall_12h_accumulated > 15.72",
+            "weight": -0.0188,
+            "feature": "rainfall_12h_accumulated"
+          },
+          {
+            "rule": "month_sin > 0.87",
+            "weight": 0.01369,
+            "feature": "month_sin"
+          },
+          {
+            "rule": "-0.71 < hour_cos <= -0.00",
+            "weight": 0.01293,
+            "feature": "hour_cos"
+          }
+        ],
+        "local_model_r2": 0.5838,
+        "local_prediction": 0.5719044147150565
+      }
+    },
+    "FN": {
+      "index_in_test": 377,
+      "timestamp": "2026-03-05 19:00:00+00:00",
+      "slug": "CIN_UFPE",
+      "stratum": "MEDIA",
+      "y_true": 1,
+      "probability": 0.2393617331981659,
+      "p_true_generator": 0.1840145221887607,
+      "features": {
+        "current_rainfall": 1.8,
+        "rainfall_3h_accumulated": 8.600000000000001,
+        "rainfall_6h_accumulated": 9.400000000000002,
+        "rainfall_12h_accumulated": 9.400000000000002,
+        "rainfall_24h_accumulated": 9.400000000000002,
+        "tide_level": 2.1606,
+        "hour_sin": -0.8660254037844384,
+        "hour_cos": -0.5000000000000004,
+        "month_sin": 1.0,
+        "month_cos": 6.123233995736766e-17,
+        "latitude": -8.05531,
+        "longitude": -34.95116
+      },
+      "shap": {
+        "rainfall_3h_accumulated": 0.12522,
+        "rainfall_24h_accumulated": -0.04416,
+        "current_rainfall": 0.04174,
+        "rainfall_12h_accumulated": -0.03873,
+        "rainfall_6h_accumulated": -0.0262,
+        "hour_cos": 0.01484,
+        "month_sin": 0.0117,
+        "tide_level": -0.01112,
+        "hour_sin": 0.00853,
+        "longitude": 0.00588,
+        "latitude": -0.0049,
+        "month_cos": 0.00468
+      },
+      "lime": {
+        "rules": [
+          {
+            "rule": "rainfall_3h_accumulated > 2.99",
+            "weight": 0.38373,
+            "feature": "rainfall_3h_accumulated"
+          },
+          {
+            "rule": "current_rainfall > 0.60",
+            "weight": 0.03775,
+            "feature": "current_rainfall"
+          },
+          {
+            "rule": "4.34 < rainfall_12h_accumulated <= 15.72",
+            "weight": -0.02194,
+            "feature": "rainfall_12h_accumulated"
+          },
+          {
+            "rule": "rainfall_6h_accumulated > 7.50",
+            "weight": 0.01311,
+            "feature": "rainfall_6h_accumulated"
+          },
+          {
+            "rule": "2.20 < rainfall_24h_accumulated <= 10.99",
+            "weight": -0.01081,
+            "feature": "rainfall_24h_accumulated"
+          },
+          {
+            "rule": "longitude <= -34.95",
+            "weight": -0.01067,
+            "feature": "longitude"
+          }
+        ],
+        "local_model_r2": 0.5192,
+        "local_prediction": 0.43427851378492144
+      }
+    },
+    "FP": {
+      "index_in_test": 583,
+      "timestamp": "2026-05-02 11:00:00+00:00",
+      "slug": "MASCARENHAS_IMBIRIBEIRA",
+      "stratum": "FORTE",
+      "y_true": 0,
+      "probability": 0.9751612544059753,
+      "p_true_generator": 0.6810748102055647,
+      "features": {
+        "current_rainfall": 3.0000000000000004,
+        "rainfall_3h_accumulated": 11.05586850231584,
+        "rainfall_6h_accumulated": 17.540705744416698,
+        "rainfall_12h_accumulated": 19.918745744416697,
+        "rainfall_24h_accumulated": 168.96508676577363,
+        "tide_level": 0.8646,
+        "hour_sin": 0.8660254037844387,
+        "hour_cos": -0.4999999999999998,
+        "month_sin": 0.4999999999999999,
+        "month_cos": -0.8660254037844387,
+        "latitude": -8.118123,
+        "longitude": -34.904945
+      },
+      "shap": {
+        "rainfall_24h_accumulated": 0.34807,
+        "rainfall_3h_accumulated": 0.22972,
+        "rainfall_12h_accumulated": 0.08005,
+        "current_rainfall": 0.07122,
+        "tide_level": 0.03813,
+        "month_cos": 0.02249,
+        "rainfall_6h_accumulated": 0.00946,
+        "hour_sin": 0.00718,
+        "hour_cos": 0.00672,
+        "month_sin": 0.00632,
+        "latitude": 0.00515,
+        "longitude": -0.00122
+      },
+      "lime": {
+        "rules": [
+          {
+            "rule": "rainfall_3h_accumulated > 2.99",
+            "weight": 0.36676,
+            "feature": "rainfall_3h_accumulated"
+          },
+          {
+            "rule": "rainfall_24h_accumulated > 31.62",
+            "weight": 0.11717,
+            "feature": "rainfall_24h_accumulated"
+          },
+          {
+            "rule": "current_rainfall > 0.60",
+            "weight": 0.04178,
+            "feature": "current_rainfall"
+          },
+          {
+            "rule": "-0.71 < hour_cos <= -0.00",
+            "weight": 0.01122,
+            "feature": "hour_cos"
+          },
+          {
+            "rule": "rainfall_6h_accumulated > 7.50",
+            "weight": 0.01041,
+            "feature": "rainfall_6h_accumulated"
+          },
+          {
+            "rule": "-0.50 < month_sin <= 0.50",
+            "weight": 0.01015,
+            "feature": "month_sin"
+          }
+        ],
+        "local_model_r2": 0.5458,
+        "local_prediction": 0.5478736846595701
+      }
+    }
+  },
+  "counterfactual_TP": {
+    "case": "TP",
+    "index_in_test": 361,
+    "probability": 0.9993625283241272,
+    "low_threshold": 0.0159,
+    "dice": [
+      {
+        "features": {
+          "current_rainfall": 0.4,
+          "rainfall_3h_accumulated": 1.0,
+          "rainfall_6h_accumulated": 1.0,
+          "rainfall_12h_accumulated": 1.0,
+          "rainfall_24h_accumulated": 1.0
+        },
+        "probability": 0.0034,
+        "mm_less_in_3h": 73.55,
+        "statement": "Com 73.5 mm a menos em 3 h (e as demais janelas como na linha), o risco seria LOW."
+      },
+      {
+        "features": {
+          "current_rainfall": 0.4,
+          "rainfall_3h_accumulated": 0.9,
+          "rainfall_6h_accumulated": 0.9,
+          "rainfall_12h_accumulated": 0.9,
+          "rainfall_24h_accumulated": 0.9
+        },
+        "probability": 0.0034,
+        "mm_less_in_3h": 73.65,
+        "statement": "Com 73.6 mm a menos em 3 h (e as demais janelas como na linha), o risco seria LOW."
+      },
+      {
+        "features": {
+          "current_rainfall": 0.2,
+          "rainfall_3h_accumulated": 0.4,
+          "rainfall_6h_accumulated": 0.4,
+          "rainfall_12h_accumulated": 0.4,
+          "rainfall_24h_accumulated": 0.4
+        },
+        "probability": 0.0031,
+        "mm_less_in_3h": 74.15,
+        "statement": "Com 74.1 mm a menos em 3 h (e as demais janelas como na linha), o risco seria LOW."
+      },
+      {
+        "note": "133 candidatos da DiCE: 17 abaixo do limiar e 18 coerentes como saíram; depois do reparo, 3 coerentes e abaixo do limiar (até 3 usados)"
+      }
+    ],
+    "scale": {
+      "reachable": true,
+      "k": 0.0262,
+      "p_at_k": 0.0060705323703587055,
+      "rain_3h_mm_observed": 74.54806329603319,
+      "rain_3h_mm_low": 1.9533392799069675,
+      "mm_less_in_3h": 72.59472401612622,
+      "statement": "Com 72.6 mm a menos em 3 h (de 74.5 para 2.0 mm, e a chuva das outras janelas reduzida na mesma proporção), o risco seria LOW."
+    },
+    "scale_below_high": {
+      "reachable": true,
+      "k": 0.1338,
+      "p_at_k": 0.22048339247703552,
+      "rain_3h_mm_observed": 74.54806329603319,
+      "rain_3h_mm_low": 9.976667880962264,
+      "mm_less_in_3h": 64.57139541507092,
+      "statement": "Com 64.6 mm a menos em 3 h (de 74.5 para 10.0 mm, e a chuva das outras janelas reduzida na mesma proporção), o risco sairia de HIGH (MEDIUM)."
+    },
+    "reading": "limiar, não ação: chuva e maré não são controláveis"
+  },
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
+}

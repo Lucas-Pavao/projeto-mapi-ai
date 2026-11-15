@@ -84,3 +84,11 @@ def test_limiares_vem_do_metadata(client):
     assert j["thresholds"]["source"] == "metadata"
     assert j["thresholds"]["high"] == meta["thresholds"]["high"]
     assert j["thresholds"]["medium"] == meta["thresholds"]["medium"]
+
+
+def test_top_contributors_em_unidade_fisica(client):
+    j = client.post("/v1/predict/flood", json=PAYLOAD).json()
+    tc = j["top_contributors"]
+    assert len(tc) == 3
+    assert {"feature_id", "contribution", "value", "unit"} <= set(tc[0])
+    assert abs(tc[0]["contribution"]) >= abs(tc[-1]["contribution"])

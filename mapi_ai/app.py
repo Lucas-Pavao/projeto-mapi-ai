@@ -224,6 +224,38 @@ def v2_features(data: PredictionInput) -> pd.DataFrame:
     return pd.DataFrame([[float(d[f]) for f in feats]], columns=feats)
 
 
+_v2_explainer = None
+
+
+def v2_explainer():
+    """
+    SHAP do modelo servido, em PROBABILIDADE, com 200 linhas do treino como fundo (mesmo desenho de
+    mapi_ai/xai/shap_explain.py). Criado sob demanda; sem o dataset local, a previsão segue sem contribuições.
+    """
+    global _v2_explainer
+    if _v2_explainer is None:
+        from mapi_ai.xai.shap_explain import explainer
+        from mapi_ai import in1165_config as C
+        from mapi_ai.trainer import feature_matrix, temporal_split
+        df = pd.read_csv(C.DATASET_CSV, parse_dates=["timestamp"])
+        X_tr, _ = feature_matrix(temporal_split(df)[0])
+        _v2_explainer = explainer(v2_model, X_tr.sample(200, random_state=C.SEED))
+    return _v2_explainer
+
+
+def top_contributors(X: pd.DataFrame, k: int = 3) -> list:
+    """As k features de maior |contribuição SHAP| nesta previsão, com o valor em unidade física (ADR 0007)."""
+    try:
+        sv = v2_explainer()(X)
+    except Exception as e:  # sem dataset ou sem shap: não derruba a previsão
+        print(f"top_contributors indisponível: {e}")
+        return []
+    units = metadata.get("feature_units", {})
+    pairs = sorted(zip(metadata["features"], sv.values[0], X.iloc[0]), key=lambda t: -abs(t[1]))[:k]
+    return [{"feature_id": f, "contribution": round(float(c), 5), "value": float(v), "unit": units.get(f)}
+            for f, c, v in pairs]
+
+
 def v2_probability(X: pd.DataFrame) -> float:
     raw = float(v2_model.predict_proba(X)[0][1])
     return float(v2_calibrator.predict_proba(X)[0][1]) if v2_calibrator is not None else raw
@@ -295,6 +327,8 @@ def predict_v2(data: PredictionInput):
         "rain_source": metadata.get("rain_source"),
         "training_data": metadata.get("training_data"),
         "calibrated": v2_calibrator is not None,
+        # SHAP em probabilidade do modelo bruto (o calibrador, quando usado, é monótono e não troca a ordem).
+        "top_contributors": top_contributors(X),
     }
     if metadata.get("training_data") == "SYNTHETIC":
         response["synthetic_warning"] = ("Modelo treinado com rótulo SINTÉTICO (experimento controlado): a "
