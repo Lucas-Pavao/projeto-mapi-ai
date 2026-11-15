@@ -1,0 +1,18 @@
+{
+  "logreg_standardized_coefficients": {
+    "current_rainfall": 0.5636,
+    "rainfall_3h_accumulated": 1.9414,
+    "rainfall_6h_accumulated": 0.1427,
+    "rainfall_12h_accumulated": -0.2332,
+    "rainfall_24h_accumulated": 0.7233,
+    "tide_level": 0.1764,
+    "hour_sin": -0.1575,
+    "hour_cos": 0.0889,
+    "month_sin": 0.0285,
+    "month_cos": -0.2396,
+    "latitude": -0.0411,
+    "longitude": 0.0732
+  },
+  "tree_rules": "|--- rainfall_3h_accumulated <= 5.14\n|   |--- rainfall_24h_accumulated <= 152.51\n|   |   |--- rainfall_3h_accumulated <= 1.01\n|   |   |   |--- class: 0\n|   |   |--- rainfall_3h_accumulated >  1.01\n|   |   |   |--- class: 0\n|   |--- rainfall_24h_accumulated >  152.51\n|   |   |--- class: 1\n|--- rainfall_3h_accumulated >  5.14\n|   |--- rainfall_3h_accumulated <= 12.67\n|   |   |--- rainfall_24h_accumulated <= 37.05\n|   |   |   |--- class: 0\n|   |   |--- rainfall_24h_accumulated >  37.05\n|   |   |   |--- class: 1\n|   |--- rainfall_3h_accumulated >  12.67\n|   |   |--- rainfall_24h_accumulated <= 33.98\n|   |   |   |--- class: 1\n|   |   |--- rainfall_24h_accumulated >  33.98\n|   |   |   |--- class: 1\n",
+  "justification": "testar o modelo interpretável antes da caixa-preta; o XGBoost só se justifica com ganho significativo no teste (ver reports/metrics.csv e o IC por bootstrap)"
+}

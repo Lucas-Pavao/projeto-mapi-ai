@@ -1,0 +1,19 @@
+|--- rainfall_3h_accumulated <= 5.14
+|   |--- rainfall_24h_accumulated <= 152.51
+|   |   |--- rainfall_3h_accumulated <= 1.01
+|   |   |   |--- class: 0
+|   |   |--- rainfall_3h_accumulated >  1.01
+|   |   |   |--- class: 0
+|   |--- rainfall_24h_accumulated >  152.51
+|   |   |--- class: 1
+|--- rainfall_3h_accumulated >  5.14
+|   |--- rainfall_3h_accumulated <= 12.67
+|   |   |--- rainfall_24h_accumulated <= 37.05
+|   |   |   |--- class: 0
+|   |   |--- rainfall_24h_accumulated >  37.05
+|   |   |   |--- class: 1
+|   |--- rainfall_3h_accumulated >  12.67
+|   |   |--- rainfall_24h_accumulated <= 33.98
+|   |   |   |--- class: 1
+|   |   |--- rainfall_24h_accumulated >  33.98
+|   |   |   |--- class: 1

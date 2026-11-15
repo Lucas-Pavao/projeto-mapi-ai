@@ -7,6 +7,7 @@ Contrato de entrada: `projeto-mapi-api/docs/handoff/etapa0.json`.
 |---|---|---|---|
 | 1 Dataset | concluida | (este) | flood_scenario_labels 0 linhas; CKAN 225 ocorrências / 18 dias / 0 com hora; 0 pontos-dia a 500 m (1 km: 6; 2 km: 45) → Plano B. Sintético: 5 000 horas reais (estratos da tabela de 4 408 eventos Cemaden), 7,7% positivos, fórmula em `reports/synthetic_ground_truth.md`. `load_dataset()` exige `--synthetic`. Nada gravado no banco. |
 | 2 Treino | concluida | (este) | split temporal 60/20/20 (treino até 2024-07-03, validação até 2025-07-31, teste até 2026-10-07); XGBoost sem scaler, NaN nativo, `scale_pos_weight` = 11,0 (só treino); grade de 12 combinações escolhida por PR-AUC na validação; ablações sem lat/lon e com reanálise; `models/xgb_v2*.joblib` + `metadata.json`; app carrega v2 com fallback para o legado; pytest 45 passam |
+| 3 Baselines | concluida | (este) | logística em Pipeline (imputer→scaler→LR balanced, ajuste só no treino) e árvore profundidade 3 (`reports/baseline_tree.txt` e `figures/baseline_tree.png`): a árvore usa só chuva de 3 h e 24 h |
 
 ## Decisões
 | Data | Decisão | Por quê |
