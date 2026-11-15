@@ -8,135 +8,175 @@ from sklearn.metrics import classification_report, mean_squared_error, mean_abso
 from mapi_ai.data_engineering import get_engine, load_sensor_data
 from mapi_ai.feature_engineering import prepare_scenario_features, FEATURE_COLUMNS
 from mapi_ai.models import get_xgboost_classifier, get_lstm_model, create_sequences
-from mapi_ai.config import MODEL_PATH_XGB, MODEL_PATH_LSTM, SCALER_PATH
+from mapi_ai.config import MODEL_PATH_LSTM
 
 def load_scenario_data(engine):
     """Loads scenario labels from flood_scenario_labels table."""
     query = "SELECT * FROM flood_scenario_labels ORDER BY timestamp ASC"
     return pd.read_sql(query, engine)
 
-def generate_dummy_scenario_data(n_samples=200):
-    """Generates synthetic flood scenario dataset for testing/bootstrapping."""
-    np.random.seed(42)
-    timestamps = pd.date_range(end=pd.Timestamp.now(), periods=n_samples, freq='15min')
-    
-    # Coordinates around Recife area
-    latitudes = np.random.uniform(-8.12, -8.04, size=n_samples)
-    longitudes = np.random.uniform(-34.95, -34.88, size=n_samples)
-    
-    current_rainfall = np.random.exponential(scale=2.0, size=n_samples)
-    # Accumulated precipitation
-    rainfall_3h = current_rainfall * 1.5 + np.random.normal(0, 1, size=n_samples)
-    rainfall_6h = rainfall_3h * 1.8 + np.random.normal(0, 2, size=n_samples)
-    rainfall_12h = rainfall_6h * 1.5 + np.random.normal(0, 4, size=n_samples)
-    rainfall_24h = rainfall_12h * 1.3 + np.random.normal(0, 8, size=n_samples)
-    
-    current_rainfall = np.clip(current_rainfall, 0, None)
-    rainfall_3h = np.clip(rainfall_3h, 0, None)
-    rainfall_6h = np.clip(rainfall_6h, 0, None)
-    rainfall_12h = np.clip(rainfall_12h, 0, None)
-    rainfall_24h = np.clip(rainfall_24h, 0, None)
-    
-    tide_level = np.random.uniform(0.0, 2.8, size=n_samples)
-    river_level = np.random.uniform(0.5, 4.0, size=n_samples)
-    
-    # Make flooding probability depend on rainfall and tide
-    flood_prob = (current_rainfall * 0.15 + rainfall_6h * 0.05 + (tide_level > 2.0) * 0.3 + (river_level > 3.0) * 0.4)
-    is_flooded = (flood_prob > 0.6).astype(bool)
-    
-    data = {
-        'id': range(1, n_samples + 1),
-        'timestamp': timestamps,
-        'latitude': latitudes,
-        'longitude': longitudes,
-        'is_flooded': is_flooded,
-        'current_rainfall': current_rainfall,
-        'rainfall_3h_accumulated': rainfall_3h,
-        'rainfall_6h_accumulated': rainfall_6h,
-        'rainfall_12h_accumulated': rainfall_12h,
-        'rainfall_24h_accumulated': rainfall_24h,
-        'tide_level': tide_level,
-        'river_level': river_level,
-        'wind_speed': np.random.uniform(0, 25, size=n_samples),
-        'temperature': np.random.uniform(22, 32, size=n_samples),
-        'apparent_temperature': np.random.uniform(24, 35, size=n_samples),
-        'humidity': np.random.uniform(60, 95, size=n_samples),
-        'pressure': np.random.uniform(1008, 1016, size=n_samples),
-        'wave_height': np.random.uniform(0.5, 2.5, size=n_samples),
-        'wave_period': np.random.uniform(4, 12, size=n_samples),
-        'wave_direction': np.random.uniform(0, 360, size=n_samples),
-        'solar_radiation': np.random.uniform(0, 800, size=n_samples)
-    }
-    
-    return pd.DataFrame(data)
+class NoLabelsError(RuntimeError):
+    """Não há rótulo real e o modo sintético não foi pedido explicitamente."""
 
-def load_dataset(csv_path=None):
+
+def load_dataset(csv_path=None, synthetic=False):
     """
-    Loads dataset either from CSV or PostgreSQL database.
-    If both fail or are empty, creates a synthetic dataset for demonstration and testing.
+    Carrega o dataset de treino. NÃO existe mais fallback silencioso.
+
+    Antes, com flood_scenario_labels vazia, esta função gerava 200 linhas com is_flooded por fórmula fixa e treinava
+    sobre elas sem avisar: as explicações (SHAP/LIME) apenas devolviam a fórmula — eram circulares.
+
+    Agora:
+    - `csv_path`: lê o CSV indicado;
+    - sem CSV, lê `flood_scenario_labels` do banco; vazia => NoLabelsError com a explicação;
+    - `synthetic=True` (flag `--synthetic`): lê o dataset do Plano B (mapi_ai/synthetic.py), com aviso explícito.
     """
-    df = None
+    from mapi_ai import in1165_config as C
+    if synthetic:
+        print("=" * 72)
+        print(f"AVISO: {C.SYNTHETIC_TAG}.")
+        print("Rótulo gerado por fórmula conhecida (reports/synthetic_ground_truth.md) sobre horas reais.")
+        print("Nenhuma métrica deste treino é desempenho em alagamento real.")
+        print("=" * 72)
+        if not C.DATASET_CSV.exists():
+            raise FileNotFoundError(f"{C.DATASET_CSV} não existe: rode `python -m mapi_ai.synthetic` antes.")
+        return pd.read_csv(C.DATASET_CSV, parse_dates=["timestamp"])
     if csv_path:
-        if os.path.exists(csv_path):
-            print(f"Loading data from CSV file: {csv_path}")
-            df = pd.read_csv(csv_path)
-        else:
-            print(f"Warning: CSV file {csv_path} not found.")
-            
-    if df is None:
-        try:
-            print("Connecting to database...")
-            engine = get_engine()
-            print("Loading data from table 'flood_scenario_labels'...")
-            df = load_scenario_data(engine)
-            print(f"Loaded {len(df)} records from database.")
-        except Exception as e:
-            print(f"Warning: Could not load data from database: {e}")
-            
-    if df is None or len(df) == 0:
-        print("Warning: No data loaded. Generating synthetic/dummy dataset for fallback/testing...")
-        df = generate_dummy_scenario_data()
-        
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"CSV {csv_path} não encontrado.")
+        return pd.read_csv(csv_path)
+    df = load_scenario_data(get_engine())
+    if len(df) == 0:
+        raise NoLabelsError("flood_scenario_labels está vazia e não há rótulo real suficiente "
+                            "(python -m mapi_ai.build_labels). Para o experimento controlado, use --synthetic.")
     return df
 
+# ---------------------------------------------------------------------------------------------------------------
+# Etapa 2 do IN1165: treino do XGBoost sem vazamento.
+# ---------------------------------------------------------------------------------------------------------------
+
+def temporal_split(df):
+    """
+    Split temporal em treino 60% / validação 20% / teste 20%, SEM embaralhar.
+
+    Por quê: em série temporal, embaralhar deixa o modelo ver o futuro (horas vizinhas de um mesmo evento caem no
+    treino e no teste), e a métrica fica otimista. Aqui o passado treina, o futuro próximo escolhe hiperparâmetros e
+    limiares (validação) e o futuro mais distante é usado UMA vez, no fim (teste).
+    """
+    from mapi_ai import in1165_config as C
+    df = df.sort_values("timestamp").reset_index(drop=True)
+    n = len(df)
+    a, b = int(n * C.SPLIT[0]), int(n * (C.SPLIT[0] + C.SPLIT[1]))
+    return df.iloc[:a], df.iloc[a:b], df.iloc[b:]
+
+
+def feature_matrix(df, rain_source="cemaden", drop_location=False):
+    """
+    X com as features na ordem de C.FEATURES. NaN continua NaN: o XGBoost aprende para que lado mandar o ausente
+    (na árvore, cada divisão tem um "caminho padrão" para o NaN). Trocar NaN por 0.0 fabricaria "não choveu".
+
+    rain_source='reanalysis' troca as 5 features de chuva pela reanálise na MESMA hora e ponto (colunas *_rea):
+    é a ablação que mede quanto vale a qualidade da forçante.
+    """
+    from mapi_ai import in1165_config as C
+    X = df[C.FEATURES].copy()
+    if rain_source == "reanalysis":
+        for f in C.RAIN_FEATURES:
+            X[f] = df[f + "_rea"].to_numpy()
+    if drop_location:
+        X = X.drop(columns=["latitude", "longitude"])
+    return X.astype(float), df[C.LABEL].astype(int).to_numpy()
+
+
+def scale_pos_weight(y_train):
+    """#negativos / #positivos, SÓ no treino: compensa a classe rara sem olhar validação ou teste."""
+    pos = int(y_train.sum())
+    return (len(y_train) - pos) / max(pos, 1)
+
+
+# Grade pequena de propósito: com ~3 000 linhas de treino, uma busca grande sobreajusta a própria validação.
+PARAM_GRID = [
+    {"max_depth": d, "n_estimators": n, "learning_rate": lr}
+    for d in (2, 3, 4) for n in (150, 400) for lr in (0.03, 0.1)
+]
+
+
+def fit_xgb(X_tr, y_tr, X_va, y_va):
+    """Escolhe hiperparâmetros pela PR-AUC na validação (a métrica certa para classe rara) e devolve o melhor."""
+    from sklearn.metrics import average_precision_score
+    from mapi_ai import in1165_config as C
+    spw = scale_pos_weight(y_tr)
+    best = None
+    for params in PARAM_GRID:
+        clf = get_xgboost_classifier(scale_pos_weight=spw, random_state=C.SEED, **params)
+        clf.fit(X_tr, y_tr)
+        ap = average_precision_score(y_va, clf.predict_proba(X_va)[:, 1])
+        if best is None or ap > best[0]:
+            best = (ap, params, clf)
+    ap, params, clf = best
+    return clf, {**params, "scale_pos_weight": spw, "val_pr_auc": ap}
+
+
+VARIANTS = {
+    # nome: (fonte da chuva, sem lat/lon?)
+    "xgb_v2": ("cemaden", False),
+    "xgb_v2_sem_local": ("cemaden", True),       # ablação 1: o modelo decora o local?
+    "xgb_v2_reanalise": ("reanalysis", False),   # ablação 2: chuva medida × reanálise, resto igual
+}
+
+
+def _versions():
+    import sklearn, xgboost, numpy, pandas, platform, subprocess
+    try:
+        commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True,
+                                cwd=os.path.dirname(__file__)).stdout.strip() or "unknown"
+    except Exception:
+        commit = "unknown"
+    return {"python": platform.python_version(), "xgboost": xgboost.__version__, "scikit-learn": sklearn.__version__,
+            "numpy": numpy.__version__, "pandas": pandas.__version__, "code_commit": commit}
+
+
 def train_xgboost(df):
-    """Trains XGBoost Classifier for is_flooded prediction."""
-    print("--- XGBoost Training Pipeline ---")
-    
-    # 1. Feature Engineering
-    print("Preparing features...")
-    X = prepare_scenario_features(df, is_training=True)
-    y = df['is_flooded'].astype(int)
-    
-    # 2. Scale features
-    scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X)
-    
-    # 3. Train/Test Split
-    train_size = int(len(X_scaled) * 0.8)
-    X_train, X_test = X_scaled[:train_size], X_scaled[train_size:]
-    y_train, y_test = y[:train_size], y[train_size:]
-    
-    print(f"Features: {X.columns.tolist()}")
-    print(f"Training on {len(X_train)} samples, testing on {len(X_test)} samples.")
-    
-    # 4. Train Model
-    clf = get_xgboost_classifier()
-    clf.fit(X_train, y_train)
-    
-    # 5. Evaluate Model
-    preds = clf.predict(X_test)
-    print("XGBoost Classifier Evaluation:")
-    print(classification_report(y_test, preds))
-    
-    # 6. Save Model and Scaler
-    os.makedirs(os.path.dirname(MODEL_PATH_XGB), exist_ok=True)
-    joblib.dump(clf, MODEL_PATH_XGB)
-    joblib.dump(scaler, SCALER_PATH)
-    print(f"XGBoost model saved to {MODEL_PATH_XGB}")
-    print(f"StandardScaler saved to {SCALER_PATH}")
-    
-    return clf, scaler
+    """Treina o modelo principal e as duas ablações; salva os artefatos versionados e o metadata.json."""
+    import hashlib, json
+    from mapi_ai import in1165_config as C
+    tr, va, te = temporal_split(df)
+    C.MODELS_DIR.mkdir(exist_ok=True)
+    meta = {
+        "model_version": "xgb_v2",
+        "artifact": "models/xgb_v2.joblib",
+        "features": C.FEATURES,
+        "feature_units": C.UNITS,
+        "label": C.LABEL,
+        "training_data": "SYNTHETIC",
+        "training_data_note": C.SYNTHETIC_TAG + " — reports/synthetic_ground_truth.md",
+        "rain_source": "MEASURED",
+        "rain_source_detail": "Cemaden PED, point_rain_accum_v chuva-ponto-v4 (projeto-mapi-api ADRs 0021-0023)",
+        "dataset_sha256": hashlib.sha256(C.DATASET_CSV.read_bytes()).hexdigest() if C.DATASET_CSV.exists() else None,
+        "seed": C.SEED,
+        "split": {name: {"rows": int(len(p)), "positives": int(p[C.LABEL].sum()),
+                         "from": str(p.timestamp.min()), "to": str(p.timestamp.max())}
+                  for name, p in (("train", tr), ("validation", va), ("test", te))},
+        "versions": _versions(),
+        "variants": {},
+        "thresholds": None,        # escolhidos na validação pela Etapa 4 (mapi_ai/evaluate.py)
+        "calibrator": None,        # idem, se a calibração melhorar o Brier na validação
+        "model_validation_status": "NOT_VALIDATED",
+        "attribution": C.ATTRIBUTION,
+    }
+    for name, (rain, no_loc) in VARIANTS.items():
+        X_tr, y_tr = feature_matrix(tr, rain, no_loc)
+        X_va, y_va = feature_matrix(va, rain, no_loc)
+        clf, info = fit_xgb(X_tr, y_tr, X_va, y_va)
+        path = C.MODELS_DIR / f"{name}.joblib"
+        joblib.dump(clf, path)
+        meta["variants"][name] = {"artifact": f"models/{name}.joblib", "rain_source": rain,
+                                  "features": list(X_tr.columns), **info}
+        print(f"{name}: {info}")
+    (C.MODELS_DIR / "metadata.json").write_text(json.dumps(meta, indent=2, ensure_ascii=False))
+    print(f"Artefatos em {C.MODELS_DIR}; metadata.json gravado.")
+    return meta
+
 
 def train_lstm(df):
     """Trains LSTM model for water level (river_level) regression."""
@@ -202,26 +242,20 @@ def train_lstm(df):
     model.save(MODEL_PATH_LSTM)
     print(f"LSTM model saved to {MODEL_PATH_LSTM}")
 
-def train_pipeline(csv_path=None, model_type="all"):
-    """Facade for triggering training from other scripts/code."""
-    df = load_dataset(csv_path)
+def train_pipeline(csv_path=None, model_type="all", synthetic=False):
+    """Fachada usada pelo main.py e pelo notebook."""
+    df = load_dataset(csv_path, synthetic=synthetic)
     if model_type in ["all", "xgb"]:
         train_xgboost(df)
-    if model_type in ["all", "lstm"]:
+    if model_type == "lstm":  # LSTM fora do escopo do IN1165; caminho legado mantido
         train_lstm(df)
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="MAPI AI Model Trainer")
-    parser.add_argument("--csv", type=str, help="Path to scenario labels CSV file")
-    parser.add_argument("--model", type=str, choices=["all", "xgb", "lstm"], default="all",
-                        help="Model to train: xgb, lstm, or all (default: all)")
+    parser.add_argument("--csv", type=str, help="CSV com rótulos")
+    parser.add_argument("--synthetic", action="store_true",
+                        help="usa o dataset do Plano B (rótulo sintético, experimento controlado)")
+    parser.add_argument("--model", type=str, choices=["all", "xgb", "lstm"], default="xgb")
     args = parser.parse_args()
-    
-    # Load dataset
-    df = load_dataset(args.csv)
-    
-    # Train
-    if args.model in ["all", "xgb"]:
-        train_xgboost(df)
-    if args.model in ["all", "lstm"]:
-        train_lstm(df)
+    train_pipeline(args.csv, args.model, synthetic=args.synthetic)

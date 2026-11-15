@@ -1,0 +1,157 @@
+{
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "real_labels": {
+    "flood_scenario_labels_rows": 0,
+    "occurrences": 225,
+    "occurrence_days": 18,
+    "with_hour": 0,
+    "period": [
+      "2021-05-13 03:00:00+00:00",
+      "2024-06-25 03:00:00+00:00"
+    ],
+    "by_radius": {
+      "500m": {
+        "occurrence_point_pairs": 0,
+        "positive_point_days": 0,
+        "points": []
+      },
+      "1000m": {
+        "occurrence_point_pairs": 10,
+        "positive_point_days": 6,
+        "points": [
+          "AGAMENON_DERBY",
+          "AV_RECIFE_IBURA",
+          "MASCARENHAS_IMBIRIBEIRA"
+        ]
+      },
+      "2000m": {
+        "occurrence_point_pairs": 96,
+        "positive_point_days": 45,
+        "points": [
+          "AGAMENON_DERBY",
+          "AV_RECIFE_IBURA",
+          "CIN_UFPE",
+          "MASCARENHAS_IMBIRIBEIRA"
+        ]
+      },
+      "3000m": {
+        "occurrence_point_pairs": 199,
+        "positive_point_days": 54,
+        "points": [
+          "AGAMENON_DERBY",
+          "AV_RECIFE_IBURA",
+          "CIN_UFPE",
+          "MASCARENHAS_IMBIRIBEIRA"
+        ]
+      }
+    },
+    "min_real_positives": 30,
+    "decision": "PLANO_B: 0 positivos reais a 500 m (< 30); nenhum com hora"
+  },
+  "dataset": {
+    "path": "data/in1165/dataset.csv.gz",
+    "sha256": "5372507c241007bcd9f1d4f50337e6772847a43bb3ca676a39bc337ffcb65888",
+    "rows": 5000,
+    "positives": 385,
+    "positive_rate": 0.077,
+    "points": 5,
+    "period": [
+      "2021-10-01 09:00:00+00:00",
+      "2026-10-07 03:00:00+00:00"
+    ],
+    "by_stratum": {
+      "FORTE": {
+        "rows": 900,
+        "positives": 251
+      },
+      "FRACA": {
+        "rows": 1300,
+        "positives": 17
+      },
+      "MEDIA": {
+        "rows": 1300,
+        "positives": 110
+      },
+      "SECO": {
+        "rows": 1500,
+        "positives": 7
+      }
+    },
+    "by_point": {
+      "AGAMENON_DERBY": {
+        "rows": 1016,
+        "positives": 77
+      },
+      "AV_RECIFE_IBURA": {
+        "rows": 929,
+        "positives": 75
+      },
+      "CIN_UFPE": {
+        "rows": 961,
+        "positives": 82
+      },
+      "JABOATAO_CENTRO": {
+        "rows": 1068,
+        "positives": 63
+      },
+      "MASCARENHAS_IMBIRIBEIRA": {
+        "rows": 1026,
+        "positives": 88
+      }
+    },
+    "missing_rate": {
+      "current_rainfall": 0.0,
+      "rainfall_3h_accumulated": 0.0,
+      "rainfall_6h_accumulated": 0.0,
+      "rainfall_12h_accumulated": 0.0,
+      "rainfall_24h_accumulated": 0.0,
+      "tide_level": 0.0,
+      "hour_sin": 0.0,
+      "hour_cos": 0.0,
+      "month_sin": 0.0,
+      "month_cos": 0.0,
+      "latitude": 0.0,
+      "longitude": 0.0
+    },
+    "split": {
+      "train": {
+        "rows": 3000,
+        "positives": 250,
+        "from": "2021-10-01 09:00:00+00:00",
+        "to": "2024-07-03 14:00:00+00:00"
+      },
+      "validation": {
+        "rows": 1000,
+        "positives": 72,
+        "from": "2024-07-04 08:00:00+00:00",
+        "to": "2025-07-31 00:00:00+00:00"
+      },
+      "test": {
+        "rows": 1000,
+        "positives": 63,
+        "from": "2025-07-31 01:00:00+00:00",
+        "to": "2026-10-07 03:00:00+00:00"
+      }
+    }
+  },
+  "generator": {
+    "formula": "is_flooded ~ Bernoulli(sigmoid(b0 + 6.0*P1h/R1 + 10.0*P3h/R3 + 2.0*P24h/R24 + 6.0*max(0, mare - T_hi)/T_span * 1[P3h > wet3]))",
+    "b0": -5.056295958599229,
+    "true_features_ranked": [
+      "rainfall_3h_accumulated",
+      "rainfall_24h_accumulated",
+      "current_rainfall",
+      "tide_level"
+    ]
+  },
+  "sources_sha256": {
+    "cemaden_point_hourly.csv.gz": "e20276a89180c8c7b6d504277e328b77d2a2cfb35387f4d22ccde1fb33d662ca",
+    "reanalysis_point_hourly.csv.gz": "377fe8e61bfac26247c80d700e0662aa7ba873bc7bcff648924990326edc2ccb",
+    "tide_hourly.csv.gz": "d852218a08cc9aa86455b7356cf5b522d23ae8fef3bca8502c406fc2054261e1",
+    "flood_occurrences.csv.gz": "3105e1d652ab4dc197ea73171981470b5647bc084ffefe51d8eb093f97fea9c3",
+    "flood_points.csv": "6ef4a01e0ec62fb751bd7884d5af2c3842f6dc95a7fd2dbbe6d4441d75bd5f53",
+    "eventos_CEMADEN_PED.csv.gz": "259aa068f3c3208c9646dc69a9c02ea126dcda34afd046d5a09f1366c04fa6aa"
+  },
+  "rain_source": "MEASURED (Cemaden PED, point_rain_accum_v chuva-ponto-v4); reanálise só na ablação",
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
+}

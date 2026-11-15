@@ -1,4 +1,5 @@
-FROM python:3.10-slim
+# 3.12: pandas 3 e numpy 2.4 (requirements travados do IN1165) exigem Python >= 3.11
+FROM python:3.12-slim
 
 WORKDIR /app
 

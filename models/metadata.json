@@ -1,0 +1,184 @@
+{
+  "model_version": "xgb_v2",
+  "artifact": "models/xgb_v2.joblib",
+  "features": [
+    "current_rainfall",
+    "rainfall_3h_accumulated",
+    "rainfall_6h_accumulated",
+    "rainfall_12h_accumulated",
+    "rainfall_24h_accumulated",
+    "tide_level",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "latitude",
+    "longitude"
+  ],
+  "feature_units": {
+    "current_rainfall": "mm",
+    "rainfall_3h_accumulated": "mm",
+    "rainfall_6h_accumulated": "mm",
+    "rainfall_12h_accumulated": "mm",
+    "rainfall_24h_accumulated": "mm",
+    "tide_level": "m (NR DHN)",
+    "hour_sin": "adimensional",
+    "hour_cos": "adimensional",
+    "month_sin": "adimensional",
+    "month_cos": "adimensional",
+    "latitude": "graus",
+    "longitude": "graus"
+  },
+  "label": "is_flooded",
+  "training_data": "SYNTHETIC",
+  "training_data_note": "DADOS SINTÉTICOS — experimento controlado — reports/synthetic_ground_truth.md",
+  "rain_source": "MEASURED",
+  "rain_source_detail": "Cemaden PED, point_rain_accum_v chuva-ponto-v4 (projeto-mapi-api ADRs 0021-0023)",
+  "dataset_sha256": "5372507c241007bcd9f1d4f50337e6772847a43bb3ca676a39bc337ffcb65888",
+  "seed": 42,
+  "split": {
+    "train": {
+      "rows": 3000,
+      "positives": 250,
+      "from": "2021-10-01 09:00:00+00:00",
+      "to": "2024-07-03 14:00:00+00:00"
+    },
+    "validation": {
+      "rows": 1000,
+      "positives": 72,
+      "from": "2024-07-04 08:00:00+00:00",
+      "to": "2025-07-31 00:00:00+00:00"
+    },
+    "test": {
+      "rows": 1000,
+      "positives": 63,
+      "from": "2025-07-31 01:00:00+00:00",
+      "to": "2026-10-07 03:00:00+00:00"
+    }
+  },
+  "versions": {
+    "python": "3.12.3",
+    "xgboost": "3.2.0",
+    "scikit-learn": "1.9.0",
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "code_commit": "a5ecbcd"
+  },
+  "variants": {
+    "xgb_v2": {
+      "artifact": "models/xgb_v2.joblib",
+      "rain_source": "cemaden",
+      "features": [
+        "current_rainfall",
+        "rainfall_3h_accumulated",
+        "rainfall_6h_accumulated",
+        "rainfall_12h_accumulated",
+        "rainfall_24h_accumulated",
+        "tide_level",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos",
+        "latitude",
+        "longitude"
+      ],
+      "max_depth": 4,
+      "n_estimators": 400,
+      "learning_rate": 0.03,
+      "scale_pos_weight": 11.0,
+      "val_pr_auc": 0.7601953414683574
+    },
+    "xgb_v2_sem_local": {
+      "artifact": "models/xgb_v2_sem_local.joblib",
+      "rain_source": "cemaden",
+      "features": [
+        "current_rainfall",
+        "rainfall_3h_accumulated",
+        "rainfall_6h_accumulated",
+        "rainfall_12h_accumulated",
+        "rainfall_24h_accumulated",
+        "tide_level",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos"
+      ],
+      "max_depth": 3,
+      "n_estimators": 150,
+      "learning_rate": 0.03,
+      "scale_pos_weight": 11.0,
+      "val_pr_auc": 0.7562505666979564
+    },
+    "xgb_v2_reanalise": {
+      "artifact": "models/xgb_v2_reanalise.joblib",
+      "rain_source": "reanalysis",
+      "features": [
+        "current_rainfall",
+        "rainfall_3h_accumulated",
+        "rainfall_6h_accumulated",
+        "rainfall_12h_accumulated",
+        "rainfall_24h_accumulated",
+        "tide_level",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos",
+        "latitude",
+        "longitude"
+      ],
+      "max_depth": 2,
+      "n_estimators": 150,
+      "learning_rate": 0.03,
+      "scale_pos_weight": 11.0,
+      "val_pr_auc": 0.47106779458158815
+    }
+  },
+  "thresholds": {
+    "medium": 0.0159,
+    "high": 0.2441,
+    "criteria": {
+      "high": "maior limiar com recall >= 0.8 na validação (melhor precisão)",
+      "medium": "maior limiar com recall >= 0.95 na validação: nível de atenção, aceita mais alarmes falsos para quase não perder alagamento"
+    },
+    "validation": {
+      "high": {
+        "recall": 0.8333333333333334,
+        "precision": 0.4580152671755725
+      },
+      "medium": {
+        "recall": 0.9583333333333334,
+        "precision": 0.1326923076923077
+      }
+    },
+    "chosen_on": "validation",
+    "probabilities": "raw"
+  },
+  "calibrator": null,
+  "model_validation_status": "NOT_VALIDATED",
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "calibration": {
+    "method": "sigmoid (Platt)",
+    "fit_on": "validation",
+    "val_ece_raw": 0.04725559589639307,
+    "val_ece_calibrated": 0.024024246732862863,
+    "used": false
+  },
+  "test_metrics": {
+    "limiar_high_val": 0.2441,
+    "precision": 0.4261,
+    "recall": 0.7778,
+    "f1": 0.5506,
+    "acuracia": 0.92,
+    "roc_auc": 0.9228,
+    "pr_auc": 0.7644,
+    "brier": 0.0367,
+    "bss": 0.383,
+    "ece_10": 0.0444,
+    "tp": 49.0,
+    "fp": 66.0,
+    "fn": 14.0,
+    "tn": 871.0,
+    "medium_recall": 0.9682539682539683,
+    "medium_precision": 0.11401869158878504
+  }
+}

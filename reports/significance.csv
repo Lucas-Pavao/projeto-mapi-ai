@@ -1,0 +1,6 @@
+a,b,delta_pr_auc,ic95_lo,ic95_hi,significativo
+xgb_v2,logistica,-0.0354,-0.0695,-0.0057,True
+xgb_v2,arvore_rasa,0.0942,0.0279,0.16,True
+xgb_v2,xgb_v2_reanalise,0.4461,0.3358,0.5476,True
+xgb_v2,xgb_v2_sem_local,-0.0278,-0.0609,-0.004,True
+logistica,arvore_rasa,0.1296,0.0597,0.1943,True
