@@ -74,3 +74,13 @@ def test_nan_continua_nan_no_treino():
     df.loc[0, "rainfall_6h_accumulated"] = np.nan
     X, _ = feature_matrix(df)
     assert np.isnan(X.iloc[0]["rainfall_6h_accumulated"])
+
+
+def test_limiares_vem_do_metadata(client):
+    meta = json.loads((C.MODELS_DIR / "metadata.json").read_text())
+    if not meta.get("thresholds"):
+        pytest.skip("rode mapi_ai.evaluate (Etapa 4)")
+    j = client.post("/v1/predict/flood", json=PAYLOAD).json()
+    assert j["thresholds"]["source"] == "metadata"
+    assert j["thresholds"]["high"] == meta["thresholds"]["high"]
+    assert j["thresholds"]["medium"] == meta["thresholds"]["medium"]

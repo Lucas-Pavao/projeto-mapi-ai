@@ -133,8 +133,52 @@
       "val_pr_auc": 0.47106779458158815
     }
   },
-  "thresholds": null,
+  "thresholds": {
+    "medium": 0.0159,
+    "high": 0.2441,
+    "criteria": {
+      "high": "maior limiar com recall >= 0.8 na validação (melhor precisão)",
+      "medium": "maior limiar com recall >= 0.95 na validação: nível de atenção, aceita mais alarmes falsos para quase não perder alagamento"
+    },
+    "validation": {
+      "high": {
+        "recall": 0.8333333333333334,
+        "precision": 0.4580152671755725
+      },
+      "medium": {
+        "recall": 0.9583333333333334,
+        "precision": 0.1326923076923077
+      }
+    },
+    "chosen_on": "validation",
+    "probabilities": "raw"
+  },
   "calibrator": null,
   "model_validation_status": "NOT_VALIDATED",
-  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "calibration": {
+    "method": "sigmoid (Platt)",
+    "fit_on": "validation",
+    "val_ece_raw": 0.04725559589639307,
+    "val_ece_calibrated": 0.024024246732862863,
+    "used": false
+  },
+  "test_metrics": {
+    "limiar_high_val": 0.2441,
+    "precision": 0.4261,
+    "recall": 0.7778,
+    "f1": 0.5506,
+    "acuracia": 0.92,
+    "roc_auc": 0.9228,
+    "pr_auc": 0.7644,
+    "brier": 0.0367,
+    "bss": 0.383,
+    "ece_10": 0.0444,
+    "tp": 49.0,
+    "fp": 66.0,
+    "fn": 14.0,
+    "tn": 871.0,
+    "medium_recall": 0.9682539682539683,
+    "medium_precision": 0.11401869158878504
+  }
 }
