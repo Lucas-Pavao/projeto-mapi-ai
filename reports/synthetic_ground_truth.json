@@ -1,0 +1,51 @@
+{
+  "formula": "is_flooded ~ Bernoulli(sigmoid(b0 + 6.0*P1h/R1 + 10.0*P3h/R3 + 2.0*P24h/R24 + 6.0*max(0, mare - T_hi)/T_span * 1[P3h > wet3]))",
+  "b0": -5.056295958599229,
+  "coefficients": {
+    "current_rainfall": 6.0,
+    "rainfall_3h_accumulated": 10.0,
+    "rainfall_24h_accumulated": 2.0,
+    "tide_x_rain": 6.0
+  },
+  "anchors": {
+    "R1_mm": 31.832,
+    "R3_mm": 54.6839470822498,
+    "R24_mm": 104.6947246254217,
+    "T_hi_m": 2.0771200000000007,
+    "T_span_m": 0.3394899999999974,
+    "wet3_mm": 7.4
+  },
+  "target_positive_rate": 0.08,
+  "true_features_ranked": [
+    "rainfall_3h_accumulated",
+    "current_rainfall",
+    "tide_level",
+    "rainfall_24h_accumulated"
+  ],
+  "strata": {
+    "FORTE": {
+      "pool_hours": 6052,
+      "sampled": 900,
+      "inclusion_prob": 0.14871116986120292
+    },
+    "MEDIA": {
+      "pool_hours": 39493,
+      "sampled": 1300,
+      "inclusion_prob": 0.03291722583749019
+    },
+    "FRACA": {
+      "pool_hours": 39116,
+      "sampled": 1300,
+      "inclusion_prob": 0.03323448205337969
+    },
+    "SECO": {
+      "pool_hours": 127550,
+      "sampled": 1500,
+      "inclusion_prob": 0.011760094080752646
+    }
+  },
+  "seed": 42,
+  "n_rows": 5000,
+  "positive_rate": 0.077,
+  "dataset_sha256": "5c20d270dbe06cd67079bd9e8e924bb902b83ab10448ab576c5a362428d73430"
+}

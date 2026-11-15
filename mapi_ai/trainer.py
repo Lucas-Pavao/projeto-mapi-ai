@@ -15,88 +15,40 @@ def load_scenario_data(engine):
     query = "SELECT * FROM flood_scenario_labels ORDER BY timestamp ASC"
     return pd.read_sql(query, engine)
 
-def generate_dummy_scenario_data(n_samples=200):
-    """Generates synthetic flood scenario dataset for testing/bootstrapping."""
-    np.random.seed(42)
-    timestamps = pd.date_range(end=pd.Timestamp.now(), periods=n_samples, freq='15min')
-    
-    # Coordinates around Recife area
-    latitudes = np.random.uniform(-8.12, -8.04, size=n_samples)
-    longitudes = np.random.uniform(-34.95, -34.88, size=n_samples)
-    
-    current_rainfall = np.random.exponential(scale=2.0, size=n_samples)
-    # Accumulated precipitation
-    rainfall_3h = current_rainfall * 1.5 + np.random.normal(0, 1, size=n_samples)
-    rainfall_6h = rainfall_3h * 1.8 + np.random.normal(0, 2, size=n_samples)
-    rainfall_12h = rainfall_6h * 1.5 + np.random.normal(0, 4, size=n_samples)
-    rainfall_24h = rainfall_12h * 1.3 + np.random.normal(0, 8, size=n_samples)
-    
-    current_rainfall = np.clip(current_rainfall, 0, None)
-    rainfall_3h = np.clip(rainfall_3h, 0, None)
-    rainfall_6h = np.clip(rainfall_6h, 0, None)
-    rainfall_12h = np.clip(rainfall_12h, 0, None)
-    rainfall_24h = np.clip(rainfall_24h, 0, None)
-    
-    tide_level = np.random.uniform(0.0, 2.8, size=n_samples)
-    river_level = np.random.uniform(0.5, 4.0, size=n_samples)
-    
-    # Make flooding probability depend on rainfall and tide
-    flood_prob = (current_rainfall * 0.15 + rainfall_6h * 0.05 + (tide_level > 2.0) * 0.3 + (river_level > 3.0) * 0.4)
-    is_flooded = (flood_prob > 0.6).astype(bool)
-    
-    data = {
-        'id': range(1, n_samples + 1),
-        'timestamp': timestamps,
-        'latitude': latitudes,
-        'longitude': longitudes,
-        'is_flooded': is_flooded,
-        'current_rainfall': current_rainfall,
-        'rainfall_3h_accumulated': rainfall_3h,
-        'rainfall_6h_accumulated': rainfall_6h,
-        'rainfall_12h_accumulated': rainfall_12h,
-        'rainfall_24h_accumulated': rainfall_24h,
-        'tide_level': tide_level,
-        'river_level': river_level,
-        'wind_speed': np.random.uniform(0, 25, size=n_samples),
-        'temperature': np.random.uniform(22, 32, size=n_samples),
-        'apparent_temperature': np.random.uniform(24, 35, size=n_samples),
-        'humidity': np.random.uniform(60, 95, size=n_samples),
-        'pressure': np.random.uniform(1008, 1016, size=n_samples),
-        'wave_height': np.random.uniform(0.5, 2.5, size=n_samples),
-        'wave_period': np.random.uniform(4, 12, size=n_samples),
-        'wave_direction': np.random.uniform(0, 360, size=n_samples),
-        'solar_radiation': np.random.uniform(0, 800, size=n_samples)
-    }
-    
-    return pd.DataFrame(data)
+class NoLabelsError(RuntimeError):
+    """Não há rótulo real e o modo sintético não foi pedido explicitamente."""
 
-def load_dataset(csv_path=None):
+
+def load_dataset(csv_path=None, synthetic=False):
     """
-    Loads dataset either from CSV or PostgreSQL database.
-    If both fail or are empty, creates a synthetic dataset for demonstration and testing.
+    Carrega o dataset de treino. NÃO existe mais fallback silencioso.
+
+    Antes, com flood_scenario_labels vazia, esta função gerava 200 linhas com is_flooded por fórmula fixa e treinava
+    sobre elas sem avisar: as explicações (SHAP/LIME) apenas devolviam a fórmula — eram circulares.
+
+    Agora:
+    - `csv_path`: lê o CSV indicado;
+    - sem CSV, lê `flood_scenario_labels` do banco; vazia => NoLabelsError com a explicação;
+    - `synthetic=True` (flag `--synthetic`): lê o dataset do Plano B (mapi_ai/synthetic.py), com aviso explícito.
     """
-    df = None
+    from mapi_ai import in1165_config as C
+    if synthetic:
+        print("=" * 72)
+        print(f"AVISO: {C.SYNTHETIC_TAG}.")
+        print("Rótulo gerado por fórmula conhecida (reports/synthetic_ground_truth.md) sobre horas reais.")
+        print("Nenhuma métrica deste treino é desempenho em alagamento real.")
+        print("=" * 72)
+        if not C.DATASET_CSV.exists():
+            raise FileNotFoundError(f"{C.DATASET_CSV} não existe: rode `python -m mapi_ai.synthetic` antes.")
+        return pd.read_csv(C.DATASET_CSV, parse_dates=["timestamp"])
     if csv_path:
-        if os.path.exists(csv_path):
-            print(f"Loading data from CSV file: {csv_path}")
-            df = pd.read_csv(csv_path)
-        else:
-            print(f"Warning: CSV file {csv_path} not found.")
-            
-    if df is None:
-        try:
-            print("Connecting to database...")
-            engine = get_engine()
-            print("Loading data from table 'flood_scenario_labels'...")
-            df = load_scenario_data(engine)
-            print(f"Loaded {len(df)} records from database.")
-        except Exception as e:
-            print(f"Warning: Could not load data from database: {e}")
-            
-    if df is None or len(df) == 0:
-        print("Warning: No data loaded. Generating synthetic/dummy dataset for fallback/testing...")
-        df = generate_dummy_scenario_data()
-        
+        if not os.path.exists(csv_path):
+            raise FileNotFoundError(f"CSV {csv_path} não encontrado.")
+        return pd.read_csv(csv_path)
+    df = load_scenario_data(get_engine())
+    if len(df) == 0:
+        raise NoLabelsError("flood_scenario_labels está vazia e não há rótulo real suficiente "
+                            "(python -m mapi_ai.build_labels). Para o experimento controlado, use --synthetic.")
     return df
 
 def train_xgboost(df):
