@@ -33,6 +33,8 @@ def client(monkeypatch):
     monkeypatch.setattr(app_module, "model", FakeModel())
     monkeypatch.setattr(app_module, "scaler", FakeScaler())
     monkeypatch.setattr(app_module, "lstm_model", None)
+    # Caminho legado (artefato sem metadata): os testes abaixo fixam esse contrato.
+    monkeypatch.setattr(app_module, "metadata", None)
     return TestClient(app_module.app)
 
 

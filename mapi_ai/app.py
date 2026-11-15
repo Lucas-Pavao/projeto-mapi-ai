@@ -1,4 +1,11 @@
 import os
+# psycopg2 ANTES do TensorFlow: com o TF carregado primeiro, a primeira conexão do psycopg2-binary aborta o processo
+# ("Fatal Python error: Aborted"; reproduzido em 2026-11-15 com tensorflow 2.21 e psycopg2-binary 2.9.12). As duas
+# rodas trazem bibliotecas nativas próprias; a ordem de carga decide qual vale.
+try:
+    import psycopg2  # noqa: F401
+except ImportError:
+    pass
 import joblib
 import numpy as np
 import pandas as pd
@@ -14,15 +21,43 @@ from pydantic import BaseModel, Field, ConfigDict, field_validator, model_valida
 from mapi_ai.config import MODEL_PATH_XGB, MODEL_PATH_LSTM, SCALER_PATH, TIDE_THRESHOLD
 from mapi_ai.feature_engineering import prepare_scenario_features, SpatialMetadataCache, MissingFeaturesError
 
-# Load models at startup
+# ---------------------------------------------------------------------------------------------------------------
+# Carga do modelo. Dois caminhos:
+# - v2 (IN1165): models/metadata.json + models/xgb_v2.joblib, SEM scaler; features, limiares e versão vêm do metadata;
+# - legado: models/flood_classifier.joblib + scaler.joblib (artefato antigo, sem metadata). Só se não houver v2.
+# ---------------------------------------------------------------------------------------------------------------
+import json
+from pathlib import Path
+
+METADATA_PATH = Path(MODEL_PATH_XGB).parent / "metadata.json"
+
+
+def load_v2():
+    """Devolve (modelo, calibrador, metadata) do v2, ou (None, None, None) se não houver artefato com metadata."""
+    if not METADATA_PATH.exists():
+        return None, None, None
+    meta = json.loads(METADATA_PATH.read_text())
+    clf = joblib.load(meta["artifact"])
+    cal = joblib.load(meta["calibrator"]["artifact"]) if meta.get("calibrator") else None
+    return clf, cal, meta
+
+
+try:
+    v2_model, v2_calibrator, metadata = load_v2()
+    if metadata:
+        print(f"Modelo {metadata['model_version']} carregado ({metadata['training_data']}).")
+except Exception as e:
+    v2_model, v2_calibrator, metadata = None, None, None
+    print(f"Warning: artefato v2 ilegível ({e}); tentando o legado.")
+
 try:
     model = joblib.load(MODEL_PATH_XGB)
     scaler = joblib.load(SCALER_PATH)
-    print("XGBoost Classifier and Scaler loaded successfully.")
+    print("XGBoost legado e scaler carregados (compatibilidade).")
 except Exception as e:
     model = None
     scaler = None
-    print(f"Warning: XGBoost models not found ({e}). Train the model first.")
+    print(f"Warning: XGBoost legado não encontrado ({e}).")
 
 try:
     from tensorflow.keras.models import load_model
@@ -157,8 +192,47 @@ def predict_river_level_lstm(data: PredictionInput, X_current: pd.DataFrame):
         print(f"LSTM Prediction Error: {e}")
         return None
 
+# Cortes do artefato legado, sem justificativa registrada; o v2 lê os limiares do metadata (Etapa 4).
+LEGACY_THRESHOLDS = {"medium": 0.5, "high": 0.8}
+
+
+def risk_from(prob: float, thresholds: dict) -> str:
+    if prob >= thresholds["high"]:
+        return "HIGH"
+    if prob >= thresholds["medium"]:
+        return "MEDIUM"
+    return "LOW"
+
+
+def v2_features(data: PredictionInput) -> pd.DataFrame:
+    """
+    Features do v2 a partir do payload do contrato (mesmos nomes). Hora e mês em hora LOCAL de Recife, como no treino.
+    Ausente => MissingFeaturesError (422); não há imputação.
+    """
+    d = data.model_dump()
+    d["latitude"] = d["latitude"] if d["latitude"] is not None else d["lat"]
+    d["longitude"] = d["longitude"] if d["longitude"] is not None else d["lon"]
+    ts = pd.Timestamp(d["timestamp"])
+    ts = ts.tz_localize("UTC") if ts.tzinfo is None else ts  # sem fuso: o contrato é UTC (ADR 0001 do backend)
+    local = ts.tz_convert("America/Recife")
+    d["hour_sin"], d["hour_cos"] = np.sin(2 * np.pi * local.hour / 24), np.cos(2 * np.pi * local.hour / 24)
+    d["month_sin"], d["month_cos"] = np.sin(2 * np.pi * local.month / 12), np.cos(2 * np.pi * local.month / 12)
+    feats = metadata["features"]
+    missing = [f for f in feats if d.get(f) is None]
+    if missing:
+        raise MissingFeaturesError(missing)
+    return pd.DataFrame([[float(d[f]) for f in feats]], columns=feats)
+
+
+def v2_probability(X: pd.DataFrame) -> float:
+    raw = float(v2_model.predict_proba(X)[0][1])
+    return float(v2_calibrator.predict_proba(X)[0][1]) if v2_calibrator is not None else raw
+
+
 @app.post("/v1/predict/flood")
 def predict_flood(data: PredictionInput):
+    if metadata is not None and v2_model is not None:
+        return predict_v2(data)
     if model is None or scaler is None:
         raise HTTPException(status_code=503, detail="Model not loaded. Please train the model.")
     
@@ -174,11 +248,7 @@ def predict_flood(data: PredictionInput):
         
         prob = model.predict_proba(X_scaled)[0][1]
         
-        risk_level = "LOW"
-        if prob > 0.8: 
-            risk_level = "HIGH"
-        elif prob > 0.5: 
-            risk_level = "MEDIUM"
+        risk_level = risk_from(prob, LEGACY_THRESHOLDS)
         
         response = {
             "flood_probability": float(prob),
@@ -200,6 +270,37 @@ def predict_flood(data: PredictionInput):
     except Exception as e:
         print(f"Prediction Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+
+def predict_v2(data: PredictionInput):
+    """
+    Caminho v2. O contrato antigo (flood_probability, risk_level, 422 com missing_features) não muda; os campos
+    novos entram só por adição: limiares usados, fonte da chuva do treino e aviso de dado sintético.
+    """
+    try:
+        X = v2_features(data)
+    except MissingFeaturesError as e:
+        return JSONResponse(status_code=422, content={"detail": str(e), "missing_features": e.missing_features})
+    thresholds = metadata.get("thresholds") or LEGACY_THRESHOLDS
+    prob = v2_probability(X)
+    response = {
+        "flood_probability": prob,
+        "risk_level": risk_from(prob, thresholds),
+        "model_version": metadata["model_version"],
+        "model_validation_status": metadata.get("model_validation_status", "NOT_VALIDATED"),
+        "station_id": data.station_id,
+        "timestamp": data.timestamp,
+        "thresholds": {"medium": thresholds["medium"], "high": thresholds["high"],
+                       "source": "metadata" if metadata.get("thresholds") else "legacy"},
+        "rain_source": metadata.get("rain_source"),
+        "training_data": metadata.get("training_data"),
+        "calibrated": v2_calibrator is not None,
+    }
+    if metadata.get("training_data") == "SYNTHETIC":
+        response["synthetic_warning"] = ("Modelo treinado com rótulo SINTÉTICO (experimento controlado): a "
+                                         "probabilidade não foi validada contra alagamento real.")
+    return response
+
 
 # --- Simulacao do balde M1a (ADR 0014): a formula vive so em avaliacao/balde.py ---
 from dataclasses import asdict

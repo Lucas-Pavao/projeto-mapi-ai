@@ -1,23 +1,20 @@
 import numpy as np
 import xgboost as xgb
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
 from mapi_ai.config import PREDICTION_WINDOW_HOURS
 
-def get_xgboost_classifier():
-    """Returns an initialized XGBoost Classifier."""
-    return xgb.XGBClassifier(
-        n_estimators=100,
-        max_depth=6,
-        learning_rate=0.1,
-        objective='binary:logistic',
-        random_state=42,
-        use_label_encoder=False,
-        eval_metric='logloss'
-    )
+def get_xgboost_classifier(**params):
+    """XGBoost para is_flooded. Sem padronização: árvores dividem por limiar e não dependem de escala, e manter as
+    unidades físicas (mm, m) faz SHAP, LIME e contrafactuais saírem em mm e m, não em z-scores."""
+    base = dict(n_estimators=100, max_depth=6, learning_rate=0.1, objective="binary:logistic",
+                random_state=42, eval_metric="logloss", tree_method="hist", n_jobs=1)
+    base.update(params)
+    return xgb.XGBClassifier(**base)
+
 
 def get_lstm_model(input_shape):
     """Returns a compiled LSTM model for regression."""
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import LSTM, Dense, Dropout
     model = Sequential([
         LSTM(64, return_sequences=True, input_shape=input_shape),
         Dropout(0.2),
