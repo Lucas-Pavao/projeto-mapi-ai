@@ -62,7 +62,7 @@
     "scikit-learn": "1.9.0",
     "numpy": "2.4.6",
     "pandas": "3.0.3",
-    "code_commit": "a4589ae"
+    "code_commit": "a5ecbcd"
   },
   "variants": {
     "xgb_v2": {
