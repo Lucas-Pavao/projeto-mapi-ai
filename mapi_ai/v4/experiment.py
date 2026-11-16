@@ -5,7 +5,7 @@ Três braços: sem previsão, com a previsão fora da amostra do rain_v1, e com 
 Uso: python -m mapi_ai.v4.experiment            -> só o cenário CENTRAL do balde (f = 1,0)
      python -m mapi_ai.v4.experiment --sensibilidade   -> também a faixa pré-registrada de capacidade da galeria
 
-A opção --sensibilidade NÃO foi rodada: depende do ok do Lucas (a regra do plano é não ajustar parâmetro do balde).
+A opção --sensibilidade foi rodada em 2026-11-16 com o ok do Lucas (faixa inteira reportada; nenhum f escolhido pela frequência).
 """
 import json
 import subprocess

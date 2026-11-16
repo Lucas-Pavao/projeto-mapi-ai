@@ -29,8 +29,8 @@
     "valid_end": "2025-07-31 00:00:00+00:00",
     "guard_h": 6
   },
-  "sensibilidade_rodada": false,
-  "code_commit": "0aba78a4e30969419ac9d1f730bee2c9f7138bf7",
+  "sensibilidade_rodada": true,
+  "code_commit": "945654ab1770b9210a0ccd264a7495eebdd993dc",
   "model_generation": "v4",
   "training_data": "PHYSICAL_MODEL_LABEL",
   "training_data_note": "RÓTULO DO MODELO FÍSICO (balde M1a), não alagamento observado",
@@ -43,6 +43,40 @@
         "test": 0
       },
       "treinavel": false
+    },
+    "f=0.8": {
+      "eventos": {
+        "train": 1,
+        "validation": 0,
+        "test": 0
+      },
+      "treinavel": false
+    },
+    "f=0.6": {
+      "eventos": {
+        "train": 7,
+        "validation": 2,
+        "test": 0
+      },
+      "treinavel": false
+    },
+    "f=0.4": {
+      "eventos": {
+        "train": 41,
+        "validation": 5,
+        "test": 5
+      },
+      "treinavel": true,
+      "familia": "xgboost"
+    },
+    "f=0.2": {
+      "eventos": {
+        "train": 162,
+        "validation": 29,
+        "test": 30
+      },
+      "treinavel": true,
+      "familia": "xgboost"
     }
   }
 }
