@@ -1,0 +1,274 @@
+{
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "generator": {
+    "formula": "z = b0' + (z_v2 - b0) + K_PEAK*I10/CAP10 + K_TREND*max(0,dM/dt)/TREND_REF*mare_alta*chovendo + K_SOIL*(solo - SOIL_MED)/SOIL_SPAN*P3h/R3",
+    "coefficients": {
+      "K_PEAK": 4.0,
+      "K_TREND": 3.0,
+      "K_SOIL": 3.0
+    },
+    "anchors": {
+      "CAP10_mm": 10.016666666666667,
+      "TREND_REF_m_h": 0.39396000000000064,
+      "SOIL_MED": 0.365,
+      "SOIL_SPAN": 0.11499999999999999
+    },
+    "b0": -5.52163547701257,
+    "prevalence_continuous_h0": 0.03306637888598584,
+    "peak_unknown_label_uses": "P1h/6 (chuva uniforme na hora)",
+    "missing_rate_sample": {
+      "rain_max_10min_mm": 0.295,
+      "tide_trend_m_h": 0.0,
+      "soil_moisture": 0.0
+    },
+    "missing_rate_peak_by_rain": {
+      "seco": 0.0038973354951206828,
+      "0_a_5mm": 0.7703198373945751,
+      "5mm_ou_mais": 0.5157245222929936
+    },
+    "river_level_m": "fora: régua do Duas Unas só desde 2026-11-09",
+    "sample": {
+      "strata": {
+        "FORTE": {
+          "pool_hours": 6041,
+          "sampled": 900,
+          "inclusion_prob": 0.14898195662969707
+        },
+        "MEDIA": {
+          "pool_hours": 39307,
+          "sampled": 1300,
+          "inclusion_prob": 0.03307298954384715
+        },
+        "FRACA": {
+          "pool_hours": 38846,
+          "sampled": 1300,
+          "inclusion_prob": 0.03346547907120424
+        },
+        "SECO": {
+          "pool_hours": 127018,
+          "sampled": 1500,
+          "inclusion_prob": 0.011809349855925931
+        }
+      },
+      "rows": 5000,
+      "split": {
+        "train": {
+          "rows": 3016,
+          "positives_h0": 293,
+          "positives_h3": 582,
+          "positives_h6": 763,
+          "from": "2021-10-01 10:00:00+00:00",
+          "to": "2024-07-03 07:00:00+00:00"
+        },
+        "validation": {
+          "rows": 974,
+          "positives_h0": 62,
+          "positives_h3": 129,
+          "positives_h6": 175,
+          "from": "2024-07-03 19:00:00+00:00",
+          "to": "2025-07-30 16:00:00+00:00"
+        },
+        "test": {
+          "rows": 1010,
+          "positives_h0": 60,
+          "positives_h3": 134,
+          "positives_h6": 180,
+          "from": "2025-07-31 06:00:00+00:00",
+          "to": "2026-10-07 14:00:00+00:00"
+        }
+      },
+      "missing_rate": {
+        "rain_0_1h": 0.0028,
+        "rain_1_3h": 0.0046,
+        "rain_3_6h": 0.007,
+        "rain_6_12h": 0.0144,
+        "rain_12_24h": 0.0246
+      }
+    }
+  },
+  "variants": {
+    "fisico_base": {
+      "features": [
+        "rain_0_1h",
+        "rain_1_3h",
+        "rain_3_6h",
+        "rain_6_12h",
+        "rain_12_24h",
+        "tide_level",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos"
+      ],
+      "chosen": "logistica",
+      "validation_pr_auc": {
+        "regra_chuva3h": 0.6550885482278879,
+        "logistica": 0.6868294633320359,
+        "arvore_rasa": 0.5693251786622616,
+        "xgboost": 0.6875925400487575
+      },
+      "test_pr_auc_chosen": 0.6470665331317096,
+      "alerts_and_events_test": {
+        "medium": {
+          "threshold": 0.07108102899339544,
+          "alert_days_per_point_year": 48.6554548478297,
+          "alerts_per_point_year": 45.73977216031931,
+          "alert_hours_fraction": 0.018875769166805254,
+          "events": 504,
+          "events_detected": 216,
+          "event_recall": 0.42857142857142855,
+          "rain_events": 370,
+          "rain_event_recall": 0.5783783783783784,
+          "lead_median_h": 0.0,
+          "lead_p10_h": 0.0,
+          "false_alerts": 33,
+          "false_alerts_per_event": 0.06547619047619048,
+          "false_alert_mean_hours": 1.1515151515151516,
+          "point_years": 5.487565594341775
+        },
+        "high": {
+          "threshold": 0.972780330614787,
+          "alert_days_per_point_year": 8.564817894561783,
+          "alerts_per_point_year": 8.382587726592384,
+          "alert_hours_fraction": 0.002744054548478297,
+          "events": 504,
+          "events_detected": 46,
+          "event_recall": 0.09126984126984126,
+          "rain_events": 370,
+          "rain_event_recall": 0.12432432432432433,
+          "lead_median_h": 0.0,
+          "lead_p10_h": 0.0,
+          "false_alerts": 0,
+          "false_alerts_per_event": 0.0,
+          "false_alert_mean_hours": 0.0,
+          "point_years": 5.487565594341775
+        }
+      },
+      "calibration_adopted": true
+    },
+    "fisico": {
+      "features": [
+        "rain_0_1h",
+        "rain_1_3h",
+        "rain_3_6h",
+        "rain_6_12h",
+        "rain_12_24h",
+        "tide_level",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos",
+        "rain_max_10min_mm",
+        "tide_trend_m_h",
+        "soil_moisture"
+      ],
+      "chosen": "logistica",
+      "validation_pr_auc": {
+        "regra_chuva3h": 0.6550885482278879,
+        "logistica": 0.6920272544053863,
+        "arvore_rasa": 0.5714834304024436,
+        "xgboost": 0.6955971197651208
+      },
+      "test_pr_auc_chosen": 0.6423054732407578,
+      "alerts_and_events_test": {
+        "medium": {
+          "threshold": 0.04374239765599952,
+          "alert_days_per_point_year": 51.2066771994013,
+          "alerts_per_point_year": 47.01538333610511,
+          "alert_hours_fraction": 0.020642773989689008,
+          "events": 504,
+          "events_detected": 223,
+          "event_recall": 0.44246031746031744,
+          "rain_events": 370,
+          "rain_event_recall": 0.5972972972972973,
+          "lead_median_h": 0.0,
+          "lead_p10_h": 0.0,
+          "false_alerts": 36,
+          "false_alerts_per_event": 0.07142857142857142,
+          "false_alert_mean_hours": 1.1111111111111112,
+          "point_years": 5.487565594341775
+        },
+        "high": {
+          "threshold": 0.8755939919364257,
+          "alert_days_per_point_year": 9.658198902378182,
+          "alerts_per_point_year": 9.47596873440878,
+          "alert_hours_fraction": 0.002868784300681856,
+          "events": 504,
+          "events_detected": 51,
+          "event_recall": 0.10119047619047619,
+          "rain_events": 370,
+          "rain_event_recall": 0.13783783783783785,
+          "lead_median_h": 0.0,
+          "lead_p10_h": 0.0,
+          "false_alerts": 0,
+          "false_alerts_per_event": 0.0,
+          "false_alert_mean_hours": 0.0,
+          "point_years": 5.487565594341775
+        }
+      },
+      "calibration_adopted": true,
+      "test_pr_auc_soil_absent_as_in_production": 0.644753386747631
+    },
+    "fisico_sem_solo": {
+      "features": [
+        "rain_0_1h",
+        "rain_1_3h",
+        "rain_3_6h",
+        "rain_6_12h",
+        "rain_12_24h",
+        "tide_level",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos",
+        "rain_max_10min_mm",
+        "tide_trend_m_h"
+      ],
+      "chosen": "logistica",
+      "validation_pr_auc": {
+        "regra_chuva3h": 0.6550885482278879,
+        "logistica": 0.6840565706100589,
+        "arvore_rasa": 0.5693251786622616,
+        "xgboost": 0.6893496614792168
+      },
+      "test_pr_auc_chosen": 0.6472915529750116,
+      "alerts_and_events_test": {
+        "medium": {
+          "threshold": 0.05785177759048323,
+          "alert_days_per_point_year": 48.4732246798603,
+          "alerts_per_point_year": 44.82862132047231,
+          "alert_hours_fraction": 0.01895892233494096,
+          "events": 504,
+          "events_detected": 214,
+          "event_recall": 0.4246031746031746,
+          "rain_events": 370,
+          "rain_event_recall": 0.572972972972973,
+          "lead_median_h": 0.0,
+          "lead_p10_h": 0.0,
+          "false_alerts": 32,
+          "false_alerts_per_event": 0.06349206349206349,
+          "false_alert_mean_hours": 1.09375,
+          "point_years": 5.487565594341775
+        },
+        "high": {
+          "threshold": 0.9227520524237643,
+          "alert_days_per_point_year": 9.84042907034758,
+          "alerts_per_point_year": 9.658198902378182,
+          "alert_hours_fraction": 0.0028895725927157827,
+          "events": 504,
+          "events_detected": 52,
+          "event_recall": 0.10317460317460317,
+          "rain_events": 370,
+          "rain_event_recall": 0.14054054054054055,
+          "lead_median_h": 0.0,
+          "lead_p10_h": 0.0,
+          "false_alerts": 0,
+          "false_alerts_per_event": 0.0,
+          "false_alert_mean_hours": 0.0,
+          "point_years": 5.487565594341775
+        }
+      },
+      "calibration_adopted": true
+    }
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "bloco": "B (projeto-mapi-ai)", "data": "2026-11-16", "branch": "feat/modelo-v3",
+  "le": "docs/handoff/v3-api.json, docs/handoff/v3-lacunas.json",
+  "training_data": "SYNTHETIC",
+  "training_data_note": "DADOS SINTÉTICOS — experimento controlado — reports/synthetic_ground_truth.md",
+  "atribuicao": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "model_version": "logreg_v3",
+  "horizonte_h": 6,
+  "artefatos": {"modelo": "models/v3/logistica_h6.joblib", "calibrador": "models/v3/calibrator_h6.joblib",
+    "metadata": "models/v3/metadata.json", "fundo_shap": "models/v3/shap_background.joblib"},
+  "features_em_ordem": ["rain_0_1h", "rain_1_3h", "rain_3_6h", "rain_6_12h", "rain_12_24h", "tide_level",
+    "hour_sin", "hour_cos", "month_sin", "month_cos"],
+  "entradas_do_contrato": "as do v2 (acumulados); as janelas disjuntas são derivadas no serviço por subtração; chuva e maré aceitam null e saem em imputed_features",
+  "resposta_por_adicao": ["horizon_hours", "probability_kind (PRIOR_CORRECTED)", "flood_probability_uncorrected", "imputed_features"],
+  "limiares_sobre_a_probabilidade_servida": {"medium": 0.0491, "high": 0.9279,
+    "regra": "menor limiar com no máximo 50 (moderado) e 10 (alto) dias de alerta por ponto por ano, na série contínua da validação"},
+  "resultados": {
+    "fonte": "reports/v3/RELATORIO.md, reports/v3/evaluation.json, reports/v3/explanation_eval.json, reports/v3/physical_comparison.json",
+    "validacao_pr_auc_h6": {"regra_chuva3h": 0.601, "logistica": 0.672, "arvore_rasa": 0.541, "xgboost": 0.665},
+    "teste_pr_auc_h6": 0.651,
+    "antecedencia_mediana_h": 0,
+    "eventos_detectados_moderado_pct": 33.2,
+    "eventos_sinteticos_por_ponto_ano": 107,
+    "negativo_janelas_disjuntas": "Jaccard SHAP x LIME top-5 caiu de 0,77 para 0,62 (H=0) e de 0,84 para 0,70 (H=6)",
+    "negativo_entradas_fisicas": "PR-AUC de teste 0,642 com elas contra 0,647 sem"
+  },
+  "reproducao": "notebooks/v3_modelo.ipynb (10 células, cerca de 1 h; o B8 das explicações é a parte lenta)",
+  "v2": "intocado (models/*.joblib, models/metadata.json, reports/ fora de reports/v3)",
+  "pendencias_para_as_proximas_fases": [
+    "antecedência de 0 h: precisa de previsão de chuva como entrada (Fase 3)",
+    "gerador com 107 eventos por ponto por ano e sem atraso físico: trocar pelo rótulo do balde (Fase 4)",
+    "pi_real depende de uma duração de alagamento por dia [sem fonte]"
+  ]
+}

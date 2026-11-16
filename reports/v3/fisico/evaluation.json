@@ -1,0 +1,212 @@
+{
+  "horizons": {
+    "h6": {
+      "model": "logistica",
+      "calibration": {
+        "rule": "Platt ajustado na primeira metade (no tempo) da validação; adotado se ECE e Brier melhoram na segunda metade",
+        "check_second_half": {
+          "raw": {
+            "ece": 0.21327765050254346,
+            "brier": 0.15644270918157024
+          },
+          "calibrated": {
+            "ece": 0.05285208571198067,
+            "brier": 0.10671195816766879
+          }
+        },
+        "adopted": true,
+        "platt": {
+          "a": 0.8993889967844175,
+          "b": -1.2014663847996703
+        }
+      },
+      "prior": {
+        "pi_sint": 0.15195071868583163,
+        "pi_sint_source": "taxa de positivos da metade da validação que ajusta o calibrador",
+        "pi_real": 0.0034640657084188914,
+        "pi_real_source": "parâmetro declarado (mapi_ai/v3/config.py): ~0,1% das horas, 18 dias com alagamento em 5 anos; duração por dia [sem fonte]"
+      },
+      "thresholds": {
+        "medium": 0.04374239765599952,
+        "high": 0.8755939919364257,
+        "probability": "servida (calibrada e corrigida por prevalência)",
+        "rule": "menor limiar com dias de alerta por ponto por ano <= orçamento ({'medium': 50, 'high': 10}), na série contínua da validação",
+        "chosen_on": "validation"
+      },
+      "continuous": {
+        "validation": {
+          "hours": 44685,
+          "unknown_hours": 99,
+          "prevalence": 0.10048114579836634,
+          "pr_auc": 0.4886162181239358
+        },
+        "test": {
+          "hours": 48104,
+          "unknown_hours": 174,
+          "prevalence": 0.09531431897555297,
+          "pr_auc": 0.47860566134727034
+        }
+      },
+      "alerts_and_events": {
+        "validation": {
+          "medium": {
+            "threshold": 0.04374239765599952,
+            "alert_days_per_point_year": 48.84712990936556,
+            "alerts_per_point_year": 48.06243705941591,
+            "alert_hours_fraction": 0.02175226586102719,
+            "events": 481,
+            "events_detected": 209,
+            "event_recall": 0.43451143451143454,
+            "rain_events": 362,
+            "rain_event_recall": 0.5773480662983426,
+            "lead_median_h": 0.0,
+            "lead_p10_h": 0.0,
+            "false_alerts": 36,
+            "false_alerts_per_event": 0.07484407484407485,
+            "false_alert_mean_hours": 1.5555555555555556,
+            "point_years": 5.097535934291581
+          },
+          "high": {
+            "threshold": 0.8755939919364257,
+            "alert_days_per_point_year": 9.808660624370596,
+            "alerts_per_point_year": 10.201007049345419,
+            "alert_hours_fraction": 0.0029316325388832943,
+            "events": 481,
+            "events_detected": 45,
+            "event_recall": 0.09355509355509356,
+            "rain_events": 362,
+            "rain_event_recall": 0.12430939226519337,
+            "lead_median_h": 0.0,
+            "lead_p10_h": 0.0,
+            "false_alerts": 0,
+            "false_alerts_per_event": 0.0,
+            "false_alert_mean_hours": 0.0,
+            "point_years": 5.097535934291581
+          }
+        },
+        "test": {
+          "medium": {
+            "threshold": 0.04374239765599952,
+            "alert_days_per_point_year": 51.2066771994013,
+            "alerts_per_point_year": 47.01538333610511,
+            "alert_hours_fraction": 0.020642773989689008,
+            "events": 504,
+            "events_detected": 223,
+            "event_recall": 0.44246031746031744,
+            "rain_events": 370,
+            "rain_event_recall": 0.5972972972972973,
+            "lead_median_h": 0.0,
+            "lead_p10_h": 0.0,
+            "false_alerts": 36,
+            "false_alerts_per_event": 0.07142857142857142,
+            "false_alert_mean_hours": 1.1111111111111112,
+            "point_years": 5.487565594341775
+          },
+          "high": {
+            "threshold": 0.8755939919364257,
+            "alert_days_per_point_year": 9.658198902378182,
+            "alerts_per_point_year": 9.47596873440878,
+            "alert_hours_fraction": 0.002868784300681856,
+            "events": 504,
+            "events_detected": 51,
+            "event_recall": 0.10119047619047619,
+            "rain_events": 370,
+            "rain_event_recall": 0.13783783783783785,
+            "lead_median_h": 0.0,
+            "lead_p10_h": 0.0,
+            "false_alerts": 0,
+            "false_alerts_per_event": 0.0,
+            "false_alert_mean_hours": 0.0,
+            "point_years": 5.487565594341775
+          }
+        }
+      },
+      "degradation_check": {
+        "hours_without_current_rain": 99,
+        "positives": 11,
+        "pr_auc_without_current": 0.15986747230972842,
+        "pr_auc_same_hours_if_complete": 0.550123005336909
+      }
+    }
+  },
+  "correlation": {
+    "acumulados_v2": {
+      "current_rainfall": {
+        "current_rainfall": 1.0,
+        "rainfall_3h_accumulated": 0.757,
+        "rainfall_6h_accumulated": 0.595,
+        "rainfall_12h_accumulated": 0.424,
+        "rainfall_24h_accumulated": 0.315
+      },
+      "rainfall_3h_accumulated": {
+        "current_rainfall": 0.757,
+        "rainfall_3h_accumulated": 1.0,
+        "rainfall_6h_accumulated": 0.843,
+        "rainfall_12h_accumulated": 0.627,
+        "rainfall_24h_accumulated": 0.469
+      },
+      "rainfall_6h_accumulated": {
+        "current_rainfall": 0.595,
+        "rainfall_3h_accumulated": 0.843,
+        "rainfall_6h_accumulated": 1.0,
+        "rainfall_12h_accumulated": 0.818,
+        "rainfall_24h_accumulated": 0.619
+      },
+      "rainfall_12h_accumulated": {
+        "current_rainfall": 0.424,
+        "rainfall_3h_accumulated": 0.627,
+        "rainfall_6h_accumulated": 0.818,
+        "rainfall_12h_accumulated": 1.0,
+        "rainfall_24h_accumulated": 0.83
+      },
+      "rainfall_24h_accumulated": {
+        "current_rainfall": 0.315,
+        "rainfall_3h_accumulated": 0.469,
+        "rainfall_6h_accumulated": 0.619,
+        "rainfall_12h_accumulated": 0.83,
+        "rainfall_24h_accumulated": 1.0
+      }
+    },
+    "janelas_v3": {
+      "rain_0_1h": {
+        "rain_0_1h": 1.0,
+        "rain_1_3h": 0.444,
+        "rain_3_6h": 0.222,
+        "rain_6_12h": 0.107,
+        "rain_12_24h": 0.062
+      },
+      "rain_1_3h": {
+        "rain_0_1h": 0.444,
+        "rain_1_3h": 1.0,
+        "rain_3_6h": 0.404,
+        "rain_6_12h": 0.204,
+        "rain_12_24h": 0.079
+      },
+      "rain_3_6h": {
+        "rain_0_1h": 0.222,
+        "rain_1_3h": 0.404,
+        "rain_3_6h": 1.0,
+        "rain_6_12h": 0.395,
+        "rain_12_24h": 0.118
+      },
+      "rain_6_12h": {
+        "rain_0_1h": 0.107,
+        "rain_1_3h": 0.204,
+        "rain_3_6h": 0.395,
+        "rain_6_12h": 1.0,
+        "rain_12_24h": 0.317
+      },
+      "rain_12_24h": {
+        "rain_0_1h": 0.062,
+        "rain_1_3h": 0.079,
+        "rain_3_6h": 0.118,
+        "rain_6_12h": 0.317,
+        "rain_12_24h": 1.0
+      }
+    },
+    "media_abs_fora_da_diagonal": {
+      "acumulados_v2": 0.6295811415202988,
+      "janelas_v3": 0.2352841233931488
+    }
+  }
+}

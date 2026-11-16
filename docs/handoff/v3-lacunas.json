@@ -1,0 +1,28 @@
+{
+  "fonte": "point_rain_hourly, rule_version chuva-ponto-v4, 2021-09-01T01:00Z a 2026-11-16T11:00Z, 45659 horas por ponto",
+  "extraido_em": "2026-11-16",
+  "documento": "docs/extratos/lacunas-chuva-ponto.md",
+  "por_ponto": {
+    "AGAMENON_DERBY":          {"horas": 45659, "lacunas": 109,  "fracao": 0.0024, "curtas_h": 109, "longas_h": 0,    "runs": {"1h": 9,  "2_6h": 12, "7_24h": 5,  "gt24h": 0}, "horas_por_faixa": {"1h": 9,  "2_6h": 36, "7_24h": 64,  "gt24h": 0}},
+    "AV_RECIFE_IBURA":         {"horas": 45659, "lacunas": 1858, "fracao": 0.0407, "curtas_h": 354, "longas_h": 1504, "runs": {"1h": 41, "2_6h": 27, "7_24h": 16, "gt24h": 6}, "horas_por_faixa": {"1h": 41, "2_6h": 85, "7_24h": 228, "gt24h": 1504}},
+    "CIN_UFPE":                {"horas": 45659, "lacunas": 177,  "fracao": 0.0039, "curtas_h": 177, "longas_h": 0,    "runs": {"1h": 29, "2_6h": 33, "7_24h": 6,  "gt24h": 0}, "horas_por_faixa": {"1h": 29, "2_6h": 76, "7_24h": 72,  "gt24h": 0}},
+    "JABOATAO_CENTRO":         {"horas": 45659, "lacunas": 82,   "fracao": 0.0018, "curtas_h": 82,  "longas_h": 0,    "runs": {"1h": 10, "2_6h": 8,  "7_24h": 4,  "gt24h": 0}, "horas_por_faixa": {"1h": 10, "2_6h": 26, "7_24h": 46,  "gt24h": 0}},
+    "MASCARENHAS_IMBIRIBEIRA": {"horas": 45659, "lacunas": 1621, "fracao": 0.0355, "curtas_h": 133, "longas_h": 1488, "runs": {"1h": 11, "2_6h": 16, "7_24h": 6,  "gt24h": 2}, "horas_por_faixa": {"1h": 11, "2_6h": 49, "7_24h": 73,  "gt24h": 1488}}
+  },
+  "por_ponto_ano_pct": {
+    "AGAMENON_DERBY":          {"2021": 0.24, "2022": 0.64, "2023": 0.16, "2024": 0.33, "2025": 0.03, "2026": 0.00},
+    "AV_RECIFE_IBURA":         {"2021": 0.17, "2022": 0.64, "2023": 0.23, "2024": 8.72, "2025": 7.10, "2026": 5.07},
+    "CIN_UFPE":                {"2021": 0.17, "2022": 0.67, "2023": 0.17, "2024": 0.26, "2025": 0.66, "2026": 0.22},
+    "JABOATAO_CENTRO":         {"2021": 0.72, "2022": 0.68, "2023": 0.00, "2024": 0.00, "2025": 0.00, "2026": 0.01},
+    "MASCARENHAS_IMBIRIBEIRA": {"2021": 0.20, "2022": 0.64, "2023": 0.26, "2024": 8.72, "2025": 8.49, "2026": 0.34}
+  },
+  "dependencia_da_chuva": {
+    "referencia": "chuva de reanalise (OPEN_METEO_ARCHIVE) na mesma hora e ponto, ate 2026-11-01",
+    "taxa_lacuna_curta_pct_por_faixa_mm": {"0": 0.361, "(0,1)": 0.412, "[1,5)": 0.352, ">=5": 0.406},
+    "horas_por_faixa": {"0": 120381, "(0,1)": 96054, "[1,5)": 6530, ">=5": 493},
+    "conclusao": "lacuna curta independente da chuva (0,35% a 0,41% em todas as faixas); faixa >= 5 mm com so 2 horas em lacuna",
+    "simular_como": "INDEPENDENTE_DA_CHUVA"
+  },
+  "simultaneidade_horas_lacuna_curta": {"1_ponto": 337, "2_pontos": 36, "3_pontos": 6, "4_pontos": 37, "5_pontos": 56},
+  "lacuna_longa": "meses inteiros sem estacao valida (ate 744 h); so IBURA e MASCARENHAS; em producao vira UNKNOWN, nao previsao com entrada ausente"
+}

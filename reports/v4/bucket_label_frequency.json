@@ -1,0 +1,191 @@
+{
+  "label_tag": "RÓTULO DO MODELO FÍSICO (balde M1a), não alagamento observado",
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "hcrit_mm": 150.0,
+  "parametros_centrais": {
+    "C": 0.86,
+    "iT_mm_h": 60.1,
+    "f": 1.0,
+    "snap_m": 10
+  },
+  "frequencia_real_declarada": {
+    "valor": "cerca de 4 por ano",
+    "calculo": "18 dias com alagamento registrado em 5 anos = 3,6 por ano",
+    "fonte": "CKAN Recife, 2021-05-13 a 2024-06-25 (reports/dataset_summary.json; projeto-mapi-api/docs/REVISAO-INGESTAO-2026-11.md)",
+    "ressalva": "é a cidade inteira, não um ponto; nenhum registro tem hora; a 500 m dos pontos há 0 registros"
+  },
+  "faixa_f": "PARAMETROS-MODELO-FISICO.md, capacidade da galeria [sem fonte]",
+  "frequencia_por_f": {
+    "f=1.0": {
+      "AGAMENON_DERBY": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 0.0,
+        "anos": 5.07,
+        "horas_sem_rotulo_pct": 0.54
+      },
+      "AV_RECIFE_IBURA": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 0.0,
+        "anos": 4.85,
+        "horas_sem_rotulo_pct": 4.97
+      },
+      "CIN_UFPE": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 0.0,
+        "anos": 5.04,
+        "horas_sem_rotulo_pct": 1.26
+      },
+      "MASCARENHAS_IMBIRIBEIRA": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 60.1,
+        "anos": 4.9,
+        "horas_sem_rotulo_pct": 4.01
+      }
+    },
+    "f=0.8": {
+      "AGAMENON_DERBY": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 0.0,
+        "anos": 5.07,
+        "horas_sem_rotulo_pct": 0.54
+      },
+      "AV_RECIFE_IBURA": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 94.3,
+        "anos": 4.85,
+        "horas_sem_rotulo_pct": 4.97
+      },
+      "CIN_UFPE": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 140.3,
+        "anos": 5.04,
+        "horas_sem_rotulo_pct": 1.26
+      },
+      "MASCARENHAS_IMBIRIBEIRA": {
+        "horas_positivas": 1,
+        "eventos": 1,
+        "eventos_por_ano": 0.2,
+        "lamina_maxima_mm": 238.7,
+        "anos": 4.9,
+        "horas_sem_rotulo_pct": 4.01
+      }
+    },
+    "f=0.6": {
+      "AGAMENON_DERBY": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 42.0,
+        "anos": 5.07,
+        "horas_sem_rotulo_pct": 0.54
+      },
+      "AV_RECIFE_IBURA": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 139.0,
+        "anos": 4.85,
+        "horas_sem_rotulo_pct": 4.97
+      },
+      "CIN_UFPE": {
+        "horas_positivas": 9,
+        "eventos": 7,
+        "eventos_por_ano": 1.39,
+        "lamina_maxima_mm": 565.7,
+        "anos": 5.04,
+        "horas_sem_rotulo_pct": 1.26
+      },
+      "MASCARENHAS_IMBIRIBEIRA": {
+        "horas_positivas": 3,
+        "eventos": 2,
+        "eventos_por_ano": 0.41,
+        "lamina_maxima_mm": 351.9,
+        "anos": 4.9,
+        "horas_sem_rotulo_pct": 4.01
+      }
+    },
+    "f=0.4": {
+      "AGAMENON_DERBY": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 74.3,
+        "anos": 5.07,
+        "horas_sem_rotulo_pct": 0.54
+      },
+      "AV_RECIFE_IBURA": {
+        "horas_positivas": 4,
+        "eventos": 2,
+        "eventos_por_ano": 0.41,
+        "lamina_maxima_mm": 187.3,
+        "anos": 4.85,
+        "horas_sem_rotulo_pct": 4.97
+      },
+      "CIN_UFPE": {
+        "horas_positivas": 57,
+        "eventos": 31,
+        "eventos_por_ano": 6.16,
+        "lamina_maxima_mm": 811.7,
+        "anos": 5.04,
+        "horas_sem_rotulo_pct": 1.26
+      },
+      "MASCARENHAS_IMBIRIBEIRA": {
+        "horas_positivas": 23,
+        "eventos": 18,
+        "eventos_por_ano": 3.68,
+        "lamina_maxima_mm": 483.1,
+        "anos": 4.9,
+        "horas_sem_rotulo_pct": 4.01
+      }
+    },
+    "f=0.2": {
+      "AGAMENON_DERBY": {
+        "horas_positivas": 0,
+        "eventos": 0,
+        "eventos_por_ano": 0.0,
+        "lamina_maxima_mm": 103.4,
+        "anos": 5.07,
+        "horas_sem_rotulo_pct": 0.54
+      },
+      "AV_RECIFE_IBURA": {
+        "horas_positivas": 65,
+        "eventos": 15,
+        "eventos_por_ano": 3.09,
+        "lamina_maxima_mm": 279.3,
+        "anos": 4.85,
+        "horas_sem_rotulo_pct": 4.97
+      },
+      "CIN_UFPE": {
+        "horas_positivas": 434,
+        "eventos": 138,
+        "eventos_por_ano": 27.4,
+        "lamina_maxima_mm": 1025.7,
+        "anos": 5.04,
+        "horas_sem_rotulo_pct": 1.26
+      },
+      "MASCARENHAS_IMBIRIBEIRA": {
+        "horas_positivas": 223,
+        "eventos": 68,
+        "eventos_por_ano": 13.89,
+        "lamina_maxima_mm": 668.8,
+        "anos": 4.9,
+        "horas_sem_rotulo_pct": 4.01
+      }
+    }
+  },
+  "nota": "Nenhum parâmetro do balde foi ajustado para acertar a frequência. A diferença fica registrada."
+}

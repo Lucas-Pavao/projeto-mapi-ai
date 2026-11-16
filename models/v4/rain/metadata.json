@@ -1,0 +1,474 @@
+{
+  "model_version": "rain_v1",
+  "target": "MEASURED",
+  "training_data": "MEASURED",
+  "target_note": "chuva medida do ponto (maior acumulado entre as estações válidas a até 5 km), em (t, t+H]",
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "horizons_h": [
+    1,
+    3,
+    6
+  ],
+  "quantiles": [
+    0.5,
+    0.8,
+    0.95
+  ],
+  "thresholds_mm_h": {
+    "MEDIA": 5.03,
+    "FORTE": 25.15
+  },
+  "selection_criterion": "por horizonte: menor erro de quantil (pinball médio de 50%, 80% e 95%) na validação; fica o modelo mais simples cuja diferença para o melhor tem IC 95% contendo zero (bootstrap pareado por bloco de dia, 1000 reamostras)",
+  "alert_rule": "limiar de probabilidade com o maior CSI por linha na validação",
+  "split": {
+    "train_end": "2024-07-03 14:00:00+00:00",
+    "valid_end": "2025-07-31 00:00:00+00:00",
+    "guard_h": 6,
+    "data_start": "2021-09-01 06:00:00+00:00",
+    "data_end": "2026-10-31 00:00:00+00:00"
+  },
+  "train": {
+    "train_rows": 248662,
+    "train_from": "2021-09-01 06:00:00+00:00",
+    "train_to": "2024-07-03 08:00:00+00:00",
+    "best_iteration": {
+      "gb_rede": {
+        "q_1h": 231,
+        "MEDIA_1h": 89,
+        "FORTE_1h": 133,
+        "q_3h": 191,
+        "MEDIA_3h": 69,
+        "FORTE_3h": 57,
+        "q_6h": 133,
+        "MEDIA_6h": 111,
+        "FORTE_6h": 25
+      },
+      "gb_rede_om": {
+        "q_1h": 246,
+        "MEDIA_1h": 90,
+        "FORTE_1h": 133,
+        "q_3h": 117,
+        "MEDIA_3h": 67,
+        "FORTE_3h": 47,
+        "q_6h": 91,
+        "MEDIA_6h": 70,
+        "FORTE_6h": 43
+      }
+    }
+  },
+  "seed": 42,
+  "xgb_params": {
+    "n_estimators": 400,
+    "learning_rate": 0.05,
+    "max_depth": 5,
+    "min_child_weight": 20,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "tree_method": "hist",
+    "random_state": 42,
+    "n_jobs": 8,
+    "early_stopping_rounds": 30
+  },
+  "data_sha256": {
+    "ped_10min.csv.gz": "a73d56aadb3b8ae94e6c6364c42d83f2dd1fc2dee65b3ccae8f41f23cb47b2a1",
+    "ped_stations.csv": "969f946fd4603561f46a01d657b54e6290445d9cae76fd3b34b0b979fa2e7e26",
+    "open_meteo_forecast_prev.csv.gz": "3b89863e100be4f9a117e10a248a8daa3437b041553d00d883bfa5c26e1c47f3",
+    "open_meteo_forecast_hist.csv.gz": "63149a979229ea182fe64c8cf0a245554223254fa6d35f42c9204adef103e69e"
+  },
+  "open_meteo": "rodada da véspera (previous-runs-api, precipitation_previous_day1): emitida pelo menos 24 h antes da hora prevista",
+  "versions": {
+    "xgboost": "3.2.0",
+    "scikit-learn": "1.9.0",
+    "pandas": "3.0.3"
+  },
+  "code_commit": "4ff6ca1e2fb9fb44e2e215a80294c4f976b1718a",
+  "horizons": {
+    "1h": {
+      "model": "gb_rede",
+      "artifact": "models/v4/rain/gb_rede.joblib",
+      "features": [
+        "p_10",
+        "p_30",
+        "p_60",
+        "p_180",
+        "p_trend",
+        "N_max_30",
+        "N_max_60",
+        "N_frac_wet_60",
+        "N_min_since_onset",
+        "S_max_30",
+        "S_max_60",
+        "S_frac_wet_60",
+        "S_min_since_onset",
+        "L_max_30",
+        "L_max_60",
+        "L_frac_wet_60",
+        "L_min_since_onset",
+        "O_max_30",
+        "O_max_60",
+        "O_frac_wet_60",
+        "O_min_since_onset",
+        "r5_15_max_60",
+        "r5_15_mean_60",
+        "r5_15_frac_wet_60",
+        "r15_40_max_60",
+        "r15_40_mean_60",
+        "r15_40_frac_wet_60",
+        "net_valid_frac",
+        "n_near_valid",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos"
+      ],
+      "validation": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 0.24689926506282955,
+          "diff_para_o_melhor": 0.09445298751298242,
+          "ic95": [
+            0.07469046083075195,
+            0.11679430153248857
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.18426869383163377,
+          "diff_para_o_melhor": 0.03182241628178668,
+          "ic95": [
+            0.02539697935396005,
+            0.0397349805799829
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.23859809057423367,
+          "diff_para_o_melhor": 0.08615181302438658,
+          "ic95": [
+            0.06700019623647484,
+            0.10888311849662759
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.15244627754984713,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.15252556369466672,
+          "diff_para_o_melhor": 7.928614481962343e-05,
+          "ic95": [
+            -0.0005604069461136754,
+            0.0006862238360154724
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "alert_threshold_FORTE": 0.10546652576991118,
+      "test": {
+        "pinball": 0.14376838183751234,
+        "coverage": {
+          "q50": 0.8364821737941096,
+          "q80": 0.8967478192152214,
+          "q95": 0.9637397039603659
+        },
+        "FORTE": {
+          "precisao": 0.14912280701754385,
+          "recall": 0.3128834355828221,
+          "csi": 0.11233480176211454,
+          "acertos": 51,
+          "perdidos": 112,
+          "falsos": 291
+        },
+        "lead": {
+          "eventos": 28,
+          "detectados": 20,
+          "detectados_pct": 71.42857142857143,
+          "antecedencia_mediana_min": 20.0,
+          "antecedencia_ic95": [
+            10.0,
+            40.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 50.0,
+          "antecedencia_mediana_dos_detectados_min": 40.0,
+          "avisados_ainda_sem_chuva_pct": 0.0,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -370.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 85,
+          "falsos_por_evento": 3.0357142857142856,
+          "horas_de_aviso_por_ponto_ano": 9.11140760101509
+        }
+      }
+    },
+    "3h": {
+      "model": "gb_rede_om",
+      "artifact": "models/v4/rain/gb_rede_om.joblib",
+      "features": [
+        "p_10",
+        "p_30",
+        "p_60",
+        "p_180",
+        "p_trend",
+        "N_max_30",
+        "N_max_60",
+        "N_frac_wet_60",
+        "N_min_since_onset",
+        "S_max_30",
+        "S_max_60",
+        "S_frac_wet_60",
+        "S_min_since_onset",
+        "L_max_30",
+        "L_max_60",
+        "L_frac_wet_60",
+        "L_min_since_onset",
+        "O_max_30",
+        "O_max_60",
+        "O_frac_wet_60",
+        "O_min_since_onset",
+        "r5_15_max_60",
+        "r5_15_mean_60",
+        "r5_15_frac_wet_60",
+        "r15_40_max_60",
+        "r15_40_mean_60",
+        "r15_40_frac_wet_60",
+        "net_valid_frac",
+        "n_near_valid",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos",
+        "om_1h",
+        "om_3h",
+        "om_6h"
+      ],
+      "validation": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 0.6048441110119046,
+          "diff_para_o_melhor": 0.20135413956530404,
+          "ic95": [
+            0.15522799805848767,
+            0.2575960983720223
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.4845214839657338,
+          "diff_para_o_melhor": 0.08103151251913324,
+          "ic95": [
+            0.066281768261063,
+            0.1004531523169836
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.5728263109063878,
+          "diff_para_o_melhor": 0.16933633945978732,
+          "ic95": [
+            0.12939915980412883,
+            0.2165790496095348
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.41417537762676376,
+          "diff_para_o_melhor": 0.010685406180163197,
+          "ic95": [
+            0.0046466290711862646,
+            0.016214874847363687
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.40348997144660054,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "alert_threshold_FORTE": 0.09341421391963936,
+      "test": {
+        "pinball": 0.3805531839231556,
+        "coverage": {
+          "q50": 0.7514931020962697,
+          "q80": 0.8809469534638449,
+          "q95": 0.9712534155185357
+        },
+        "FORTE": {
+          "precisao": 0.19865642994241842,
+          "recall": 0.391304347826087,
+          "csi": 0.15175953079178886,
+          "acertos": 207,
+          "perdidos": 322,
+          "falsos": 835
+        },
+        "lead": {
+          "eventos": 28,
+          "detectados": 21,
+          "detectados_pct": 75.0,
+          "antecedencia_mediana_min": 40.0,
+          "antecedencia_ic95": [
+            20.0,
+            140.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 180.0,
+          "antecedencia_mediana_dos_detectados_min": 130.0,
+          "avisados_ainda_sem_chuva_pct": 3.571428571428571,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -250.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 118,
+          "falsos_por_evento": 4.214285714285714,
+          "horas_de_aviso_por_ponto_ano": 27.760487486133695
+        }
+      }
+    },
+    "6h": {
+      "model": "gb_rede_om",
+      "artifact": "models/v4/rain/gb_rede_om.joblib",
+      "features": [
+        "p_10",
+        "p_30",
+        "p_60",
+        "p_180",
+        "p_trend",
+        "N_max_30",
+        "N_max_60",
+        "N_frac_wet_60",
+        "N_min_since_onset",
+        "S_max_30",
+        "S_max_60",
+        "S_frac_wet_60",
+        "S_min_since_onset",
+        "L_max_30",
+        "L_max_60",
+        "L_frac_wet_60",
+        "L_min_since_onset",
+        "O_max_30",
+        "O_max_60",
+        "O_frac_wet_60",
+        "O_min_since_onset",
+        "r5_15_max_60",
+        "r5_15_mean_60",
+        "r5_15_frac_wet_60",
+        "r15_40_max_60",
+        "r15_40_mean_60",
+        "r15_40_frac_wet_60",
+        "net_valid_frac",
+        "n_near_valid",
+        "hour_sin",
+        "hour_cos",
+        "month_sin",
+        "month_cos",
+        "om_1h",
+        "om_3h",
+        "om_6h"
+      ],
+      "validation": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 1.0509789030312697,
+          "diff_para_o_melhor": 0.29592226802448957,
+          "ic95": [
+            0.2318215748634127,
+            0.3836360073089564
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.8977419882227129,
+          "diff_para_o_melhor": 0.14268535321593254,
+          "ic95": [
+            0.11757522745796803,
+            0.171109328722821
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.9779726499101441,
+          "diff_para_o_melhor": 0.22291601490336374,
+          "ic95": [
+            0.171863718634642,
+            0.2880144844163366
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.7895958593816303,
+          "diff_para_o_melhor": 0.034539224374850165,
+          "ic95": [
+            0.019877575419255514,
+            0.048780890774517714
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.7550566350067802,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "alert_threshold_FORTE": 0.07263753038495933,
+      "test": {
+        "pinball": 0.7253310339944288,
+        "coverage": {
+          "q50": 0.6847813201944091,
+          "q80": 0.8860597513047231,
+          "q95": 0.9698842238683028
+        },
+        "FORTE": {
+          "precisao": 0.15258855585831063,
+          "recall": 0.37947725072604066,
+          "csi": 0.1221183800623053,
+          "acertos": 392,
+          "perdidos": 641,
+          "falsos": 2177
+        },
+        "lead": {
+          "eventos": 28,
+          "detectados": 24,
+          "detectados_pct": 85.71428571428571,
+          "antecedencia_mediana_min": 195.0,
+          "antecedencia_ic95": [
+            40.0,
+            310.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 360.0,
+          "antecedencia_mediana_dos_detectados_min": 235.0,
+          "avisados_ainda_sem_chuva_pct": 7.142857142857142,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -125.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 10.714285714285714,
+          "episodios_falsos": 320,
+          "falsos_por_evento": 11.428571428571429,
+          "horas_de_aviso_por_ponto_ano": 68.44212317838529
+        }
+      }
+    }
+  }
+}

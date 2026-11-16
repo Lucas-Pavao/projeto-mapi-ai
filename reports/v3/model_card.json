@@ -1,0 +1,260 @@
+{
+  "modelVersion": "logreg_v3",
+  "model": "logistica",
+  "horizonHours": 6,
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "trainingData": "SYNTHETIC",
+  "rainSource": "MEASURED",
+  "features": [
+    "rain_0_1h",
+    "rain_1_3h",
+    "rain_3_6h",
+    "rain_6_12h",
+    "rain_12_24h",
+    "tide_level",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos"
+  ],
+  "removedFromV2": [
+    "latitude",
+    "longitude"
+  ],
+  "selectionCriterion": "maior PR-AUC na validação (amostra, horizonte principal); empate = IC 95% do bootstrap pareado da diferença para o melhor contém zero; no empate fica o mais simples (regra < logística < árvore < XGBoost)",
+  "thresholds": {
+    "medium": 0.049075492517698424,
+    "high": 0.9279128325223347,
+    "rule": "menor limiar com dias de alerta por ponto por ano <= orçamento ({'medium': 50, 'high': 10}), na série contínua da validação",
+    "probability": "servida (calibrada e corrigida por prevalência)"
+  },
+  "calibration": {
+    "adopted": true,
+    "check": {
+      "raw": {
+        "ece": 0.2154056180974098,
+        "brier": 0.1590613979018299
+      },
+      "calibrated": {
+        "ece": 0.04659629078176995,
+        "brier": 0.11092441978736886
+      }
+    }
+  },
+  "prior": {
+    "piReal": 0.0034640657084188914,
+    "piSint": 0.16804979253112035,
+    "source": "parâmetro declarado (mapi_ai/v3/config.py): ~0,1% das horas, 18 dias com alagamento em 5 anos; duração por dia [sem fonte]"
+  },
+  "prevalenceContinuous": {
+    "h0": 0.032966200769605776,
+    "h3": 0.0864362897996469,
+    "h6": 0.13069572173024038
+  },
+  "horizons": [
+    {
+      "hours": 0,
+      "model": "logistica",
+      "validation": {
+        "regra_chuva3h": 0.7253286624092968,
+        "logistica": 0.7898328700061163,
+        "arvore_rasa": 0.6258758490613523,
+        "xgboost": 0.770799013425424
+      },
+      "test": {
+        "pr_auc": 0.6773547682848764,
+        "roc_auc": 0.8726003490401395,
+        "brier": 0.047062440209223955,
+        "bss": 0.20540574350409035,
+        "ece": 0.08919129759293597
+      },
+      "testComplete": {
+        "pr_auc": 0.72685497610581,
+        "roc_auc": 0.9111443530291697,
+        "brier": 0.04502814407701114,
+        "bss": 0.2397524542883589,
+        "ece": 0.09583018510441686
+      },
+      "testCalibrated": {
+        "pr_auc": 0.6773547682848764,
+        "roc_auc": 0.8726003490401395,
+        "brier": 0.03138094185509384,
+        "bss": 0.47016950139779345,
+        "ece": 0.01534595349276642
+      },
+      "events": {
+        "medium": {
+          "alertDaysPerPointYear": 47.744304007982706,
+          "eventRecall": 0.29642248722316866,
+          "rainEventRecall": 0.45910290237467016,
+          "leadMedianH": 0.0,
+          "leadP10H": 0.0,
+          "falseAlertsPerEvent": 0.12265758091993186
+        },
+        "high": {
+          "alertDaysPerPointYear": 9.111508398469981,
+          "eventRecall": 0.08347529812606473,
+          "rainEventRecall": 0.12928759894459102,
+          "leadMedianH": 0.0,
+          "leadP10H": 0.0,
+          "falseAlertsPerEvent": 0.0
+        }
+      }
+    },
+    {
+      "hours": 3,
+      "model": "logistica",
+      "validation": {
+        "regra_chuva3h": 0.6540063899196094,
+        "logistica": 0.7287486697755694,
+        "arvore_rasa": 0.549868178899504,
+        "xgboost": 0.7197048921424967
+      },
+      "test": {
+        "pr_auc": 0.6329776163328134,
+        "roc_auc": 0.8077602397602397,
+        "brier": 0.10684262518812779,
+        "bss": 0.14215802145330658,
+        "ece": 0.15496196594909262
+      },
+      "testComplete": {
+        "pr_auc": 0.6572345221162732,
+        "roc_auc": 0.8218301698301698,
+        "brier": 0.10366980730755015,
+        "bss": 0.1676326516718224,
+        "ece": 0.1555577284500619
+      },
+      "testCalibrated": {
+        "pr_auc": 0.6329776163328134,
+        "roc_auc": 0.8077602397602397,
+        "brier": 0.08039185149519963,
+        "bss": 0.35453191248115146,
+        "ece": 0.037614452164430726
+      },
+      "events": {
+        "medium": {
+          "alertDaysPerPointYear": 50.2955263595543,
+          "eventRecall": 0.32367972742759793,
+          "rainEventRecall": 0.5013192612137203,
+          "leadMedianH": 0.0,
+          "leadP10H": 0.0,
+          "falseAlertsPerEvent": 0.10902896081771721
+        },
+        "high": {
+          "alertDaysPerPointYear": 9.111508398469981,
+          "eventRecall": 0.08347529812606473,
+          "rainEventRecall": 0.12928759894459102,
+          "leadMedianH": 0.0,
+          "leadP10H": 0.0,
+          "falseAlertsPerEvent": 0.0
+        }
+      }
+    },
+    {
+      "hours": 6,
+      "model": "logistica",
+      "validation": {
+        "regra_chuva3h": 0.6013909751410123,
+        "logistica": 0.6721562206115267,
+        "arvore_rasa": 0.5408737949075929,
+        "xgboost": 0.6653628166491259
+      },
+      "test": {
+        "pr_auc": 0.6508370836061064,
+        "roc_auc": 0.8164867218375685,
+        "brier": 0.13106897713011276,
+        "bss": 0.19701963935807298,
+        "ece": 0.14497772334381656
+      },
+      "testComplete": {
+        "pr_auc": 0.6574718457444236,
+        "roc_auc": 0.8169769268711522,
+        "brier": 0.130603964877447,
+        "bss": 0.1998684882201328,
+        "ece": 0.14665499836659343
+      },
+      "testCalibrated": {
+        "pr_auc": 0.6508370836061064,
+        "roc_auc": 0.8164867218375685,
+        "brier": 0.10970438493758555,
+        "bss": 0.32790757576649554,
+        "ece": 0.022200205080017778
+      },
+      "events": {
+        "medium": {
+          "alertDaysPerPointYear": 49.9310660236155,
+          "eventRecall": 0.3321976149914821,
+          "rainEventRecall": 0.5118733509234829,
+          "leadMedianH": 0.0,
+          "leadP10H": 0.0,
+          "falseAlertsPerEvent": 0.09880749574105621
+        },
+        "high": {
+          "alertDaysPerPointYear": 8.929278230500582,
+          "eventRecall": 0.0817717206132879,
+          "rainEventRecall": 0.1266490765171504,
+          "leadMedianH": 0.0,
+          "leadP10H": 0.0,
+          "falseAlertsPerEvent": 0.0
+        }
+      }
+    }
+  ],
+  "explanations": {
+    "h0_acumulados_aninhados": {
+      "jaccard": 0.7704761904761903,
+      "spearman": 0.7689696969696969,
+      "limeStability": 0.7990634920634919,
+      "deletionShap": 0.045802590735923694,
+      "deletionRandom": 0.011711779273624504,
+      "formulaRecovery": 0.8739695897586163
+    },
+    "h0_janelas_disjuntas": {
+      "jaccard": 0.6249999999999999,
+      "spearman": 0.6829090909090908,
+      "limeStability": 0.7503809523809523,
+      "deletionShap": 0.0506179712565211,
+      "deletionRandom": 0.0114848887788516,
+      "formulaRecovery": 0.5252565355638068
+    },
+    "h6_acumulados_aninhados": {
+      "jaccard": 0.8390476190476189,
+      "spearman": 0.8130909090909089,
+      "limeStability": 0.8876613756613755,
+      "deletionShap": 0.01463933807970586,
+      "deletionRandom": 0.007767595768516422,
+      "formulaRecovery": null
+    },
+    "h6_janelas_disjuntas": {
+      "jaccard": 0.6971428571428571,
+      "spearman": 0.7391515151515151,
+      "limeStability": 0.8670899470899469,
+      "deletionShap": 0.027787083814914654,
+      "deletionRandom": 0.008843387791149711,
+      "formulaRecovery": null
+    }
+  },
+  "physical": {
+    "fisico_base": {
+      "testPrAuc": 0.6470665331317096,
+      "soilAbsentPrAuc": null
+    },
+    "fisico": {
+      "testPrAuc": 0.6423054732407578,
+      "soilAbsentPrAuc": 0.644753386747631
+    },
+    "fisico_sem_solo": {
+      "testPrAuc": 0.6472915529750116,
+      "soilAbsentPrAuc": null
+    }
+  },
+  "sources": {
+    "models/v3/metadata.json": "3b97f0d871039a8492c59f666ab87ff1cdc82e0d54a615ed40b32c2adbfa9d6e",
+    "reports/v3/metrics.csv": "5d8b3da8742dbcb578253fb7ce26962d30b3ba0ae2e80e0cd2f330843c449657",
+    "reports/v3/evaluation.json": "f83cb98640fdee175da3bb7f684dd6c7d3aaf589774ce0f5789f48e2a60c4851",
+    "reports/v3/explanation_eval.json": "7c0a5ba4f263b7c1591e217232b4a5a85ace3f16f07a40fce248fc8cd846229e",
+    "reports/v3/physical_comparison.json": "da9f65030f306f7902d1dbdec328f0c76d881535c9f01b7ac359ab3de6e415c7",
+    "reports/v3/dataset_summary.json": "9ec6a4c2bc1bad7b73c799ce9a48364c6aa9bc6500a0f458e87bab42aea74823"
+  },
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
+}

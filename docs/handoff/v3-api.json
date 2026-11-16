@@ -1,0 +1,57 @@
+{
+  "bloco": "A (projeto-mapi-api)", "data": "2026-11-16", "branch": "feat/modelo-v3",
+  "adr": ["0007 emenda 3", "0022 nota de 2026-11-16", "0021 emenda de 2026-11-16 (carga horária da PED)"],
+  "montagem_da_previsao": {
+    "servico": "PointRainInputService",
+    "regra": "por hora, o maior valor entre as estações PED válidas a até 5 km (chuva-ponto-v4); valor da hora = PED, senão a coleta ao vivo da mesma estação física; pico isolado fora; estação FAIL/OFFLINE no mês fora",
+    "acumulado": "janela de N h com qualquer hora sem valor é ausente (igual a point_rain_accum_v)",
+    "hora_de_referencia": "última hora fechada; se ainda sem valor e o fim da hora foi há menos de 30 min, recua uma hora",
+    "ausente": "vai como null no pedido; o id entra em imputedFeatures; nunca zero",
+    "campos_do_pedido": {
+      "current_rainfall": "mm, chuva da hora de referência", "rainfall_3h_accumulated": "mm", "rainfall_6h_accumulated": "mm",
+      "rainfall_12h_accumulated": "mm", "rainfall_24h_accumulated": "mm", "rain_hour_end_utc": "ISO-8601, fim da hora de referência (novo)",
+      "tide_level": "m (NR DHN); ainda imputado 0.0 declarado quando ausente", "river_level": "m; legado, idem"
+    },
+    "verificacao": "PointRainInputRealDayIntegrationTest: dia real 2026-10-28, 600 valores batem com point_rain_accum_v"
+  },
+  "divergencia_ped_ao_vivo": {
+    "janela": "2026-11-08T01:00Z a 2026-11-16T10:00Z", "horas_estacao_comparadas": 1640, "estacoes": 23, "divergentes_gt_0_5mm": 0, "pct": 0.0,
+    "ressalva": "semana seca: 4 horas com chuva, 0,8 mm no total; repetir depois de um evento de chuva"
+  },
+  "regra_de_degradacao": {
+    "atual": "current_rainfall ausente E rainfall_3h_accumulated ausente => UNKNOWN (INSUFFICIENT_DATA) sem consultar o modelo",
+    "observacao": "o acumulado de 3 h contém a hora de referência; na prática a regra é 'hora de referência ausente'",
+    "transicao": "o xgb_v2 recusa chuva nula (422 de validação): com chuva ausente o backend devolve INSUFFICIENT_DATA; o v3 deve aceitar null nas entradas de chuva",
+    "a_decidir_na_B2": "se o modelo treinado com lacunas prevê bem sem a hora atual, a regra pode afrouxar; registrar no ADR 0007 emenda 3"
+  },
+  "fallback_reanalise": {"padrao": "desligado", "propriedade": "mapi.ingestion.prediction-rain.reanalysis-fallback-enabled", "rain_source_quando_ligado": "REANALYSIS_FALLBACK"},
+  "lacunas": "docs/handoff/v3-lacunas.json (documento: docs/extratos/lacunas-chuva-ponto.md); lacuna curta INDEPENDENTE da chuva; taxas por ponto de 0,18% a 0,78% das horas em lacunas <= 24 h",
+  "entradas_novas": {
+    "view": "point_physical_inputs_v (V27), grade hour_end_utc, ao lado de point_rain_accum_v",
+    "rain_max_10min_mm": {"unidade": "mm", "origem": "blocos de 10 min da PED, mesma estação do valor horário",
+      "ausencia": "NULL se algum bloco > 10 min tem chuva; bloco longo com 0 mm vale 0",
+      "cobertura_pct_por_faixa_de_chuva_da_hora": {"0": 100.0, "(0,1)": 19.9, "[1,5)": 28.4, "[5,10)": 42.7, ">=10": 59.6},
+      "alerta": "a ausência DEPENDE da chuva (falta mais quando chove): simular assim na B5",
+      "desvio_do_pedido": "o pedido dizia ausente se a hora veio de bloco de 60 min; hora seca (bloco de 60 min com 0 mm) foi tratada como pico 0, senão a entrada faltaria em 97% das horas"},
+    "tide_trend_m_h": {"unidade": "m/h", "origem": "TIDE_PE02_HOURLY", "regra": "nível na hora menos o da hora anterior; positivo = enchendo", "cobertura": "2021-10-01 a 2026-11-14"},
+    "river_level_m": {"unidade": "m", "origem": "régua do Duas Unas (APAC-RIO-260790119H)", "vale_para": ["JABOATAO_CENTRO"],
+      "alerta": "série só desde 2026-11-09 (12 leituras): NÃO há histórico para treino nem para o gerador sintético"},
+    "soil_moisture": {"unidade": "m3/m3", "origem": "ERA5-Land 0-7 cm (REANÁLISE)", "regra": "valor da hora anterior", "cobertura": "2021-01-01 a 2026-11-01",
+      "alerta": "chega com ~2 semanas de atraso: AUSENTE na previsão ao vivo"},
+    "campos_do_pedido": ["rain_max_10min_mm", "tide_trend_m_h", "river_level_m", "soil_moisture"],
+    "quem_declara_ausencia": "chuva: o backend (imputedFeatures); entradas físicas: a IA declara em imputed_features as que usa e recebeu null"
+  },
+  "contrato_resposta_por_adicao": {
+    "rainSource": "passa a dizer a chuva que ENTROU na previsão: MEASURED | REANALYSIS_FALLBACK",
+    "rainInput": "{source, hourEndUtc, latestReadingUtc, ageMinutes, validStations, values[{featureId, valueMm (null = ausente), hours, hoursWithValue, stations[{stationId, name, source}]}]}",
+    "persistencia": "flood_predictions.model_info (jsonb), sem migração"
+  },
+  "geocodificacao": {"cache": "geocode_cache (V28)", "documento": "docs/extratos/geocodificacao-ocorrencias.md",
+    "casamento_ponto_dia": {"500m": 0, "1km": 6, "2km": 45, "3km": 54},
+    "pendencia": "dump de 2026-10-10 não está mais em MAPI/snapshots; coordenadas daquele snapshot não recuperadas"},
+  "o_que_a_ia_precisa_fazer": [
+    "aceitar null nas cinco entradas de chuva e nas quatro físicas (hoje current_rainfall etc. são float obrigatório)",
+    "devolver horizon_hours (ADR 0007 exige; hoje vem nulo e a tela omite 'válida até')",
+    "declarar em imputed_features as entradas do modelo que chegaram null"
+  ]
+}

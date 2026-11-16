@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 from datetime import datetime
 from contextlib import asynccontextmanager
-from typing import Optional
+from typing import List, Optional
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.exception_handlers import request_validation_exception_handler
@@ -49,6 +49,29 @@ try:
 except Exception as e:
     v2_model, v2_calibrator, metadata = None, None, None
     print(f"Warning: artefato v2 ilegível ({e}); tentando o legado.")
+
+# v3 (models/v3/metadata.json avaliado): logística com alvo de 6 h, lacunas e janelas disjuntas. É o modelo servido
+# quando existe, a menos que MAPI_MODEL_GENERATION=v2. O v2 continua carregado (comparação e volta rápida).
+v3_model = None
+if os.getenv("MAPI_MODEL_GENERATION", "v3").lower() == "v3":
+    try:
+        from mapi_ai.v3.serve import V3Model
+        v3_model = V3Model()
+        print(f"Modelo {v3_model.meta['model_version']} carregado (horizonte {v3_model.horizon} h, "
+              f"{v3_model.meta['training_data']}).")
+    except Exception as e:
+        v3_model = None
+        print(f"v3 não carregado ({e}); servindo o v2.")
+
+# Previsão de chuva (models/v4/rain): alvo MEDIDO, sem etiqueta de sintético.
+rain_model = None
+try:
+    from mapi_ai.rain.serve import RainForecaster
+    rain_model = RainForecaster()
+    print(f"Previsão de chuva {rain_model.meta['model_version']} carregada ({rain_model.chosen}).")
+except Exception as e:
+    rain_model = None
+    print(f"previsão de chuva não carregada ({e}).")
 
 try:
     model = joblib.load(MODEL_PATH_XGB)
@@ -101,12 +124,20 @@ class PredictionInput(BaseModel):
     lon: float = None
     latitude: float = None
     longitude: float = None
-    current_rainfall: float
-    rainfall_3h_accumulated: float
-    rainfall_6h_accumulated: float
-    rainfall_12h_accumulated: float
-    rainfall_24h_accumulated: float
-    tide_level: float
+    # v3: chuva ausente é aceita (null = lacuna, nunca zero). O v2 e o legado continuam exigindo os valores e
+    # respondem 422 com missing_features quando faltam.
+    current_rainfall: Optional[float] = None
+    rainfall_3h_accumulated: Optional[float] = None
+    rainfall_6h_accumulated: Optional[float] = None
+    rainfall_12h_accumulated: Optional[float] = None
+    rainfall_24h_accumulated: Optional[float] = None
+    tide_level: Optional[float] = None
+    # Entradas físicas do v3 (projeto-mapi-api, V27), por adição; null = ausente.
+    rain_max_10min_mm: Optional[float] = None
+    tide_trend_m_h: Optional[float] = None
+    river_level_m: Optional[float] = None
+    soil_moisture: Optional[float] = None
+    rain_hour_end_utc: Optional[str] = None
     river_level: Optional[float] = None
     timestamp: str
     
@@ -263,6 +294,12 @@ def v2_probability(X: pd.DataFrame) -> float:
 
 @app.post("/v1/predict/flood")
 def predict_flood(data: PredictionInput):
+    if v3_model is not None:
+        from mapi_ai.v3.serve import MissingRequired
+        try:
+            return v3_model.predict(data.model_dump())
+        except MissingRequired as e:
+            return JSONResponse(status_code=422, content={"detail": str(e), "missing_features": e.missing_features})
     if metadata is not None and v2_model is not None:
         return predict_v2(data)
     if model is None or scaler is None:
@@ -418,10 +455,49 @@ def simulate_bucket(data: BucketInput):
     }
 
 
+class RainReading(BaseModel):
+    station_id: str
+    latitude: float
+    longitude: float
+    ts: datetime = Field(..., description="fim do intervalo da leitura, UTC")
+    mm: Optional[float] = Field(None, description="chuva do intervalo; null = sem valor (nunca zero)")
+
+
+class OpenMeteoHour(BaseModel):
+    hour_end_utc: datetime
+    mm: Optional[float] = None
+
+
+class RainForecastInput(BaseModel):
+    latitude: float
+    longitude: float
+    readings: List[RainReading] = Field(..., description="leituras de 10 min das últimas 6 h, estações a até 40 km")
+    open_meteo: Optional[List[OpenMeteoHour]] = Field(None, description="previsão da rodada da véspera, por hora")
+    issued_at: Optional[datetime] = Field(None, description="instante t da previsão; padrão = a leitura mais recente")
+
+
+@app.post("/v1/forecast/rain")
+def forecast_rain(data: RainForecastInput):
+    """Chuva prevista no ponto em (t, t+1h], (t, t+3h] e (t, t+6h]: quantis e probabilidade de evento MEDIA e FORTE."""
+    if rain_model is None:
+        raise HTTPException(status_code=503, detail="modelo de previsão de chuva não carregado")
+    try:
+        return rain_model.forecast(
+            data.latitude, data.longitude,
+            [{"station_id": r.station_id, "latitude": r.latitude, "longitude": r.longitude, "ts": r.ts, "mm": r.mm} for r in data.readings],
+            [{"hour_end_utc": o.hour_end_utc, "mm": o.mm} for o in data.open_meteo] if data.open_meteo else None,
+            data.issued_at.isoformat() if data.issued_at else None)
+    except MissingFeaturesError as e:
+        return JSONResponse(status_code=422, content={"detail": str(e), "missing_features": e.missing_features})
+
+
 @app.get("/health")
 async def health():
     return {
         "status": "ok", 
+        "model_version": (v3_model.meta["model_version"] if v3_model is not None
+                          else metadata["model_version"] if metadata else "unversioned"),
+        "rain_model_version": rain_model.meta["model_version"] if rain_model is not None else None,
         "xgboost_loaded": model is not None,
         "lstm_loaded": lstm_model is not None
     }
