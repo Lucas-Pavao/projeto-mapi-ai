@@ -27,3 +27,12 @@ Contrato de entrada: `projeto-mapi-api/docs/handoff/etapa0.json`.
 | 2026-11-15 | Contrafactual da DiCE com reparo de coerência (janela longa = máx. das curtas) | a DiCE sorteia janelas independentes e gerava chuva de 1 h > 3 h; o reparo nunca passa do observado |
 | 2026-11-15 | Deleção mede a prob. da CLASSE PREVISTA | com p(alaga) em todas as linhas, as horas secas (onde remover chuva aumenta p) diluíam a curva |
 | 2026-11-15 | Atribuição verdadeira = |termo − média| do logit no teste | é o SHAP exato dos termos lineares da fórmula; o termo maré×chuva vai para a maré |
+
+## Plano de 16/11 (estado geral em `projeto-mapi-api/.claude/mapi/PROGRESSO.md`)
+
+| Fase | Status | Commit | Notas |
+|---|---|---|---|
+| 1.1 v3: notebook, relatório, handoff | concluida | c40a089 | `reports/v3/RELATORIO.md` com os dois resultados negativos; `docs/handoff/v3-ai.json` |
+| 2 Medidas da descoberta | concluida | 4ff6ca1 | `analysis/fase2/` |
+| 3 Previsão de chuva `rain_v1` | concluida | 0aba78a | `reports/v4/rain/RELATORIO.md`; rede em 1 h, rede + Open-Meteo da véspera em 3 h e 6 h; antecedência FORTE 20 min (IC 10–40) |
+| 4 Rótulo do balde e v4 | parcial | 0636f2b | balde central: 0 evento em 5 anos; v4 não treinável; `--sensibilidade` à espera do ok do Lucas |
