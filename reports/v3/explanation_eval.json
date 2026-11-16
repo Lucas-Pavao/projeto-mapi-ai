@@ -1,0 +1,485 @@
+{
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "v2_reference": {
+    "source": "reports/explanation_eval.json (xgb_v2, 12 entradas, H = 0)",
+    "raw": {
+      "tag": "DADOS SINTÉTICOS — experimento controlado",
+      "rows_explained": [
+        41,
+        66,
+        75,
+        77,
+        98,
+        129,
+        150,
+        187,
+        188,
+        192,
+        222,
+        320,
+        352,
+        358,
+        363,
+        401,
+        450,
+        455,
+        456,
+        461,
+        479,
+        482,
+        484,
+        513,
+        532,
+        544,
+        554,
+        555,
+        625,
+        668,
+        670,
+        693,
+        704,
+        717,
+        725,
+        731,
+        735,
+        739,
+        742,
+        745,
+        760,
+        781,
+        794,
+        805,
+        884,
+        899,
+        910,
+        914,
+        917,
+        958
+      ],
+      "n_rows": 50,
+      "positives_among_rows": 3,
+      "table": [
+        {
+          "metrica": "concordancia_jaccard_top5_shap_lime",
+          "media": 0.526,
+          "desvio": 0.1755,
+          "n": 50
+        },
+        {
+          "metrica": "concordancia_spearman_shap_lime",
+          "media": 0.5322,
+          "desvio": 0.2432,
+          "n": 50
+        },
+        {
+          "metrica": "estabilidade_lime_jaccard_top5_10_sementes",
+          "media": 0.6095,
+          "desvio": 0.1042,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_SHAP_k1",
+          "media": 0.1126,
+          "desvio": 0.1487,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_SHAP_k2",
+          "media": 0.1627,
+          "desvio": 0.1677,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_SHAP_k3",
+          "media": 0.1761,
+          "desvio": 0.1726,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_SHAP_k4",
+          "media": 0.1786,
+          "desvio": 0.1752,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_SHAP_k5",
+          "media": 0.1794,
+          "desvio": 0.1732,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_LIME_k1",
+          "media": 0.1044,
+          "desvio": 0.1457,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_LIME_k2",
+          "media": 0.1446,
+          "desvio": 0.1747,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_LIME_k3",
+          "media": 0.1487,
+          "desvio": 0.1768,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_LIME_k4",
+          "media": 0.1489,
+          "desvio": 0.1742,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_LIME_k5",
+          "media": 0.151,
+          "desvio": 0.1765,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_aleatório_k1",
+          "media": 0.0162,
+          "desvio": 0.0238,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_aleatório_k2",
+          "media": 0.0379,
+          "desvio": 0.0551,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_aleatório_k3",
+          "media": 0.0535,
+          "desvio": 0.0718,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_aleatório_k4",
+          "media": 0.0744,
+          "desvio": 0.1001,
+          "n": 50
+        },
+        {
+          "metrica": "delecao_queda_prob_aleatório_k5",
+          "media": 0.0877,
+          "desvio": 0.1152,
+          "n": 50
+        },
+        {
+          "metrica": "planoB_spearman_shap_vs_formula",
+          "media": 0.8404,
+          "desvio": null,
+          "n": 12
+        },
+        {
+          "metrica": "planoB_spearman_lime_vs_formula",
+          "media": 0.803,
+          "desvio": null,
+          "n": 12
+        },
+        {
+          "metrica": "planoB_shap_top4_verdadeiras_de_4",
+          "media": 4,
+          "desvio": null,
+          "n": 4
+        },
+        {
+          "metrica": "planoB_lime_top4_verdadeiras_de_4",
+          "media": 3,
+          "desvio": null,
+          "n": 4
+        }
+      ],
+      "plan_b": {
+        "true_ranking": {
+          "rainfall_3h_accumulated": 0.7242,
+          "rainfall_24h_accumulated": 0.3823,
+          "current_rainfall": 0.2925,
+          "tide_level": 0.0386,
+          "rainfall_12h_accumulated": 0.0,
+          "rainfall_6h_accumulated": 0.0,
+          "hour_sin": 0.0,
+          "hour_cos": 0.0,
+          "month_sin": 0.0,
+          "month_cos": 0.0,
+          "latitude": 0.0,
+          "longitude": 0.0
+        },
+        "shap_global_ranking": {
+          "rainfall_3h_accumulated": 0.09297,
+          "rainfall_24h_accumulated": 0.05293,
+          "current_rainfall": 0.02124,
+          "tide_level": 0.01867,
+          "rainfall_12h_accumulated": 0.01775,
+          "hour_cos": 0.0118,
+          "hour_sin": 0.01118,
+          "rainfall_6h_accumulated": 0.00709,
+          "month_sin": 0.00591,
+          "month_cos": 0.0059,
+          "longitude": 0.00586,
+          "latitude": 0.00534
+        },
+        "lime_global_ranking": {
+          "rainfall_3h_accumulated": 0.22414,
+          "rainfall_24h_accumulated": 0.06377,
+          "current_rainfall": 0.03653,
+          "rainfall_12h_accumulated": 0.01633,
+          "tide_level": 0.01567,
+          "hour_cos": 0.01026,
+          "month_sin": 0.00931,
+          "longitude": 0.0084,
+          "month_cos": 0.0072,
+          "rainfall_6h_accumulated": 0.00718,
+          "latitude": 0.00583,
+          "hour_sin": 0.005
+        },
+        "shap_top4_contains_true": 4,
+        "lime_top4_contains_true": 3,
+        "spearman_shap_vs_truth": 0.8404128189727395,
+        "spearman_lime_vs_truth": 0.802968683473954,
+        "shap_order_of_true_features": [
+          "rainfall_3h_accumulated",
+          "rainfall_24h_accumulated",
+          "current_rainfall",
+          "tide_level"
+        ],
+        "lime_order_of_true_features": [
+          "rainfall_3h_accumulated",
+          "rainfall_24h_accumulated",
+          "current_rainfall",
+          "tide_level"
+        ],
+        "true_features": [
+          "rainfall_3h_accumulated",
+          "rainfall_24h_accumulated",
+          "current_rainfall",
+          "tide_level"
+        ]
+      }
+    }
+  },
+  "v3": {
+    "h0_acumulados_aninhados": {
+      "n_rows": 50,
+      "n_features": 10,
+      "jaccard_top5_shap_lime": 0.7704761904761903,
+      "spearman_shap_lime": 0.7689696969696969,
+      "lime_stability_10_seeds": 0.7990634920634919,
+      "deletion_k1": {
+        "SHAP": 0.045802590735923694,
+        "LIME": 0.03345076545222552,
+        "aleatório": 0.011711779273624504
+      },
+      "deletion_curve": {
+        "SHAP": [
+          0.045802590735923694,
+          0.0932882026278649,
+          0.11666638141934962,
+          0.126859957480425,
+          0.12563731797822744
+        ],
+        "LIME": [
+          0.03345076545222552,
+          0.07957691597329228,
+          0.11037600767631954,
+          0.11798175065418301,
+          0.12254233142623122
+        ],
+        "aleatório": [
+          0.011711779273624504,
+          0.031468793001789036,
+          0.03898094511234055,
+          0.050725128418262135,
+          0.06417821419780773
+        ]
+      },
+      "shap_global": {
+        "rainfall_3h_accumulated": 0.7507,
+        "current_rainfall": 0.3823,
+        "rainfall_24h_accumulated": 0.3398,
+        "tide_level": 0.2509,
+        "month_cos": 0.1621,
+        "hour_cos": 0.1415,
+        "hour_sin": 0.1008,
+        "month_sin": 0.0766,
+        "rainfall_6h_accumulated": 0.0255,
+        "rainfall_12h_accumulated": 0.0005
+      },
+      "formula_recovery": {
+        "true_attribution": {
+          "rainfall_3h_accumulated": 0.6423,
+          "rainfall_24h_accumulated": 0.3271,
+          "current_rainfall": 0.2368,
+          "tide_level": 0.0096,
+          "rainfall_12h_accumulated": 0.0,
+          "rainfall_6h_accumulated": 0.0,
+          "hour_sin": 0.0,
+          "hour_cos": 0.0,
+          "month_sin": 0.0,
+          "month_cos": 0.0
+        },
+        "spearman_shap_vs_truth": 0.8739695897586163,
+        "spearman_lime_vs_truth": 0.8739695897586163
+      }
+    },
+    "h0_janelas_disjuntas": {
+      "n_rows": 50,
+      "n_features": 10,
+      "jaccard_top5_shap_lime": 0.6249999999999999,
+      "spearman_shap_lime": 0.6829090909090908,
+      "lime_stability_10_seeds": 0.7503809523809523,
+      "deletion_k1": {
+        "SHAP": 0.0506179712565211,
+        "LIME": 0.034589075304654944,
+        "aleatório": 0.0114848887788516
+      },
+      "deletion_curve": {
+        "SHAP": [
+          0.05061797125652109,
+          0.07978301766799122,
+          0.09480423137658284,
+          0.10349073659286352,
+          0.11045549091807587
+        ],
+        "LIME": [
+          0.034589075304654944,
+          0.09077326455595053,
+          0.09629406475059589,
+          0.10443341818146766,
+          0.10975712574363343
+        ],
+        "aleatório": [
+          0.011484888778851603,
+          0.02851522242270483,
+          0.03574040221325731,
+          0.049539421977205234,
+          0.06033006204521896
+        ]
+      },
+      "shap_global": {
+        "rain_0_1h": 0.7822,
+        "rain_1_3h": 0.5251,
+        "tide_level": 0.2539,
+        "month_cos": 0.1679,
+        "rain_12_24h": 0.1485,
+        "hour_cos": 0.1456,
+        "rain_6_12h": 0.1266,
+        "hour_sin": 0.0992,
+        "month_sin": 0.0732,
+        "rain_3_6h": 0.0509
+      },
+      "formula_recovery": {
+        "true_attribution": {
+          "rain_1_3h": 0.496,
+          "rain_0_1h": 0.4906,
+          "rain_12_24h": 0.1495,
+          "rain_6_12h": 0.1182,
+          "rain_3_6h": 0.0581,
+          "tide_level": 0.0096,
+          "hour_sin": 0.0,
+          "hour_cos": 0.0,
+          "month_sin": 0.0,
+          "month_cos": 0.0
+        },
+        "spearman_shap_vs_truth": 0.5252565355638068,
+        "spearman_lime_vs_truth": 0.7753786953560957
+      }
+    },
+    "h6_acumulados_aninhados": {
+      "n_rows": 50,
+      "n_features": 10,
+      "jaccard_top5_shap_lime": 0.8390476190476189,
+      "spearman_shap_lime": 0.8130909090909089,
+      "lime_stability_10_seeds": 0.8876613756613755,
+      "deletion_k1": {
+        "SHAP": 0.01463933807970586,
+        "LIME": 0.0037462422216571253,
+        "aleatório": 0.007767595768516422
+      },
+      "deletion_curve": {
+        "SHAP": [
+          0.014639338079705869,
+          0.07250968978777053,
+          0.09296223653859378,
+          0.08946289885510944,
+          0.08822294643707612
+        ],
+        "LIME": [
+          0.0037462422216571227,
+          0.05255383580265297,
+          0.0733514386567077,
+          0.07885652264217338,
+          0.07922301795252741
+        ],
+        "aleatório": [
+          0.007767595768516423,
+          0.019317186500716736,
+          0.02684018513685976,
+          0.031040700859322787,
+          0.040960960043122635
+        ]
+      },
+      "shap_global": {
+        "current_rainfall": 0.5227,
+        "rainfall_24h_accumulated": 0.3598,
+        "rainfall_3h_accumulated": 0.3219,
+        "month_sin": 0.2265,
+        "hour_cos": 0.1259,
+        "month_cos": 0.1097,
+        "tide_level": 0.0553,
+        "rainfall_6h_accumulated": 0.0368,
+        "rainfall_12h_accumulated": 0.0147,
+        "hour_sin": 0.0027
+      }
+    },
+    "h6_janelas_disjuntas": {
+      "n_rows": 50,
+      "n_features": 10,
+      "jaccard_top5_shap_lime": 0.6971428571428571,
+      "spearman_shap_lime": 0.7391515151515151,
+      "lime_stability_10_seeds": 0.8670899470899469,
+      "deletion_k1": {
+        "SHAP": 0.027787083814914654,
+        "LIME": 0.021459349509773865,
+        "aleatório": 0.008843387791149711
+      },
+      "deletion_curve": {
+        "SHAP": [
+          0.027787083814914654,
+          0.04769123614797623,
+          0.0535625419304027,
+          0.058883295610460705,
+          0.07255527899194295
+        ],
+        "LIME": [
+          0.021459349509773865,
+          0.03930772775035747,
+          0.05025222629077566,
+          0.06100466519823694,
+          0.06192552778706472
+        ],
+        "aleatório": [
+          0.008843387791149715,
+          0.02047992118366039,
+          0.0254793209286296,
+          0.03336695071627434,
+          0.03922638134274616
+        ]
+      },
+      "shap_global": {
+        "rain_0_1h": 0.722,
+        "rain_1_3h": 0.2649,
+        "month_sin": 0.2332,
+        "rain_12_24h": 0.159,
+        "rain_6_12h": 0.1294,
+        "hour_cos": 0.1271,
+        "month_cos": 0.1044,
+        "rain_3_6h": 0.0923,
+        "tide_level": 0.0574,
+        "hour_sin": 0.0006
+      }
+    }
+  }
+}

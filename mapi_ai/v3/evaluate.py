@@ -159,7 +159,8 @@ def consulted(df: pd.DataFrame) -> pd.Series:
 
 # ------------------------------------------------------------------------------------------------------- execução
 
-def run(tag: str = "v3", features=None, cont: pd.DataFrame | None = None, smp: pd.DataFrame | None = None) -> dict:
+def run(tag: str = "v3", features=None, cont: pd.DataFrame | None = None, smp: pd.DataFrame | None = None,
+        horizons=C.HORIZONS) -> dict:
     features = features or C.FEATURES
     models_dir = C.MODELS_DIR if tag == "v3" else C.MODELS_DIR / tag
     reports = C.REPORTS_DIR if tag == "v3" else C.REPORTS_DIR / tag
@@ -172,7 +173,7 @@ def run(tag: str = "v3", features=None, cont: pd.DataFrame | None = None, smp: p
     cont = cont[cont.labeled & cont.part.isin(["validation", "test"])].copy()
 
     rows, served, out = [], {}, {"horizons": {}}
-    for h in C.HORIZONS:
+    for h in horizons:
         hk = f"h{h}"
         y = {n: d[C.label(h)].astype(int).to_numpy() for n, d in (("train", tr), ("validation", va), ("test", te))}
         clim = float(y["train"].mean())

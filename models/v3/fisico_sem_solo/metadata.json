@@ -1,0 +1,242 @@
+{
+  "model_generation": "fisico_sem_solo",
+  "training_data": "SYNTHETIC",
+  "training_data_note": "DADOS SINTÉTICOS — experimento controlado — reports/v3/synthetic_ground_truth.md",
+  "label": {
+    "definition": "alaga em algum momento de t a t+H; entradas da hora t",
+    "horizons_hours": [
+      0,
+      3,
+      6
+    ],
+    "primary_horizon_hours": 6
+  },
+  "features": [
+    "rain_0_1h",
+    "rain_1_3h",
+    "rain_3_6h",
+    "rain_6_12h",
+    "rain_12_24h",
+    "tide_level",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos",
+    "rain_max_10min_mm",
+    "tide_trend_m_h"
+  ],
+  "feature_units": {
+    "rain_0_1h": "mm",
+    "rain_1_3h": "mm",
+    "rain_3_6h": "mm",
+    "rain_6_12h": "mm",
+    "rain_12_24h": "mm",
+    "tide_level": "m (NR DHN)",
+    "hour_sin": "adimensional",
+    "hour_cos": "adimensional",
+    "month_sin": "adimensional",
+    "month_cos": "adimensional",
+    "rain_max_10min_mm": "mm",
+    "tide_trend_m_h": "m/h"
+  },
+  "contract_inputs": [
+    "current_rainfall",
+    "rainfall_3h_accumulated",
+    "rainfall_6h_accumulated",
+    "rainfall_12h_accumulated",
+    "rainfall_24h_accumulated",
+    "tide_level",
+    "timestamp"
+  ],
+  "derived_in_service": "janelas disjuntas por subtração dos acumulados; ausência se propaga; hora e mês em hora local",
+  "removed_from_v2": [
+    "latitude",
+    "longitude"
+  ],
+  "selection_criterion": "maior PR-AUC na validação (amostra, horizonte principal); empate = IC 95% do bootstrap pareado da diferença para o melhor contém zero; no empate fica o mais simples (regra < logística < árvore < XGBoost)",
+  "simplicity_order": [
+    "regra_chuva3h",
+    "logistica",
+    "arvore_rasa",
+    "xgboost"
+  ],
+  "calibration_rule": "Platt ajustado na primeira metade (no tempo) da validação; adotado se ECE e Brier melhoram na segunda metade",
+  "split": {
+    "train_end": "2024-07-03 14:00:00+00:00",
+    "validation_end": "2025-07-31 00:00:00+00:00",
+    "guard_hours": 6,
+    "train": {
+      "rows": 3016,
+      "positives_h0": 293,
+      "positives_h3": 582,
+      "positives_h6": 763
+    },
+    "validation": {
+      "rows": 974,
+      "positives_h0": 62,
+      "positives_h3": 129,
+      "positives_h6": 175
+    },
+    "test": {
+      "rows": 1010,
+      "positives_h0": 60,
+      "positives_h3": 134,
+      "positives_h6": 180
+    }
+  },
+  "seed": 42,
+  "versions": {
+    "python": "3.12.15",
+    "xgboost": "3.2.0",
+    "scikit-learn": "1.9.0",
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "code_commit": "unknown"
+  },
+  "dataset_sha256": null,
+  "rain_source": "MEASURED",
+  "model_validation_status": "NOT_VALIDATED",
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "status": "avaliado",
+  "generator": "reports/v3/physical_comparison.json (fórmula com entradas físicas)",
+  "horizons": {
+    "h6": {
+      "selection": {
+        "best_by_pr_auc": "xgboost",
+        "chosen": "logistica",
+        "table": [
+          {
+            "model": "regra_chuva3h",
+            "val_pr_auc": 0.6550885482278879,
+            "diff_best_minus_model": 0.03426111325132897,
+            "ci95_lo": 0.007401462287514219,
+            "ci95_hi": 0.06190084457459508,
+            "tied_with_best": false
+          },
+          {
+            "model": "logistica",
+            "val_pr_auc": 0.6840565706100589,
+            "diff_best_minus_model": 0.005293090869157968,
+            "ci95_lo": -0.01309609121420537,
+            "ci95_hi": 0.023092651895836907,
+            "tied_with_best": true
+          },
+          {
+            "model": "arvore_rasa",
+            "val_pr_auc": 0.5693251786622616,
+            "diff_best_minus_model": 0.12002448281695521,
+            "ci95_lo": 0.08690119858373513,
+            "ci95_hi": 0.15343311257325892,
+            "tied_with_best": false
+          },
+          {
+            "model": "xgboost",
+            "val_pr_auc": 0.6893496614792168,
+            "diff_best_minus_model": 0.0,
+            "ci95_lo": 0.0,
+            "ci95_hi": 0.0,
+            "tied_with_best": true
+          }
+        ]
+      },
+      "xgboost_params": {
+        "max_depth": 3,
+        "n_estimators": 150,
+        "learning_rate": 0.03,
+        "scale_pos_weight": 2.9528178243774574
+      },
+      "train_positive_rate": 0.2529840848806366,
+      "validation_positive_rate": 0.17967145790554415,
+      "artifacts": {
+        "regra_chuva3h": "models/v3/fisico_sem_solo/regra_chuva3h_h6.joblib",
+        "logistica": "models/v3/fisico_sem_solo/logistica_h6.joblib",
+        "arvore_rasa": "models/v3/fisico_sem_solo/arvore_rasa_h6.joblib",
+        "xgboost": "models/v3/fisico_sem_solo/xgboost_h6.joblib"
+      }
+    }
+  },
+  "production": {
+    "model": "logistica",
+    "horizon_hours": 6,
+    "artifact": "models/v3/fisico_sem_solo/logistica_h6.joblib",
+    "why": {
+      "best_by_pr_auc": "xgboost",
+      "chosen": "logistica",
+      "table": [
+        {
+          "model": "regra_chuva3h",
+          "val_pr_auc": 0.6550885482278879,
+          "diff_best_minus_model": 0.03426111325132897,
+          "ci95_lo": 0.007401462287514219,
+          "ci95_hi": 0.06190084457459508,
+          "tied_with_best": false
+        },
+        {
+          "model": "logistica",
+          "val_pr_auc": 0.6840565706100589,
+          "diff_best_minus_model": 0.005293090869157968,
+          "ci95_lo": -0.01309609121420537,
+          "ci95_hi": 0.023092651895836907,
+          "tied_with_best": true
+        },
+        {
+          "model": "arvore_rasa",
+          "val_pr_auc": 0.5693251786622616,
+          "diff_best_minus_model": 0.12002448281695521,
+          "ci95_lo": 0.08690119858373513,
+          "ci95_hi": 0.15343311257325892,
+          "tied_with_best": false
+        },
+        {
+          "model": "xgboost",
+          "val_pr_auc": 0.6893496614792168,
+          "diff_best_minus_model": 0.0,
+          "ci95_lo": 0.0,
+          "ci95_hi": 0.0,
+          "tied_with_best": true
+        }
+      ]
+    }
+  },
+  "model_version": "logreg_v3",
+  "calibration": {
+    "rule": "Platt ajustado na primeira metade (no tempo) da validação; adotado se ECE e Brier melhoram na segunda metade",
+    "check_second_half": {
+      "raw": {
+        "ece": 0.23820872501873788,
+        "brier": 0.16958813917414906
+      },
+      "calibrated": {
+        "ece": 0.06053293578732987,
+        "brier": 0.10851481596035448
+      }
+    },
+    "adopted": true,
+    "platt": {
+      "a": 0.9595430413789807,
+      "b": -1.179452631968628
+    }
+  },
+  "calibrator": {
+    "artifact": "models/v3/fisico_sem_solo/calibrator_h6.joblib"
+  },
+  "prior_correction": {
+    "pi_sint": 0.15195071868583163,
+    "pi_sint_source": "taxa de positivos da metade da validação que ajusta o calibrador",
+    "pi_real": 0.0034640657084188914,
+    "pi_real_source": "parâmetro declarado (mapi_ai/v3/config.py): ~0,1% das horas, 18 dias com alagamento em 5 anos; duração por dia [sem fonte]",
+    "formula": "logit(p') = logit(p) + logit(pi_real) - logit(pi_sint)"
+  },
+  "thresholds": {
+    "medium": 0.05785177759048323,
+    "high": 0.9227520524237643,
+    "probability": "servida (calibrada e corrigida por prevalência)",
+    "rule": "menor limiar com dias de alerta por ponto por ano <= orçamento ({'medium': 50, 'high': 10}), na série contínua da validação",
+    "chosen_on": "validation"
+  },
+  "probability_served": "calibrada (se adotada) e corrigida por prevalência; os limiares usam esta",
+  "alert_budget_per_point_year": {
+    "medium": 50,
+    "high": 10
+  }
+}

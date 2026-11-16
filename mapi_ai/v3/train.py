@@ -60,6 +60,12 @@ class RainRule(BaseEstimator, ClassifierMixin):
         return np.column_stack([1 - p, p])
 
 
+def base_feature(transformed_name: str) -> str:
+    """Nome da entrada original de uma coluna do pré-processamento ('valor__x', 'ausente__missingindicator_x')."""
+    name = transformed_name.split("__", 1)[1]
+    return name[len("missingindicator_"):] if name.startswith("missingindicator_") else name
+
+
 def logistic_pipeline(features=None) -> Pipeline:
     features = features or C.FEATURES
     missing_capable = [f for f in features if f in C.WINDOWS or f in C.PHYSICAL]
@@ -124,7 +130,8 @@ def parts(df: pd.DataFrame):
     return df[df.part == "train"], df[df.part == "validation"], df[df.part == "test"]
 
 
-def run(features=None, tag: str = "v3", dataset: pd.DataFrame | None = None, extra_meta: dict | None = None) -> dict:
+def run(features=None, tag: str = "v3", dataset: pd.DataFrame | None = None, extra_meta: dict | None = None,
+        horizons=C.HORIZONS) -> dict:
     features = features or C.FEATURES
     df = D.load() if dataset is None else dataset
     tr, va, te = parts(df)
@@ -156,7 +163,7 @@ def run(features=None, tag: str = "v3", dataset: pd.DataFrame | None = None, ext
 
     X_tr, X_va = X_of(tr, features), X_of(va, features)
     meta["horizons"] = {}
-    for h in C.HORIZONS:
+    for h in horizons:
         y_tr, y_va = tr[C.label(h)].astype(int).to_numpy(), va[C.label(h)].astype(int).to_numpy()
         models = fit_candidates(X_tr, y_tr, X_va, y_va, features)
         xgb_params = models.pop("_xgb_params")

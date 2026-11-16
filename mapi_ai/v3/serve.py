@@ -22,6 +22,7 @@ import pandas as pd
 from mapi_ai.v3 import config as C
 from mapi_ai.v3.dataset import windows_from_accumulated
 from mapi_ai.v3.evaluate import prior_shift
+from mapi_ai.v3.train import base_feature
 
 BACKGROUND = "shap_background.joblib"
 SYNTHETIC_WARNING = ("Modelo treinado com rótulo SINTÉTICO (experimento controlado): a probabilidade não foi validada "
@@ -117,7 +118,7 @@ class V3Model:
         phi = np.asarray(expl.shap_values(pre.transform(X)))[0]
         by = {}
         for name, v in zip(names, phi):
-            base = name.split("__", 1)[1]
+            base = base_feature(name)
             by[base] = by.get(base, 0.0) + float(v)
         s = pd.Series(by)[self.features]
         p = float(self.served(X)[0])

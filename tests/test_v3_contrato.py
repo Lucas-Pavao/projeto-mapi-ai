@@ -70,3 +70,14 @@ def test_limiares_e_risco_usam_a_probabilidade_servida(client):
     t = j["thresholds"]
     expected = "HIGH" if j["flood_probability"] >= t["high"] else "MEDIUM" if j["flood_probability"] >= t["medium"] else "LOW"
     assert j["risk_level"] == expected
+
+
+def test_contribuicoes_somam_a_diferenca_e_contam_o_indicador_de_ausencia(client):
+    from mapi_ai.v3.serve import features_from_payload
+    m = app_module.v3_model
+    X = features_from_payload({**PAYLOAD, "current_rainfall": None}, m.features)
+    c = m.contributions(X)
+    assert list(c.index) == m.features
+    import numpy as np
+    assert c.sum() == pytest.approx(float(m.served(X)[0]) - float(np.mean(m.served(m.background))), abs=1e-9)
+    assert c["rain_0_1h"] != 0.0     # a ausência da chuva da hora pesa (indicador somado à janela)
