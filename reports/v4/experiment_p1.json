@@ -1,0 +1,48 @@
+{
+  "label_tag": "RÓTULO DO MODELO FÍSICO (balde M1a), não alagamento observado",
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "horizon_h": 6,
+  "selection": "família escolhida uma vez, no braço com previsão, pela PR-AUC de validação; empate (IC 95% do bootstrap pareado contém zero) fica com a logística; a mesma família vale para os três braços",
+  "calibration_rule": "Platt ajustado na primeira metade (no tempo) da validação; adotado se ECE e Brier melhoram na segunda metade",
+  "alert_budget": {
+    "medium": 50,
+    "high": 10
+  },
+  "min_events": {
+    "train": 20,
+    "validation": 5,
+    "test": 5
+  },
+  "rain_forecast": {
+    "model_version": "rain_v1",
+    "out_of_fold": "data/v4/rain_forecast_oof.csv.gz"
+  },
+  "frequencia_real_declarada": {
+    "valor": "cerca de 4 por ano",
+    "calculo": "18 dias com alagamento registrado em 5 anos = 3,6 por ano",
+    "fonte": "CKAN Recife, 2021-05-13 a 2024-06-25 (reports/dataset_summary.json; projeto-mapi-api/docs/REVISAO-INGESTAO-2026-11.md)",
+    "ressalva": "é a cidade inteira, não um ponto; nenhum registro tem hora; a 500 m dos pontos há 0 registros"
+  },
+  "seed": 42,
+  "split": {
+    "train_end": "2024-07-03 14:00:00+00:00",
+    "valid_end": "2025-07-31 00:00:00+00:00",
+    "guard_h": 6
+  },
+  "sensibilidade_rodada": false,
+  "code_commit": "0aba78a4e30969419ac9d1f730bee2c9f7138bf7",
+  "cenarios": {
+    "f=1.0": {
+      "f": 1.0,
+      "capacidade_mm_h": 60.1,
+      "eventos": {
+        "train": 0,
+        "validation": 0,
+        "test": 0
+      },
+      "prevalencia_y": 0.0,
+      "treinavel": false,
+      "nota": "eventos insuficientes: sem positivos não há o que treinar nem antecedência a medir"
+    }
+  }
+}
