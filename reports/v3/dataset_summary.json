@@ -1,0 +1,138 @@
+{
+  "tag": "DADOS SINTÉTICOS — experimento controlado",
+  "continuous": {
+    "formula": "is_flooded ~ Bernoulli(sigmoid(b0 + 6.0*P1h/R1 + 10.0*P3h/R3 + 2.0*P24h/R24 + 6.0*max(0, mare - T_hi)/T_span * 1[P3h > wet3]))",
+    "b0": -5.056295958599229,
+    "anchors": {
+      "R1_mm": 31.832,
+      "R3_mm": 54.6839470822498,
+      "R24_mm": 104.6947246254217,
+      "T_hi_m": 2.0771200000000007,
+      "T_span_m": 0.3394899999999974,
+      "wet3_mm": 7.4
+    },
+    "coefficients": {
+      "current_rainfall": 6.0,
+      "rainfall_3h_accumulated": 10.0,
+      "rainfall_24h_accumulated": 2.0,
+      "tide_x_rain": 6.0
+    },
+    "formula_source": "reports/synthetic_ground_truth.json (v2, sem alteração)",
+    "rows": 223560,
+    "labeled_rows": 211277,
+    "prevalence_continuous": {
+      "h0": 0.032966200769605776,
+      "h3": 0.0864362897996469,
+      "h6": 0.13069572173024038
+    },
+    "positives_in_dry_hours_h0": 0.13409906676238334,
+    "gaps": {
+      "pattern_source": "docs/handoff/v3-lacunas.json",
+      "applied_after_label": true,
+      "by_point": {
+        "AGAMENON_DERBY": {
+          "alvo_fracao_curta": 0.00239,
+          "obtida": 0.00257,
+          "horas": 115
+        },
+        "AV_RECIFE_IBURA": {
+          "alvo_fracao_curta": 0.00775,
+          "obtida": 0.00778,
+          "horas": 348
+        },
+        "CIN_UFPE": {
+          "alvo_fracao_curta": 0.00388,
+          "obtida": 0.00403,
+          "horas": 180
+        },
+        "JABOATAO_CENTRO": {
+          "alvo_fracao_curta": 0.0018,
+          "obtida": 0.00206,
+          "horas": 92
+        },
+        "MASCARENHAS_IMBIRIBEIRA": {
+          "alvo_fracao_curta": 0.00291,
+          "obtida": 0.00315,
+          "horas": 141
+        }
+      },
+      "missing_rate_features": {
+        "rain_0_1h": 0.003838562645247708,
+        "rain_1_3h": 0.005608750597556762,
+        "rain_3_6h": 0.00824036691168466,
+        "rain_6_12h": 0.013456268311269092,
+        "rain_12_24h": 0.023850206127500863
+      }
+    },
+    "seed": 42
+  },
+  "sample": {
+    "strata": {
+      "FORTE": {
+        "pool_hours": 6041,
+        "sampled": 900,
+        "inclusion_prob": 0.14898195662969707
+      },
+      "MEDIA": {
+        "pool_hours": 39310,
+        "sampled": 1300,
+        "inclusion_prob": 0.03307046553039939
+      },
+      "FRACA": {
+        "pool_hours": 38848,
+        "sampled": 1300,
+        "inclusion_prob": 0.033463756177924214
+      },
+      "SECO": {
+        "pool_hours": 127018,
+        "sampled": 1500,
+        "inclusion_prob": 0.011809349855925931
+      }
+    },
+    "rows": 5000,
+    "split": {
+      "train": {
+        "rows": 3017,
+        "positives_h0": 290,
+        "positives_h3": 610,
+        "positives_h6": 804,
+        "from": "2021-10-01 20:00:00+00:00",
+        "to": "2024-07-03 06:00:00+00:00"
+      },
+      "validation": {
+        "rows": 965,
+        "positives_h0": 67,
+        "positives_h3": 123,
+        "positives_h6": 184,
+        "from": "2024-07-03 23:00:00+00:00",
+        "to": "2025-07-30 13:00:00+00:00"
+      },
+      "test": {
+        "rows": 1018,
+        "positives_h0": 63,
+        "positives_h3": 143,
+        "positives_h6": 201,
+        "from": "2025-07-31 02:00:00+00:00",
+        "to": "2026-10-06 12:00:00+00:00"
+      }
+    },
+    "missing_rate": {
+      "rain_0_1h": 0.0038,
+      "rain_1_3h": 0.0054,
+      "rain_3_6h": 0.0088,
+      "rain_6_12h": 0.0134,
+      "rain_12_24h": 0.0258
+    }
+  },
+  "sha256": {
+    "continuous": "82e404ce659f5d7800d74d2102a7fe86ec58a4533400935df1ee34047bf5bd91",
+    "dataset": "8ae1bffaa196871910aa9529c0971649217c6b85615df7eb389fedbf3746af15"
+  },
+  "horizons": [
+    0,
+    3,
+    6
+  ],
+  "primary_horizon": 6,
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"
+}
