@@ -1,0 +1,345 @@
+{
+  "model_generation": "v3",
+  "training_data": "SYNTHETIC",
+  "training_data_note": "DADOS SINTÉTICOS — experimento controlado — reports/v3/synthetic_ground_truth.md",
+  "label": {
+    "definition": "alaga em algum momento de t a t+H; entradas da hora t",
+    "horizons_hours": [
+      0,
+      3,
+      6
+    ],
+    "primary_horizon_hours": 6
+  },
+  "features": [
+    "rain_0_1h",
+    "rain_1_3h",
+    "rain_3_6h",
+    "rain_6_12h",
+    "rain_12_24h",
+    "tide_level",
+    "hour_sin",
+    "hour_cos",
+    "month_sin",
+    "month_cos"
+  ],
+  "feature_units": {
+    "rain_0_1h": "mm",
+    "rain_1_3h": "mm",
+    "rain_3_6h": "mm",
+    "rain_6_12h": "mm",
+    "rain_12_24h": "mm",
+    "tide_level": "m (NR DHN)",
+    "hour_sin": "adimensional",
+    "hour_cos": "adimensional",
+    "month_sin": "adimensional",
+    "month_cos": "adimensional"
+  },
+  "contract_inputs": [
+    "current_rainfall",
+    "rainfall_3h_accumulated",
+    "rainfall_6h_accumulated",
+    "rainfall_12h_accumulated",
+    "rainfall_24h_accumulated",
+    "tide_level",
+    "timestamp"
+  ],
+  "derived_in_service": "janelas disjuntas por subtração dos acumulados; ausência se propaga; hora e mês em hora local",
+  "removed_from_v2": [
+    "latitude",
+    "longitude"
+  ],
+  "selection_criterion": "maior PR-AUC na validação (amostra, horizonte principal); empate = IC 95% do bootstrap pareado da diferença para o melhor contém zero; no empate fica o mais simples (regra < logística < árvore < XGBoost)",
+  "simplicity_order": [
+    "regra_chuva3h",
+    "logistica",
+    "arvore_rasa",
+    "xgboost"
+  ],
+  "calibration_rule": "Platt ajustado na primeira metade (no tempo) da validação; adotado se ECE e Brier melhoram na segunda metade",
+  "split": {
+    "train_end": "2024-07-03 14:00:00+00:00",
+    "validation_end": "2025-07-31 00:00:00+00:00",
+    "guard_hours": 6,
+    "train": {
+      "rows": 3017,
+      "positives_h0": 290,
+      "positives_h3": 610,
+      "positives_h6": 804
+    },
+    "validation": {
+      "rows": 965,
+      "positives_h0": 67,
+      "positives_h3": 123,
+      "positives_h6": 184
+    },
+    "test": {
+      "rows": 1018,
+      "positives_h0": 63,
+      "positives_h3": 143,
+      "positives_h6": 201
+    }
+  },
+  "seed": 42,
+  "versions": {
+    "python": "3.12.15",
+    "xgboost": "3.2.0",
+    "scikit-learn": "1.9.0",
+    "numpy": "2.4.6",
+    "pandas": "3.0.3",
+    "code_commit": "unknown"
+  },
+  "dataset_sha256": "8ae1bffaa196871910aa9529c0971649217c6b85615df7eb389fedbf3746af15",
+  "rain_source": "MEASURED",
+  "model_validation_status": "NOT_VALIDATED",
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "status": "avaliado",
+  "horizons": {
+    "h0": {
+      "selection": {
+        "best_by_pr_auc": "logistica",
+        "chosen": "logistica",
+        "table": [
+          {
+            "model": "regra_chuva3h",
+            "val_pr_auc": 0.7253286624092968,
+            "diff_best_minus_model": 0.06450420759681952,
+            "ci95_lo": 0.028534517119568416,
+            "ci95_hi": 0.10757890377286004,
+            "tied_with_best": false
+          },
+          {
+            "model": "logistica",
+            "val_pr_auc": 0.7898328700061163,
+            "diff_best_minus_model": 0.0,
+            "ci95_lo": 0.0,
+            "ci95_hi": 0.0,
+            "tied_with_best": true
+          },
+          {
+            "model": "arvore_rasa",
+            "val_pr_auc": 0.6258758490613523,
+            "diff_best_minus_model": 0.16395702094476405,
+            "ci95_lo": 0.09389706441126076,
+            "ci95_hi": 0.23708083704150051,
+            "tied_with_best": false
+          },
+          {
+            "model": "xgboost",
+            "val_pr_auc": 0.770799013425424,
+            "diff_best_minus_model": 0.019033856580692343,
+            "ci95_lo": -0.010205810824110814,
+            "ci95_hi": 0.05331609429781404,
+            "tied_with_best": true
+          }
+        ]
+      },
+      "xgboost_params": {
+        "max_depth": 3,
+        "n_estimators": 150,
+        "learning_rate": 0.03,
+        "scale_pos_weight": 9.403448275862068
+      },
+      "train_positive_rate": 0.0961219754723235,
+      "validation_positive_rate": 0.0694300518134715,
+      "artifacts": {
+        "regra_chuva3h": "models/v3/regra_chuva3h_h0.joblib",
+        "logistica": "models/v3/logistica_h0.joblib",
+        "arvore_rasa": "models/v3/arvore_rasa_h0.joblib",
+        "xgboost": "models/v3/xgboost_h0.joblib"
+      }
+    },
+    "h3": {
+      "selection": {
+        "best_by_pr_auc": "logistica",
+        "chosen": "logistica",
+        "table": [
+          {
+            "model": "regra_chuva3h",
+            "val_pr_auc": 0.6540063899196094,
+            "diff_best_minus_model": 0.07474227985596005,
+            "ci95_lo": 0.03932895156491966,
+            "ci95_hi": 0.11058445878249779,
+            "tied_with_best": false
+          },
+          {
+            "model": "logistica",
+            "val_pr_auc": 0.7287486697755694,
+            "diff_best_minus_model": 0.0,
+            "ci95_lo": 0.0,
+            "ci95_hi": 0.0,
+            "tied_with_best": true
+          },
+          {
+            "model": "arvore_rasa",
+            "val_pr_auc": 0.549868178899504,
+            "diff_best_minus_model": 0.1788804908760654,
+            "ci95_lo": 0.13530459216778679,
+            "ci95_hi": 0.22309773277163136,
+            "tied_with_best": false
+          },
+          {
+            "model": "xgboost",
+            "val_pr_auc": 0.7197048921424967,
+            "diff_best_minus_model": 0.009043777633072736,
+            "ci95_lo": -0.009324415471901904,
+            "ci95_hi": 0.02809429167800447,
+            "tied_with_best": true
+          }
+        ]
+      },
+      "xgboost_params": {
+        "max_depth": 2,
+        "n_estimators": 150,
+        "learning_rate": 0.03,
+        "scale_pos_weight": 3.945901639344262
+      },
+      "train_positive_rate": 0.20218760357971494,
+      "validation_positive_rate": 0.12746113989637306,
+      "artifacts": {
+        "regra_chuva3h": "models/v3/regra_chuva3h_h3.joblib",
+        "logistica": "models/v3/logistica_h3.joblib",
+        "arvore_rasa": "models/v3/arvore_rasa_h3.joblib",
+        "xgboost": "models/v3/xgboost_h3.joblib"
+      }
+    },
+    "h6": {
+      "selection": {
+        "best_by_pr_auc": "logistica",
+        "chosen": "logistica",
+        "table": [
+          {
+            "model": "regra_chuva3h",
+            "val_pr_auc": 0.6013909751410123,
+            "diff_best_minus_model": 0.07076524547051444,
+            "ci95_lo": 0.03999589135652348,
+            "ci95_hi": 0.101314425804447,
+            "tied_with_best": false
+          },
+          {
+            "model": "logistica",
+            "val_pr_auc": 0.6721562206115267,
+            "diff_best_minus_model": 0.0,
+            "ci95_lo": 0.0,
+            "ci95_hi": 0.0,
+            "tied_with_best": true
+          },
+          {
+            "model": "arvore_rasa",
+            "val_pr_auc": 0.5408737949075929,
+            "diff_best_minus_model": 0.13128242570393378,
+            "ci95_lo": 0.09323712033623535,
+            "ci95_hi": 0.16419947498154294,
+            "tied_with_best": false
+          },
+          {
+            "model": "xgboost",
+            "val_pr_auc": 0.6653628166491259,
+            "diff_best_minus_model": 0.006793403962400801,
+            "ci95_lo": -0.00732425563036749,
+            "ci95_hi": 0.020216090411931644,
+            "tied_with_best": true
+          }
+        ]
+      },
+      "xgboost_params": {
+        "max_depth": 2,
+        "n_estimators": 150,
+        "learning_rate": 0.03,
+        "scale_pos_weight": 2.7524875621890548
+      },
+      "train_positive_rate": 0.26648989061982103,
+      "validation_positive_rate": 0.19067357512953367,
+      "artifacts": {
+        "regra_chuva3h": "models/v3/regra_chuva3h_h6.joblib",
+        "logistica": "models/v3/logistica_h6.joblib",
+        "arvore_rasa": "models/v3/arvore_rasa_h6.joblib",
+        "xgboost": "models/v3/xgboost_h6.joblib"
+      }
+    }
+  },
+  "production": {
+    "model": "logistica",
+    "horizon_hours": 6,
+    "artifact": "models/v3/logistica_h6.joblib",
+    "why": {
+      "best_by_pr_auc": "logistica",
+      "chosen": "logistica",
+      "table": [
+        {
+          "model": "regra_chuva3h",
+          "val_pr_auc": 0.6013909751410123,
+          "diff_best_minus_model": 0.07076524547051444,
+          "ci95_lo": 0.03999589135652348,
+          "ci95_hi": 0.101314425804447,
+          "tied_with_best": false
+        },
+        {
+          "model": "logistica",
+          "val_pr_auc": 0.6721562206115267,
+          "diff_best_minus_model": 0.0,
+          "ci95_lo": 0.0,
+          "ci95_hi": 0.0,
+          "tied_with_best": true
+        },
+        {
+          "model": "arvore_rasa",
+          "val_pr_auc": 0.5408737949075929,
+          "diff_best_minus_model": 0.13128242570393378,
+          "ci95_lo": 0.09323712033623535,
+          "ci95_hi": 0.16419947498154294,
+          "tied_with_best": false
+        },
+        {
+          "model": "xgboost",
+          "val_pr_auc": 0.6653628166491259,
+          "diff_best_minus_model": 0.006793403962400801,
+          "ci95_lo": -0.00732425563036749,
+          "ci95_hi": 0.020216090411931644,
+          "tied_with_best": true
+        }
+      ]
+    }
+  },
+  "model_version": "logreg_v3",
+  "calibration": {
+    "rule": "Platt ajustado na primeira metade (no tempo) da validação; adotado se ECE e Brier melhoram na segunda metade",
+    "check_second_half": {
+      "raw": {
+        "ece": 0.2154056180974098,
+        "brier": 0.1590613979018299
+      },
+      "calibrated": {
+        "ece": 0.04659629078176995,
+        "brier": 0.11092441978736886
+      }
+    },
+    "adopted": true,
+    "platt": {
+      "a": 1.0822202900220352,
+      "b": -1.0216070811171933
+    }
+  },
+  "calibrator": {
+    "artifact": "models/v3/calibrator_h6.joblib"
+  },
+  "prior_correction": {
+    "pi_sint": 0.16804979253112035,
+    "pi_sint_source": "taxa de positivos da metade da validação que ajusta o calibrador",
+    "pi_real": 0.0034640657084188914,
+    "pi_real_source": "parâmetro declarado (mapi_ai/v3/config.py): ~0,1% das horas, 18 dias com alagamento em 5 anos; duração por dia [sem fonte]",
+    "formula": "logit(p') = logit(p) + logit(pi_real) - logit(pi_sint)"
+  },
+  "thresholds": {
+    "medium": 0.049075492517698424,
+    "high": 0.9279128325223347,
+    "probability": "servida (calibrada e corrigida por prevalência)",
+    "rule": "menor limiar com dias de alerta por ponto por ano <= orçamento ({'medium': 50, 'high': 10}), na série contínua da validação",
+    "chosen_on": "validation"
+  },
+  "probability_served": "calibrada (se adotada) e corrigida por prevalência; os limiares usam esta",
+  "alert_budget_per_point_year": {
+    "medium": 50,
+    "high": 10
+  }
+}

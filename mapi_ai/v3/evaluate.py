@@ -7,7 +7,7 @@ Avaliação do v3 (etapas B2.4, B3.3, B6 e B7). Toda escolha é feita na VALIDA�
 3. Correção de prevalência (B6.2): logit(p') = logit(p) + logit(pi_real) - logit(pi_sint). A probabilidade SERVIDA é a
    corrigida; a não corrigida fica no relatório.
 4. Limiares por orçamento de alertas (B6.3): na série contínua da validação, o menor limiar cujo número de alertas por
-   ponto por ano cabe no orçamento (MEDIUM <= 50, HIGH <= 10). Escolhidos sobre a probabilidade servida (B6.4).
+   de DIAS com alerta por ponto por ano cabe no orçamento (MEDIUM <= 50, HIGH <= 10). Sobre a probabilidade servida (B6.4).
 5. Série contínua e eventos (B7): alertas por ano, fração de eventos detectados, antecedência, alarmes falsos.
 """
 import json
@@ -92,34 +92,41 @@ def alert_stats(cont: pd.DataFrame, p: np.ndarray, thr: float, horizon: int) -> 
     n_alerts = hours_alert = n_events = detected = false_alerts = false_hours = 0
     n_rain_events = detected_rain = 0
     leads = []
-    cont = cont.assign(_p=p, _t=hour_index(cont["timestamp"]))
+    cont = cont.assign(_p=p, _t=hour_index(cont["timestamp"]),
+                       _day=cont["timestamp"].dt.tz_convert("America/Recife").dt.strftime("%Y-%m-%d"))
+    alert_days = 0
     for _, g in cont.groupby("slug", sort=False):
         years_points += len(g) / C.HOURS_PER_YEAR
         al = g.loc[g._p >= thr, "_t"].to_numpy()
         hours_alert += len(al)
+        alert_days += g.loc[g._p >= thr, "_day"].nunique()
         eps = episodes(al, C.ALERT_GAP_H)
         n_alerts += len(eps)
         pos = g.loc[g["flood_h0"] == 1, "_t"].to_numpy()
         evs = episodes(pos, C.EVENT_GAP_H)
         wet = set(g.loc[g["stratum"] != "SECO", "_t"].to_numpy())
         used = np.zeros(len(eps), dtype=bool)
+        ep_start = np.array([a for a, _ in eps]) if eps else np.array([], dtype=int)
         for (s, e) in evs:
             n_events += 1
             in_rain = any(t in wet for t in range(s, e + 1))
             n_rain_events += in_rain
-            hit = [k for k, (a, b) in enumerate(eps) if b >= s - horizon and a <= e]
-            if hit:
+            # detectado = há HORA de alerta na janela [início - H, fim] (não basta o episódio atravessar a janela)
+            lo, hi = np.searchsorted(al, s - horizon, "left"), np.searchsorted(al, e, "right")
+            if hi > lo:
                 detected += 1
                 detected_rain += in_rain
-                for k in hit:
-                    used[k] = True
-                first = al[(al >= s - horizon) & (al <= e)].min()
-                leads.append(max(0, s - first))
+                leads.append(max(0, s - al[lo]))
+                for t in (al[lo], al[hi - 1]):
+                    used[np.searchsorted(ep_start, t, "right") - 1] = True
+                k0, k1 = np.searchsorted(ep_start, al[lo], "right") - 1, np.searchsorted(ep_start, al[hi - 1], "right") - 1
+                used[k0:k1 + 1] = True
         for k, (a, b) in enumerate(eps):
             if not used[k]:
                 false_alerts += 1
                 false_hours += b - a + 1
-    return {"threshold": float(thr), "alerts_per_point_year": n_alerts / years_points,
+    return {"threshold": float(thr), "alert_days_per_point_year": alert_days / years_points,
+            "alerts_per_point_year": n_alerts / years_points,
             "alert_hours_fraction": hours_alert / max(len(cont), 1),
             "events": n_events, "events_detected": detected, "event_recall": detected / max(n_events, 1),
             "rain_events": n_rain_events, "rain_event_recall": detected_rain / max(n_rain_events, 1),
@@ -130,16 +137,17 @@ def alert_stats(cont: pd.DataFrame, p: np.ndarray, thr: float, horizon: int) -> 
 
 
 def budget_threshold(cont: pd.DataFrame, p: np.ndarray, budget: float, horizon: int) -> tuple[float, pd.DataFrame]:
-    """Menor limiar com alertas por ponto por ano <= budget, e a curva completa (alertas por ano x recall)."""
-    grid = np.unique(np.quantile(p, np.linspace(0.30, 0.9999, 160)))
-    rows = [alert_stats(cont, p, float(t), horizon) for t in grid]
-    curve = pd.DataFrame(rows)
-    ok = curve[curve.alerts_per_point_year <= budget]
-    # A contagem de alertas não é monótona no limiar (limiar baixo funde episódios): vale o menor limiar a partir do
-    # qual TODOS os limiares maiores cabem no orçamento.
-    above = curve[curve.alerts_per_point_year > budget]
-    floor = above.threshold.max() if len(above) else -np.inf
-    ok = ok[ok.threshold > floor]
+    """
+    Menor limiar cujo número de DIAS com alerta por ponto por ano cabe no orçamento, e a curva completa.
+
+    O orçamento conta dias com alerta (dia local com alguma hora acima do limiar), não episódios: a contagem de
+    episódios não é monótona no limiar (limiar baixo funde episódios vizinhos e a contagem CAI), e um limiar quase zero
+    passaria no orçamento com um alerta só, ligado o ano inteiro. Dias com alerta só diminuem quando o limiar sobe.
+    """
+    # Grade fina no topo: 10 dias de alerta por ano são ~0,3% das horas; quantis em passo logarítmico até 0,003%.
+    grid = np.unique(np.quantile(p, 1 - np.logspace(np.log10(0.7), -4.5, 220)))
+    curve = pd.DataFrame([alert_stats(cont, p, float(t), horizon) for t in grid])
+    ok = curve[curve.alert_days_per_point_year <= budget]
     thr = float(ok.threshold.min()) if len(ok) else float(curve.threshold.max())
     return thr, curve
 
@@ -249,19 +257,19 @@ def run(tag: str = "v3", features=None, cont: pd.DataFrame | None = None, smp: p
                                         "alagamento em 5 anos; duração por dia [sem fonte]"},
             "thresholds": {"medium": thr["medium"], "high": thr["high"], "probability": "servida (calibrada e corrigida "
                            "por prevalência)" if use else "servida (bruta corrigida por prevalência)",
-                           "rule": f"menor limiar com alertas por ponto por ano <= orçamento ({C.ALERT_BUDGET}), na série "
-                                   "contínua da validação", "chosen_on": "validation"},
+                           "rule": f"menor limiar com dias de alerta por ponto por ano <= orçamento ({C.ALERT_BUDGET}), na "
+                                   "série contínua da validação", "chosen_on": "validation"},
             "continuous": cont_metrics, "alerts_and_events": ev, "degradation_check": degr,
         }
 
         fig, ax = plt.subplots(figsize=(6.4, 4))
-        ax.plot(curve.alerts_per_point_year, curve.event_recall, label="eventos detectados")
-        ax.plot(curve.alerts_per_point_year, curve.rain_event_recall, label="eventos em chuva detectados", ls="--")
+        ax.plot(curve.alert_days_per_point_year, curve.event_recall, label="eventos detectados")
+        ax.plot(curve.alert_days_per_point_year, curve.rain_event_recall, label="eventos em chuva detectados", ls="--")
         for level, budget in C.ALERT_BUDGET.items():
             ax.axvline(budget, color="gray", lw=0.8)
             ax.text(budget, 0.02, f" {level} <= {budget}", fontsize=8)
         ax.set_xscale("log")
-        ax.set_xlabel("alertas por ponto por ano (validação, série contínua)")
+        ax.set_xlabel("dias com alerta por ponto por ano (validação, série contínua)")
         ax.set_ylabel("fração de eventos detectados")
         ax.set_title(f"{C.SYNTHETIC_TAG}\nH = {h} h, {chosen}", fontsize=9)
         ax.legend(fontsize=8)

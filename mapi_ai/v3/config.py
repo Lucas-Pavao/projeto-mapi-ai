@@ -81,7 +81,8 @@ def pi_real(h: int) -> float:
     return FLOOD_DAYS_PER_YEAR * (d + h) / HOURS_PER_YEAR
 
 
-# --- B6: limiares por orçamento de alertas (por ponto por ano), na série contínua da validação.
+# --- B6: limiares por orçamento de alertas, em DIAS com alerta por ponto por ano, na série contínua da validação.
+# (Dias, não episódios: a contagem de episódios não é monótona no limiar; ver evaluate.budget_threshold.)
 ALERT_BUDGET = {"medium": 50, "high": 10}
 ALERT_GAP_H = 6     # dois alertas separados por menos de 6 h sem alerta são um só (mesmo intervalo seco do ADR 0017)
 EVENT_GAP_H = 6     # idem para agrupar horas positivas em eventos
