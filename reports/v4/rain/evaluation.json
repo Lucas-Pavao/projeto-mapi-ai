@@ -1,0 +1,1727 @@
+{
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "selection_criterion": "por horizonte: menor erro de quantil (pinball médio de 50%, 80% e 95%) na validação; fica o modelo mais simples cuja diferença para o melhor tem IC 95% contendo zero (bootstrap pareado por bloco de dia, 1000 reamostras)",
+  "alert_rule": "limiar de probabilidade com o maior CSI por linha na validação",
+  "thresholds_mm_h": {
+    "MEDIA": 5.03,
+    "FORTE": 25.15
+  },
+  "quantiles": [
+    0.5,
+    0.8,
+    0.95
+  ],
+  "horizons": {
+    "1h": {
+      "validacao": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 0.24689926506282955,
+          "diff_para_o_melhor": 0.09445298751298242,
+          "ic95": [
+            0.07469046083075195,
+            0.11679430153248857
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.18426869383163377,
+          "diff_para_o_melhor": 0.03182241628178668,
+          "ic95": [
+            0.02539697935396005,
+            0.0397349805799829
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.23859809057423367,
+          "diff_para_o_melhor": 0.08615181302438658,
+          "ic95": [
+            0.06700019623647484,
+            0.10888311849662759
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.15244627754984713,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.15252556369466672,
+          "diff_para_o_melhor": 7.928614481962343e-05,
+          "ic95": [
+            -0.0005604069461136754,
+            0.0006862238360154724
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "melhor": "gb_rede",
+      "escolhido": "gb_rede",
+      "limiar_aviso_FORTE": {
+        "climatologia": {
+          "csi_validacao": 0.0026130128037627383,
+          "limiar": 0.00967741935483871
+        },
+        "persistencia": {
+          "csi_validacao": 0.021517553793884484,
+          "limiar": 0.02933295726977859
+        },
+        "open_meteo": {
+          "csi_validacao": 0.003779350273399807,
+          "limiar": 0.0029276985743380856
+        },
+        "gb_rede": {
+          "csi_validacao": 0.13034188034188035,
+          "limiar": 0.10546652576991118
+        },
+        "gb_rede_om": {
+          "csi_validacao": 0.1400862068965517,
+          "limiar": 0.1014265688718116
+        }
+      },
+      "teste": {
+        "climatologia": {
+          "todas": {
+            "n": 329010,
+            "pinball": 0.22596957771314546,
+            "pinball_q50": 0.1765511571393864,
+            "cobertura_q50": 0.7976383696544178,
+            "pinball_q80": 0.2705841905434551,
+            "cobertura_q80": 0.868997902799307,
+            "pinball_q95": 0.23077338545659487,
+            "cobertura_q95": 0.9654357010425215,
+            "brier_MEDIA": 0.016361431547877975,
+            "prevalencia_MEDIA": 0.016636881967492127,
+            "brier_FORTE": 0.0005012142130620807,
+            "prevalencia_FORTE": 0.0004953985679030356
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 0.7652015411931316,
+            "pinball_q50": 0.7057241473269641,
+            "cobertura_q50": 0.3712010296838549,
+            "pinball_q80": 0.9664660681771343,
+            "cobertura_q80": 0.5644759070066768,
+            "pinball_q95": 0.6234144080752956,
+            "cobertura_q95": 0.8680556672834044,
+            "brier_MEDIA": 0.0682071367320995,
+            "prevalencia_MEDIA": 0.07267315582012711,
+            "brier_FORTE": 0.002562915807470344,
+            "prevalencia_FORTE": 0.002558120826964846
+          },
+          "ainda_nao_chove": {
+            "n": 266855,
+            "pinball": 0.10037341991172323,
+            "pinball_q50": 0.05329790273115386,
+            "cobertura_q50": 0.8969627700436567,
+            "pinball_q80": 0.108501643451134,
+            "cobertura_q80": 0.9399261771373967,
+            "pinball_q95": 0.13932071355288184,
+            "cobertura_q95": 0.9881171422682731,
+            "brier_MEDIA": 0.0042865127448320035,
+            "prevalencia_MEDIA": 0.0035859753515717213,
+            "brier_FORTE": 2.1041761744616553e-05,
+            "prevalencia_FORTE": 1.4988402723392775e-05
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.08220119587563314,
+            "ic95": [
+              0.06542261266901392,
+              0.10232344087871287
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.00967741935483871,
+            "todas": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 163,
+              "falsos": 3690
+            },
+            "ja_chove": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 159,
+              "falsos": 1339
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 4,
+              "falsos": 2351
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 0,
+              "detectados_pct": 0.0,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95": [
+                0.0,
+                0.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 0.0,
+              "antecedencia_mediana_dos_detectados_min": NaN,
+              "avisados_ainda_sem_chuva_pct": 0.0,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": NaN,
+              "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+              "episodios_falsos": 460,
+              "falsos_por_evento": 16.428571428571427,
+              "horas_de_aviso_por_ponto_ano": 98.30729253726807
+            }
+          }
+        },
+        "persistencia": {
+          "todas": {
+            "n": 329010,
+            "pinball": 0.17209299868812936,
+            "pinball_q50": 0.1635520191210008,
+            "cobertura_q50": 0.841056502841859,
+            "pinball_q80": 0.20328966609106458,
+            "cobertura_q80": 0.8844442418163582,
+            "pinball_q95": 0.14943731085232273,
+            "cobertura_q95": 0.9624205951186894,
+            "brier_MEDIA": 0.014178151584472533,
+            "prevalencia_MEDIA": 0.016636881967492127,
+            "brier_FORTE": 0.0004872448995277526,
+            "prevalencia_FORTE": 0.0004953985679030356
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 0.5919256678162063,
+            "pinball_q50": 0.6385574447378058,
+            "cobertura_q50": 0.5902984474298125,
+            "pinball_q80": 0.7199465808687042,
+            "cobertura_q80": 0.810554259512509,
+            "pinball_q95": 0.4172729778421088,
+            "cobertura_q95": 0.9605824149304159,
+            "brier_MEDIA": 0.05966019094276115,
+            "prevalencia_MEDIA": 0.07267315582012711,
+            "brier_FORTE": 0.002514711669178282,
+            "prevalencia_FORTE": 0.002558120826964846
+          },
+          "ainda_nao_chove": {
+            "n": 266855,
+            "pinball": 0.07430693678314118,
+            "pinball_q50": 0.052915297945783875,
+            "cobertura_q50": 0.8994622547825598,
+            "pinball_q80": 0.08295161532190455,
+            "cobertura_q80": 0.9016544565400686,
+            "pinball_q95": 0.0870538970817351,
+            "cobertura_q95": 0.962848738078732,
+            "brier_MEDIA": 0.0035853371884323614,
+            "prevalencia_MEDIA": 0.0035859753515717213,
+            "brier_FORTE": 1.5045774597060244e-05,
+            "prevalencia_FORTE": 1.4988402723392775e-05
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.028324616850617046,
+            "ic95": [
+              0.02325547184766072,
+              0.0349548864965153
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.02933295726977859,
+            "todas": {
+              "precisao": 0.023448773448773448,
+              "recall": 0.7975460122699386,
+              "csi": 0.023310023310023312,
+              "acertos": 130,
+              "perdidos": 33,
+              "falsos": 5414
+            },
+            "ja_chove": {
+              "precisao": 0.023448773448773448,
+              "recall": 0.8176100628930818,
+              "csi": 0.023326753992463665,
+              "acertos": 130,
+              "perdidos": 29,
+              "falsos": 5414
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 4,
+              "falsos": 0
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 28,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 55.0,
+              "antecedencia_ic95": [
+                40.0,
+                60.0
+              ],
+              "antecedencia_p10_min": 30.0,
+              "antecedencia_p90_min": 60.0,
+              "antecedencia_mediana_dos_detectados_min": 55.0,
+              "avisados_ainda_sem_chuva_pct": 0.0,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -330.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+              "episodios_falsos": 639,
+              "falsos_por_evento": 22.821428571428573,
+              "horas_de_aviso_por_ponto_ano": 147.70071269013937
+            }
+          }
+        },
+        "open_meteo": {
+          "todas": {
+            "n": 329010,
+            "pinball": 0.2283303218072236,
+            "pinball_q50": 0.17618703446834327,
+            "cobertura_q50": 0.795987963891675,
+            "pinball_q80": 0.2661401782096591,
+            "cobertura_q80": 0.8767089146226559,
+            "pinball_q95": 0.24266375274366836,
+            "cobertura_q95": 0.9771739460806662,
+            "brier_MEDIA": 0.016483439482211343,
+            "prevalencia_MEDIA": 0.016636881967492127,
+            "brier_FORTE": 0.0004965887756747414,
+            "prevalencia_FORTE": 0.0004953985679030356
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 0.7302369249448597,
+            "pinball_q50": 0.7081455132669506,
+            "cobertura_q50": 0.36733971522805886,
+            "pinball_q80": 0.9227791239504668,
+            "cobertura_q80": 0.608189204408334,
+            "pinball_q95": 0.5597861376171617,
+            "cobertura_q95": 0.9087120907408898,
+            "brier_MEDIA": 0.0669823523400872,
+            "prevalencia_MEDIA": 0.07267315582012711,
+            "brier_FORTE": 0.002551493465389803,
+            "prevalencia_FORTE": 0.002558120826964846
+          },
+          "ainda_nao_chove": {
+            "n": 266855,
+            "pinball": 0.11142786572425803,
+            "pinball_q50": 0.052284993098582776,
+            "cobertura_q50": 0.89582732195387,
+            "pinball_q80": 0.11319796737411204,
+            "cobertura_q80": 0.9392516535197017,
+            "pinball_q95": 0.16880063670007928,
+            "cobertura_q95": 0.993119859099511,
+            "brier_MEDIA": 0.004722190016430711,
+            "prevalencia_MEDIA": 0.0035859753515717213,
+            "brier_FORTE": 1.7999330548259362e-05,
+            "prevalencia_FORTE": 1.4988402723392775e-05
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.0845619399697113,
+            "ic95": [
+              0.07031541036628093,
+              0.1048708071721131
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.0029276985743380856,
+            "todas": {
+              "precisao": 0.001453121051301491,
+              "recall": 0.4233128834355828,
+              "csi": 0.001450250115599647,
+              "acertos": 69,
+              "perdidos": 94,
+              "falsos": 47415
+            },
+            "ja_chove": {
+              "precisao": 0.0037104723929777925,
+              "recall": 0.42138364779874216,
+              "csi": 0.0036916634525318197,
+              "acertos": 67,
+              "perdidos": 92,
+              "falsos": 17990
+            },
+            "ainda_nao_chove": {
+              "precisao": 6.796479423658545e-05,
+              "recall": 0.5,
+              "csi": 6.796017533725237e-05,
+              "acertos": 2,
+              "perdidos": 2,
+              "falsos": 29425
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 16,
+              "detectados_pct": 57.14285714285714,
+              "antecedencia_mediana_min": 35.0,
+              "antecedencia_ic95": [
+                0.0,
+                60.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 60.0,
+              "antecedencia_mediana_dos_detectados_min": 60.0,
+              "avisados_ainda_sem_chuva_pct": 7.142857142857142,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -330.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 7.142857142857142,
+              "episodios_falsos": 3770,
+              "falsos_por_evento": 134.64285714285714,
+              "horas_de_aviso_por_ponto_ano": 1265.047013235674
+            }
+          }
+        },
+        "gb_rede": {
+          "todas": {
+            "n": 329010,
+            "pinball": 0.14376838183751234,
+            "pinball_q50": 0.14492467543787083,
+            "cobertura_q50": 0.8364821737941096,
+            "pinball_q80": 0.17058301706198867,
+            "cobertura_q80": 0.8967478192152214,
+            "pinball_q95": 0.11579745301267746,
+            "cobertura_q95": 0.9637397039603659,
+            "brier_MEDIA": 0.01254554548938622,
+            "prevalencia_MEDIA": 0.016636881967492127,
+            "brier_FORTE": 0.000464220406158044,
+            "prevalencia_FORTE": 0.0004953985679030356
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 0.4800272661273295,
+            "pinball_q50": 0.5426844624003914,
+            "cobertura_q50": 0.5669374949722468,
+            "pinball_q80": 0.5750641441721174,
+            "cobertura_q80": 0.7999839111897675,
+            "pinball_q95": 0.3223331918094798,
+            "cobertura_q95": 0.9533746279462634,
+            "brier_MEDIA": 0.05119747788546785,
+            "prevalencia_MEDIA": 0.07267315582012711,
+            "brier_FORTE": 0.0023908510633181986,
+            "prevalencia_FORTE": 0.002558120826964846
+          },
+          "ainda_nao_chove": {
+            "n": 266855,
+            "pinball": 0.06544805449482213,
+            "pinball_q50": 0.05227975756615973,
+            "cobertura_q50": 0.8992636450506829,
+            "pinball_q80": 0.07637258647035632,
+            "cobertura_q80": 0.9192857544359296,
+            "pinball_q95": 0.06769181944795037,
+            "cobertura_q95": 0.9661539038054374,
+            "brier_MEDIA": 0.0035434701274033565,
+            "prevalencia_MEDIA": 0.0035859753515717213,
+            "brier_FORTE": 1.5506116980085233e-05,
+            "prevalencia_FORTE": 1.4988402723392775e-05
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.0,
+            "ic95": [
+              0.0,
+              0.0
+            ],
+            "significativa": false
+          },
+          "FORTE": {
+            "limiar": 0.10546652576991118,
+            "todas": {
+              "precisao": 0.14912280701754385,
+              "recall": 0.3128834355828221,
+              "csi": 0.11233480176211454,
+              "acertos": 51,
+              "perdidos": 112,
+              "falsos": 291
+            },
+            "ja_chove": {
+              "precisao": 0.14912280701754385,
+              "recall": 0.32075471698113206,
+              "csi": 0.11333333333333333,
+              "acertos": 51,
+              "perdidos": 108,
+              "falsos": 291
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 4,
+              "falsos": 0
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 20,
+              "detectados_pct": 71.42857142857143,
+              "antecedencia_mediana_min": 20.0,
+              "antecedencia_ic95": [
+                10.0,
+                40.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 50.0,
+              "antecedencia_mediana_dos_detectados_min": 40.0,
+              "avisados_ainda_sem_chuva_pct": 0.0,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -370.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+              "episodios_falsos": 85,
+              "falsos_por_evento": 3.0357142857142856,
+              "horas_de_aviso_por_ponto_ano": 9.11140760101509
+            }
+          }
+        },
+        "gb_rede_om": {
+          "todas": {
+            "n": 329010,
+            "pinball": 0.14609057901150257,
+            "pinball_q50": 0.14515622510135232,
+            "cobertura_q50": 0.8408862952493845,
+            "pinball_q80": 0.1706675924184772,
+            "cobertura_q80": 0.9000881432175314,
+            "pinball_q95": 0.12244791951467818,
+            "cobertura_q95": 0.9716725935381904,
+            "brier_MEDIA": 0.012590595958977616,
+            "prevalencia_MEDIA": 0.016636881967492127,
+            "brier_FORTE": 0.000458320946825463,
+            "prevalencia_FORTE": 0.0004953985679030356
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 0.4842550631704587,
+            "pinball_q50": 0.5440274810935971,
+            "cobertura_q50": 0.5882069020995897,
+            "pinball_q80": 0.5758724307175362,
+            "cobertura_q80": 0.8064516129032258,
+            "pinball_q95": 0.3328652777002429,
+            "cobertura_q95": 0.9615477435443649,
+            "brier_MEDIA": 0.05147193496220575,
+            "prevalencia_MEDIA": 0.07267315582012711,
+            "brier_FORTE": 0.002359991294154607,
+            "prevalencia_FORTE": 0.002558120826964846
+          },
+          "ainda_nao_chove": {
+            "n": 266855,
+            "pinball": 0.06732640553564517,
+            "pinball_q50": 0.052252427472685166,
+            "cobertura_q50": 0.8997395589365011,
+            "pinball_q80": 0.0762885973669398,
+            "cobertura_q80": 0.9218976597777819,
+            "pinball_q95": 0.07343819176731062,
+            "cobertura_q95": 0.9740308407187424,
+            "brier_MEDIA": 0.003535091558960963,
+            "prevalencia_MEDIA": 0.0035859753515717213,
+            "brier_FORTE": 1.5419939836209792e-05,
+            "prevalencia_FORTE": 1.4988402723392775e-05
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.002322197173990248,
+            "ic95": [
+              0.001675794004008923,
+              0.0030883518138779178
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.1014265688718116,
+            "todas": {
+              "precisao": 0.15384615384615385,
+              "recall": 0.3067484662576687,
+              "csi": 0.1141552511415525,
+              "acertos": 50,
+              "perdidos": 113,
+              "falsos": 275
+            },
+            "ja_chove": {
+              "precisao": 0.15384615384615385,
+              "recall": 0.31446540880503143,
+              "csi": 0.1152073732718894,
+              "acertos": 50,
+              "perdidos": 109,
+              "falsos": 275
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 4,
+              "falsos": 0
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 18,
+              "detectados_pct": 64.28571428571429,
+              "antecedencia_mediana_min": 20.0,
+              "antecedencia_ic95": [
+                0.0,
+                40.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 50.0,
+              "antecedencia_mediana_dos_detectados_min": 40.0,
+              "avisados_ainda_sem_chuva_pct": 0.0,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -370.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+              "episodios_falsos": 85,
+              "falsos_por_evento": 3.0357142857142856,
+              "horas_de_aviso_por_ponto_ano": 8.658501375233637
+            }
+          }
+        }
+      }
+    },
+    "3h": {
+      "validacao": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 0.6048441110119046,
+          "diff_para_o_melhor": 0.20135413956530404,
+          "ic95": [
+            0.15522799805848767,
+            0.2575960983720223
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.4845214839657338,
+          "diff_para_o_melhor": 0.08103151251913324,
+          "ic95": [
+            0.066281768261063,
+            0.1004531523169836
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.5728263109063878,
+          "diff_para_o_melhor": 0.16933633945978732,
+          "ic95": [
+            0.12939915980412883,
+            0.2165790496095348
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.41417537762676376,
+          "diff_para_o_melhor": 0.010685406180163197,
+          "ic95": [
+            0.0046466290711862646,
+            0.016214874847363687
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.40348997144660054,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "melhor": "gb_rede_om",
+      "escolhido": "gb_rede_om",
+      "limiar_aviso_FORTE": {
+        "climatologia": {
+          "csi_validacao": 0.0075219044470160356,
+          "limiar": 0.011876484560570071
+        },
+        "persistencia": {
+          "csi_validacao": 0.04395008138903961,
+          "limiar": 0.0631891433418151
+        },
+        "open_meteo": {
+          "csi_validacao": 0.018372496451663774,
+          "limiar": 0.016148814390842193
+        },
+        "gb_rede": {
+          "csi_validacao": 0.13182140326009922,
+          "limiar": 0.15000842220783112
+        },
+        "gb_rede_om": {
+          "csi_validacao": 0.13665480427046264,
+          "limiar": 0.09341421391963936
+        }
+      },
+      "teste": {
+        "climatologia": {
+          "todas": {
+            "n": 329013,
+            "pinball": 0.5519552552145481,
+            "pinball_q50": 0.46808597886713166,
+            "cobertura_q50": 0.7044159349326622,
+            "pinball_q80": 0.6731252632213942,
+            "cobertura_q80": 0.8518781932628802,
+            "pinball_q95": 0.5146545235551184,
+            "cobertura_q95": 0.9661533130909721,
+            "brier_MEDIA": 0.03911822945889809,
+            "prevalencia_MEDIA": 0.0411925601750547,
+            "brier_FORTE": 0.0016335113254243364,
+            "prevalencia_FORTE": 0.0016077072696328715
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 1.652351991332893,
+            "pinball_q50": 1.6379831737403048,
+            "cobertura_q50": 0.2652079478722548,
+            "pinball_q80": 2.0376654794494713,
+            "cobertura_q80": 0.571506717078272,
+            "pinball_q95": 1.281407320808903,
+            "cobertura_q95": 0.8762448716917384,
+            "brier_MEDIA": 0.1335929191750872,
+            "prevalencia_MEDIA": 0.1539377363044003,
+            "brier_FORTE": 0.007391664433456782,
+            "prevalencia_FORTE": 0.0074169415171748045
+          },
+          "ainda_nao_chove": {
+            "n": 266858,
+            "pinball": 0.29565730224541936,
+            "pinball_q50": 0.1956003867269594,
+            "cobertura_q50": 0.8067136829324959,
+            "pinball_q80": 0.35530456030202834,
+            "cobertura_q80": 0.9171806728672177,
+            "pinball_q95": 0.3360669597072705,
+            "cobertura_q95": 0.9870942598685443,
+            "brier_MEDIA": 0.017115965040479162,
+            "prevalencia_MEDIA": 0.014935271746257752,
+            "brier_FORTE": 0.00029249176108105514,
+            "prevalencia_FORTE": 0.0002547913895498061
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.17140207129139245,
+            "ic95": [
+              0.1278119230713877,
+              0.22436596114282478
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.011876484560570071,
+            "todas": {
+              "precisao": 0.004631170271769273,
+              "recall": 0.31568998109640833,
+              "csi": 0.004585140848937456,
+              "acertos": 167,
+              "perdidos": 362,
+              "falsos": 35893
+            },
+            "ja_chove": {
+              "precisao": 0.01364280652019844,
+              "recall": 0.33405639913232105,
+              "csi": 0.01328158689090125,
+              "acertos": 154,
+              "perdidos": 307,
+              "falsos": 11134
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0005247860487647344,
+              "recall": 0.19117647058823528,
+              "csi": 0.0005236234744431465,
+              "acertos": 13,
+              "perdidos": 55,
+              "falsos": 24759
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 12,
+              "detectados_pct": 42.857142857142854,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95": [
+                0.0,
+                165.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 180.0,
+              "antecedencia_mediana_dos_detectados_min": 180.0,
+              "avisados_ainda_sem_chuva_pct": 7.142857142857142,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -190.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 14.285714285714285,
+              "episodios_falsos": 1792,
+              "falsos_por_evento": 64.0,
+              "horas_de_aviso_por_ponto_ano": 960.6940295105384
+            }
+          }
+        },
+        "persistencia": {
+          "todas": {
+            "n": 329013,
+            "pinball": 0.44680570906709105,
+            "pinball_q50": 0.42436081169780265,
+            "cobertura_q50": 0.7316944923148934,
+            "pinball_q80": 0.5371612938117771,
+            "cobertura_q80": 0.8518721144757198,
+            "pinball_q95": 0.37889502169169353,
+            "cobertura_q95": 0.9673204402257661,
+            "brier_MEDIA": 0.034279247002419216,
+            "prevalencia_MEDIA": 0.0411925601750547,
+            "brier_FORTE": 0.0015660613812964015,
+            "prevalencia_FORTE": 0.0016077072696328715
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 1.3232015571090205,
+            "pinball_q50": 1.4549041418154949,
+            "cobertura_q50": 0.5135548226208672,
+            "pinball_q80": 1.6127924393562445,
+            "cobertura_q80": 0.8178103129273591,
+            "pinball_q95": 0.901908090155322,
+            "cobertura_q95": 0.9589896227174001,
+            "brier_MEDIA": 0.11766539895296022,
+            "prevalencia_MEDIA": 0.1539377363044003,
+            "brier_FORTE": 0.007184437955829641,
+            "prevalencia_FORTE": 0.0074169415171748045
+          },
+          "ainda_nao_chove": {
+            "n": 266858,
+            "pinball": 0.2426807289838778,
+            "pinball_q50": 0.18433270430186488,
+            "cobertura_q50": 0.7825023045964521,
+            "pinball_q80": 0.2866315969268556,
+            "cobertura_q80": 0.8598055894895412,
+            "pinball_q95": 0.257077885722913,
+            "cobertura_q95": 0.9692608053721455,
+            "brier_MEDIA": 0.014859398474079754,
+            "prevalencia_MEDIA": 0.014935271746257752,
+            "brier_FORTE": 0.00025759445363050224,
+            "prevalencia_FORTE": 0.0002547913895498061
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.06625252514393548,
+            "ic95": [
+              0.051756520046757036,
+              0.08681260540862082
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.0631891433418151,
+            "todas": {
+              "precisao": 0.05357142857142857,
+              "recall": 0.5614366729678639,
+              "csi": 0.0514196675900277,
+              "acertos": 297,
+              "perdidos": 232,
+              "falsos": 5247
+            },
+            "ja_chove": {
+              "precisao": 0.05357142857142857,
+              "recall": 0.6442516268980477,
+              "csi": 0.05203223545900491,
+              "acertos": 297,
+              "perdidos": 164,
+              "falsos": 5247
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 68,
+              "falsos": 0
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 28,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 125.0,
+              "antecedencia_ic95": [
+                60.0,
+                180.0
+              ],
+              "antecedencia_p10_min": 30.0,
+              "antecedencia_p90_min": 180.0,
+              "antecedencia_mediana_dos_detectados_min": 125.0,
+              "avisados_ainda_sem_chuva_pct": 0.0,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -245.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 3.571428571428571,
+              "episodios_falsos": 635,
+              "falsos_por_evento": 22.678571428571427,
+              "horas_de_aviso_por_ponto_ano": 147.70071269013937
+            }
+          }
+        },
+        "open_meteo": {
+          "todas": {
+            "n": 329013,
+            "pinball": 0.5658846696657015,
+            "pinball_q50": 0.4684467058465773,
+            "cobertura_q50": 0.725102047639455,
+            "pinball_q80": 0.6887322765885354,
+            "cobertura_q80": 0.9029855963138235,
+            "pinball_q95": 0.5404750265619919,
+            "cobertura_q95": 0.9831040110877077,
+            "brier_MEDIA": 0.03967598255332511,
+            "prevalencia_MEDIA": 0.0411925601750547,
+            "brier_FORTE": 0.001625287692265009,
+            "prevalencia_FORTE": 0.0016077072696328715
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 1.4799392444134616,
+            "pinball_q50": 1.6026840431076774,
+            "cobertura_q50": 0.3133456680878449,
+            "pinball_q80": 1.7750071722596001,
+            "cobertura_q80": 0.7126860268683131,
+            "pinball_q95": 1.0621265178731079,
+            "cobertura_q95": 0.9356930255007642,
+            "brier_MEDIA": 0.12460842479022018,
+            "prevalencia_MEDIA": 0.1539377363044003,
+            "brier_FORTE": 0.007337893092883842,
+            "prevalencia_FORTE": 0.0074169415171748045
+          },
+          "ainda_nao_chove": {
+            "n": 266858,
+            "pinball": 0.35298843986016065,
+            "pinball_q50": 0.20426679856456345,
+            "cobertura_q50": 0.8210059282464831,
+            "pinball_q80": 0.43572349985920744,
+            "cobertura_q80": 0.9473090557524976,
+            "pinball_q95": 0.41897502115671115,
+            "cobertura_q95": 0.9941466997429345,
+            "brier_MEDIA": 0.019896017597504402,
+            "prevalencia_MEDIA": 0.014935271746257752,
+            "brier_FORTE": 0.0002948757595019701,
+            "prevalencia_FORTE": 0.0002547913895498061
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.18533148574254596,
+            "ic95": [
+              0.1554915071696051,
+              0.22673386436955656
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.016148814390842193,
+            "todas": {
+              "precisao": 0.006455083378160301,
+              "recall": 0.40831758034026466,
+              "csi": 0.006395262768319763,
+              "acertos": 216,
+              "perdidos": 313,
+              "falsos": 33246
+            },
+            "ja_chove": {
+              "precisao": 0.013048085839183998,
+              "recall": 0.42733188720173537,
+              "csi": 0.012823851061059759,
+              "acertos": 197,
+              "perdidos": 264,
+              "falsos": 14901
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0010346329775648008,
+              "recall": 0.27941176470588236,
+              "csi": 0.001031879650247108,
+              "acertos": 19,
+              "perdidos": 49,
+              "falsos": 18345
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 17,
+              "detectados_pct": 60.71428571428571,
+              "antecedencia_mediana_min": 115.0,
+              "antecedencia_ic95": [
+                0.0,
+                180.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 180.0,
+              "antecedencia_mediana_dos_detectados_min": 180.0,
+              "avisados_ainda_sem_chuva_pct": 10.714285714285714,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -210.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 14.285714285714285,
+              "episodios_falsos": 1549,
+              "falsos_por_evento": 55.32142857142857,
+              "horas_de_aviso_por_ponto_ano": 891.4793015940554
+            }
+          }
+        },
+        "gb_rede": {
+          "todas": {
+            "n": 329013,
+            "pinball": 0.38516493708810107,
+            "pinball_q50": 0.3896100924739795,
+            "cobertura_q50": 0.7482926206563266,
+            "pinball_q80": 0.46485789086300283,
+            "cobertura_q80": 0.8683091549574029,
+            "pinball_q95": 0.3010268279273212,
+            "cobertura_q95": 0.9646579314495172,
+            "brier_MEDIA": 0.031340638441872584,
+            "prevalencia_MEDIA": 0.0411925601750547,
+            "brier_FORTE": 0.0014861709824399506,
+            "prevalencia_FORTE": 0.0016077072696328715
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 1.1261106011046396,
+            "pinball_q50": 1.2875357815709139,
+            "cobertura_q50": 0.5291448797361435,
+            "pinball_q80": 1.35932201604464,
+            "cobertura_q80": 0.8340921888826321,
+            "pinball_q95": 0.731474005698366,
+            "cobertura_q95": 0.9558201271016008,
+            "brier_MEDIA": 0.10465263543056874,
+            "prevalencia_MEDIA": 0.1539377363044003,
+            "brier_FORTE": 0.006731193087254096,
+            "prevalencia_FORTE": 0.0074169415171748045
+          },
+          "ainda_nao_chove": {
+            "n": 266858,
+            "pinball": 0.21258821933203625,
+            "pinball_q50": 0.1804705081039402,
+            "cobertura_q50": 0.7993352269746457,
+            "pinball_q80": 0.2565245536549571,
+            "cobertura_q80": 0.8762787699825375,
+            "pinball_q95": 0.20076959623721155,
+            "cobertura_q95": 0.9667163809966349,
+            "brier_MEDIA": 0.014266965613379378,
+            "prevalencia_MEDIA": 0.014935271746257752,
+            "brier_FORTE": 0.0002646547903545085,
+            "prevalencia_FORTE": 0.0002547913895498061
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.004611753164945543,
+            "ic95": [
+              0.0012943550186668787,
+              0.008457202851112101
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.15000842220783112,
+            "todas": {
+              "precisao": 0.20819112627986347,
+              "recall": 0.34593572778827975,
+              "csi": 0.1493877551020408,
+              "acertos": 183,
+              "perdidos": 346,
+              "falsos": 696
+            },
+            "ja_chove": {
+              "precisao": 0.20833333333333334,
+              "recall": 0.39045553145336226,
+              "csi": 0.1572052401746725,
+              "acertos": 180,
+              "perdidos": 281,
+              "falsos": 684
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.2,
+              "recall": 0.04411764705882353,
+              "csi": 0.0375,
+              "acertos": 3,
+              "perdidos": 65,
+              "falsos": 12
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 19,
+              "detectados_pct": 67.85714285714286,
+              "antecedencia_mediana_min": 40.0,
+              "antecedencia_ic95": [
+                5.0,
+                150.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 180.0,
+              "antecedencia_mediana_dos_detectados_min": 150.0,
+              "avisados_ainda_sem_chuva_pct": 3.571428571428571,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -260.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+              "episodios_falsos": 94,
+              "falsos_por_evento": 3.357142857142857,
+              "horas_de_aviso_por_ponto_ano": 23.417916027170364
+            }
+          }
+        },
+        "gb_rede_om": {
+          "todas": {
+            "n": 329013,
+            "pinball": 0.3805531839231556,
+            "pinball_q50": 0.3877587516941053,
+            "cobertura_q50": 0.7514931020962697,
+            "pinball_q80": 0.4575062253359139,
+            "cobertura_q80": 0.8809469534638449,
+            "pinball_q95": 0.29639457473944764,
+            "cobertura_q95": 0.9712534155185357,
+            "brier_MEDIA": 0.031128508220123675,
+            "prevalencia_MEDIA": 0.0411925601750547,
+            "brier_FORTE": 0.0014679945161382283,
+            "prevalencia_FORTE": 0.0016077072696328715
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 1.1060791664595173,
+            "pinball_q50": 1.2790945968611762,
+            "cobertura_q50": 0.5403587804681844,
+            "pinball_q80": 1.3226349359822105,
+            "cobertura_q80": 0.8363124446947148,
+            "pinball_q95": 0.7165079665351642,
+            "cobertura_q95": 0.9622878288150591,
+            "brier_MEDIA": 0.1033959902276695,
+            "prevalencia_MEDIA": 0.1539377363044003,
+            "brier_FORTE": 0.006633419193541567,
+            "prevalencia_FORTE": 0.0074169415171748045
+          },
+          "ainda_nao_chove": {
+            "n": 266858,
+            "pinball": 0.21156792792727935,
+            "pinball_q50": 0.18015403511690206,
+            "cobertura_q50": 0.8006692697989193,
+            "pinball_q80": 0.256005520803089,
+            "cobertura_q80": 0.8913429614251774,
+            "pinball_q95": 0.19854422786184692,
+            "cobertura_q95": 0.9733416273823532,
+            "brier_MEDIA": 0.014298093081846847,
+            "prevalencia_MEDIA": 0.014935271746257752,
+            "brier_FORTE": 0.00026501581436029216,
+            "prevalencia_FORTE": 0.0002547913895498061
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.0,
+            "ic95": [
+              0.0,
+              0.0
+            ],
+            "significativa": false
+          },
+          "FORTE": {
+            "limiar": 0.09341421391963936,
+            "todas": {
+              "precisao": 0.19865642994241842,
+              "recall": 0.391304347826087,
+              "csi": 0.15175953079178886,
+              "acertos": 207,
+              "perdidos": 322,
+              "falsos": 835
+            },
+            "ja_chove": {
+              "precisao": 0.2,
+              "recall": 0.44251626898047725,
+              "csi": 0.15974941268598278,
+              "acertos": 204,
+              "perdidos": 257,
+              "falsos": 816
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.13636363636363635,
+              "recall": 0.04411764705882353,
+              "csi": 0.034482758620689655,
+              "acertos": 3,
+              "perdidos": 65,
+              "falsos": 19
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 21,
+              "detectados_pct": 75.0,
+              "antecedencia_mediana_min": 40.0,
+              "antecedencia_ic95": [
+                20.0,
+                140.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 180.0,
+              "antecedencia_mediana_dos_detectados_min": 130.0,
+              "avisados_ainda_sem_chuva_pct": 3.571428571428571,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -250.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+              "episodios_falsos": 118,
+              "falsos_por_evento": 4.214285714285714,
+              "horas_de_aviso_por_ponto_ano": 27.760487486133695
+            }
+          }
+        }
+      }
+    },
+    "6h": {
+      "validacao": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 1.0509789030312697,
+          "diff_para_o_melhor": 0.29592226802448957,
+          "ic95": [
+            0.2318215748634127,
+            0.3836360073089564
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.8977419882227129,
+          "diff_para_o_melhor": 0.14268535321593254,
+          "ic95": [
+            0.11757522745796803,
+            0.171109328722821
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.9779726499101441,
+          "diff_para_o_melhor": 0.22291601490336374,
+          "ic95": [
+            0.171863718634642,
+            0.2880144844163366
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.7895958593816303,
+          "diff_para_o_melhor": 0.034539224374850165,
+          "ic95": [
+            0.019877575419255514,
+            0.048780890774517714
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.7550566350067802,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "melhor": "gb_rede_om",
+      "escolhido": "gb_rede_om",
+      "limiar_aviso_FORTE": {
+        "climatologia": {
+          "csi_validacao": 0.012967340280320937,
+          "limiar": 0.017204301075268817
+        },
+        "persistencia": {
+          "csi_validacao": 0.060626473560121255,
+          "limiar": 0.09342756183745583
+        },
+        "open_meteo": {
+          "csi_validacao": 0.04191533657182512,
+          "limiar": 0.0384012539184953
+        },
+        "gb_rede": {
+          "csi_validacao": 0.12258436688779925,
+          "limiar": 0.07361562508394305
+        },
+        "gb_rede_om": {
+          "csi_validacao": 0.12118811881188118,
+          "limiar": 0.07263753038495933
+        }
+      },
+      "teste": {
+        "climatologia": {
+          "todas": {
+            "n": 328997,
+            "pinball": 0.9731488097412984,
+            "pinball_q50": 0.8752014980460466,
+            "cobertura_q50": 0.6487050033890887,
+            "pinball_q80": 1.1879988854894772,
+            "cobertura_q80": 0.8529925804794573,
+            "pinball_q95": 0.8562460456883714,
+            "cobertura_q95": 0.9662063787815695,
+            "brier_MEDIA": 0.06417533224493556,
+            "prevalencia_MEDIA": 0.07048383175297836,
+            "brier_FORTE": 0.0031878559756191097,
+            "prevalencia_FORTE": 0.003139435934840749
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 2.6525807113668263,
+            "pinball_q50": 2.717354207522416,
+            "cobertura_q50": 0.24725283565280348,
+            "pinball_q80": 3.2145544367296366,
+            "cobertura_q80": 0.6045853109162578,
+            "pinball_q95": 2.025833489848426,
+            "cobertura_q95": 0.8788834365698657,
+            "brier_MEDIA": 0.18156077757069214,
+            "prevalencia_MEDIA": 0.22773710884080123,
+            "brier_FORTE": 0.013316069278833177,
+            "prevalencia_FORTE": 0.013514600595285978
+          },
+          "ainda_nao_chove": {
+            "n": 266842,
+            "pinball": 0.5819619281951598,
+            "pinball_q50": 0.4461123679334568,
+            "cobertura_q50": 0.7422144939702146,
+            "pinball_q80": 0.7159571518518484,
+            "cobertura_q80": 0.91085361374896,
+            "pinball_q95": 0.5838162648001745,
+            "cobertura_q95": 0.9865463457776512,
+            "brier_MEDIA": 0.03683736887411143,
+            "prevalencia_MEDIA": 0.033861026284729374,
+            "brier_FORTE": 0.0008290905977924418,
+            "prevalencia_FORTE": 0.0007231579144575379
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.24781777574686972,
+            "ic95": [
+              0.17805942473917877,
+              0.33109582996120435
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.017204301075268817,
+            "todas": {
+              "precisao": 0.006486125041792043,
+              "recall": 0.37560503388189737,
+              "csi": 0.006416935417183495,
+              "acertos": 388,
+              "perdidos": 645,
+              "falsos": 59432
+            },
+            "ja_chove": {
+              "precisao": 0.019418059396416977,
+              "recall": 0.38452380952380955,
+              "csi": 0.018832721124132704,
+              "acertos": 323,
+              "perdidos": 517,
+              "falsos": 16311
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0015051173991571343,
+              "recall": 0.33678756476683935,
+              "csi": 0.0015006695294823844,
+              "acertos": 65,
+              "perdidos": 128,
+              "falsos": 43121
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 18,
+              "detectados_pct": 64.28571428571429,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95": [
+                0.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 360.0,
+              "antecedencia_mediana_dos_detectados_min": 360.0,
+              "avisados_ainda_sem_chuva_pct": 21.428571428571427,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -30.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 28.57142857142857,
+              "episodios_falsos": 1337,
+              "falsos_por_evento": 47.75,
+              "horas_de_aviso_por_ponto_ano": 1593.6970838968498
+            }
+          }
+        },
+        "persistencia": {
+          "todas": {
+            "n": 328997,
+            "pinball": 0.8405950117332245,
+            "pinball_q50": 0.7970009774553378,
+            "cobertura_q50": 0.6379298291473783,
+            "pinball_q80": 1.0277012774063572,
+            "cobertura_q80": 0.8497281130223072,
+            "pinball_q95": 0.6970827803379781,
+            "cobertura_q95": 0.969783919002301,
+            "brier_MEDIA": 0.05752205320022849,
+            "prevalencia_MEDIA": 0.07048383175297836,
+            "brier_FORTE": 0.0030587911391053435,
+            "prevalencia_FORTE": 0.003139435934840749
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 2.2096847938136874,
+            "pinball_q50": 2.434457946740248,
+            "cobertura_q50": 0.5052529965409058,
+            "pinball_q80": 2.6731386066003195,
+            "cobertura_q80": 0.8171506717078272,
+            "pinball_q95": 1.5214578281004951,
+            "cobertura_q95": 0.9553535516048588,
+            "brier_MEDIA": 0.16115531545276737,
+            "prevalencia_MEDIA": 0.22773710884080123,
+            "brier_FORTE": 0.013013291600914778,
+            "prevalencia_FORTE": 0.013514600595285978
+          },
+          "ainda_nao_chove": {
+            "n": 266842,
+            "pinball": 0.5216955303726771,
+            "pinball_q50": 0.41559123713745855,
+            "cobertura_q50": 0.6688339916504898,
+            "pinball_q80": 0.6444326870193464,
+            "cobertura_q80": 0.857316314523201,
+            "pinball_q95": 0.5050626669612261,
+            "cobertura_q95": 0.9731451570592335,
+            "brier_MEDIA": 0.03338684359569264,
+            "prevalencia_MEDIA": 0.033861026284729374,
+            "brier_FORTE": 0.0007404818440765282,
+            "prevalencia_FORTE": 0.0007231579144575379
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.11526397773879576,
+            "ic95": [
+              0.08599785219562854,
+              0.1510835971359244
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.09342756183745583,
+            "todas": {
+              "precisao": 0.0762987012987013,
+              "recall": 0.409486931268151,
+              "csi": 0.06873578160545986,
+              "acertos": 423,
+              "perdidos": 610,
+              "falsos": 5121
+            },
+            "ja_chove": {
+              "precisao": 0.0762987012987013,
+              "recall": 0.5035714285714286,
+              "csi": 0.07096124811273276,
+              "acertos": 423,
+              "perdidos": 417,
+              "falsos": 5121
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0,
+              "recall": 0.0,
+              "csi": 0.0,
+              "acertos": 0,
+              "perdidos": 193,
+              "falsos": 0
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 28,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 170.0,
+              "antecedencia_ic95": [
+                60.0,
+                240.1249999999999
+              ],
+              "antecedencia_p10_min": 30.0,
+              "antecedencia_p90_min": 360.0,
+              "antecedencia_mediana_dos_detectados_min": 170.0,
+              "avisados_ainda_sem_chuva_pct": 0.0,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -210.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 3.571428571428571,
+              "episodios_falsos": 633,
+              "falsos_por_evento": 22.607142857142858,
+              "horas_de_aviso_por_ponto_ano": 147.70071269013937
+            }
+          }
+        },
+        "open_meteo": {
+          "todas": {
+            "n": 328997,
+            "pinball": 0.9872865018374443,
+            "pinball_q50": 0.8583825097067966,
+            "cobertura_q50": 0.6907205840782743,
+            "pinball_q80": 1.2289510686403666,
+            "cobertura_q80": 0.90538515548774,
+            "pinball_q95": 0.8745259271651701,
+            "cobertura_q95": 0.9828873819518111,
+            "brier_MEDIA": 0.0657626237440956,
+            "prevalencia_MEDIA": 0.07048383175297836,
+            "brier_FORTE": 0.003200736454690933,
+            "prevalencia_FORTE": 0.003139435934840749
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 2.34303530713488,
+            "pinball_q50": 2.5699802611640488,
+            "cobertura_q50": 0.33432547663100315,
+            "pinball_q80": 2.829391386962436,
+            "cobertura_q80": 0.7361113345668088,
+            "pinball_q95": 1.6297342732781568,
+            "cobertura_q95": 0.9395221623360952,
+            "brier_MEDIA": 0.16555457952297156,
+            "prevalencia_MEDIA": 0.22773710884080123,
+            "brier_FORTE": 0.013235096434219464,
+            "prevalencia_FORTE": 0.013514600595285978
+          },
+          "ainda_nao_chove": {
+            "n": 266842,
+            "pinball": 0.6714945088481019,
+            "pinball_q50": 0.4597032978817258,
+            "cobertura_q50": 0.7737350192248597,
+            "pinball_q80": 0.8561635464912739,
+            "cobertura_q80": 0.9448137849364043,
+            "pinball_q95": 0.6986166821713059,
+            "cobertura_q95": 0.9929883601531992,
+            "brier_MEDIA": 0.04252201819700214,
+            "prevalencia_MEDIA": 0.033861026284729374,
+            "brier_FORTE": 0.0008638286309931005,
+            "prevalencia_FORTE": 0.0007231579144575379
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.26195546784301577,
+            "ic95": [
+              0.21584588934475699,
+              0.32795562359689573
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.0384012539184953,
+            "todas": {
+              "precisao": 0.025852062889099928,
+              "recall": 0.4743465634075508,
+              "csi": 0.02513207160075909,
+              "acertos": 490,
+              "perdidos": 543,
+              "falsos": 18464
+            },
+            "ja_chove": {
+              "precisao": 0.03891120035698349,
+              "recall": 0.5190476190476191,
+              "csi": 0.03755706779223016,
+              "acertos": 436,
+              "perdidos": 404,
+              "falsos": 10769
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.006968641114982578,
+              "recall": 0.27979274611398963,
+              "csi": 0.006845841784989858,
+              "acertos": 54,
+              "perdidos": 139,
+              "falsos": 7695
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 21,
+              "detectados_pct": 75.0,
+              "antecedencia_mediana_min": 260.0,
+              "antecedencia_ic95": [
+                120.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 360.0,
+              "antecedencia_mediana_dos_detectados_min": 360.0,
+              "avisados_ainda_sem_chuva_pct": 10.714285714285714,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -80.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 21.428571428571427,
+              "episodios_falsos": 460,
+              "falsos_por_evento": 16.428571428571427,
+              "horas_de_aviso_por_ponto_ano": 504.96380020362574
+            }
+          }
+        },
+        "gb_rede": {
+          "todas": {
+            "n": 328997,
+            "pinball": 0.7425565663363742,
+            "pinball_q50": 0.7391502853682682,
+            "cobertura_q50": 0.6709574859345222,
+            "pinball_q80": 0.9125180385734593,
+            "cobertura_q80": 0.8629318808378192,
+            "pinball_q95": 0.576001375067395,
+            "cobertura_q95": 0.9563491460408453,
+            "brier_MEDIA": 0.05312809015033387,
+            "prevalencia_MEDIA": 0.07048383175297836,
+            "brier_FORTE": 0.0028904884941889034,
+            "prevalencia_FORTE": 0.003139435934840749
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 1.970658832617996,
+            "pinball_q50": 2.190555947411418,
+            "cobertura_q50": 0.505156463679511,
+            "pinball_q80": 2.4097286102294833,
+            "cobertura_q80": 0.8435684981095648,
+            "pinball_q95": 1.3116919402130869,
+            "cobertura_q95": 0.9549513313490468,
+            "brier_MEDIA": 0.14626305453734495,
+            "prevalencia_MEDIA": 0.22773710884080123,
+            "brier_FORTE": 0.012114199136577975,
+            "prevalencia_FORTE": 0.013514600595285978
+          },
+          "ainda_nao_chove": {
+            "n": 266842,
+            "pinball": 0.4564970391227639,
+            "pinball_q50": 0.4010771225067548,
+            "cobertura_q50": 0.7095772029890347,
+            "pinball_q80": 0.563775625155481,
+            "cobertura_q80": 0.8674421567819159,
+            "pinball_q95": 0.4046383697060557,
+            "cobertura_q95": 0.9566747363608428,
+            "brier_MEDIA": 0.03143783512860289,
+            "prevalencia_MEDIA": 0.033861026284729374,
+            "brier_FORTE": 0.0007423732573726985,
+            "prevalencia_FORTE": 0.0007231579144575379
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.017225532341945488,
+            "ic95": [
+              0.00652407250502122,
+              0.027499019501854866
+            ],
+            "significativa": true
+          },
+          "FORTE": {
+            "limiar": 0.07361562508394305,
+            "todas": {
+              "precisao": 0.13623789764868602,
+              "recall": 0.3814133591481123,
+              "csi": 0.11158312092891533,
+              "acertos": 394,
+              "perdidos": 639,
+              "falsos": 2498
+            },
+            "ja_chove": {
+              "precisao": 0.1416575392479007,
+              "recall": 0.46190476190476193,
+              "csi": 0.12159197743654027,
+              "acertos": 388,
+              "perdidos": 452,
+              "falsos": 2351
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.0392156862745098,
+              "recall": 0.031088082901554404,
+              "csi": 0.01764705882352941,
+              "acertos": 6,
+              "perdidos": 187,
+              "falsos": 147
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 27,
+              "detectados_pct": 96.42857142857143,
+              "antecedencia_mediana_min": 190.0,
+              "antecedencia_ic95": [
+                55.0,
+                290.0
+              ],
+              "antecedencia_p10_min": 20.0,
+              "antecedencia_p90_min": 360.0,
+              "antecedencia_mediana_dos_detectados_min": 190.0,
+              "avisados_ainda_sem_chuva_pct": 3.571428571428571,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -140.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 7.142857142857142,
+              "episodios_falsos": 345,
+              "falsos_por_evento": 12.321428571428571,
+              "horas_de_aviso_por_ponto_ano": 77.04734146823287
+            }
+          }
+        },
+        "gb_rede_om": {
+          "todas": {
+            "n": 328997,
+            "pinball": 0.7253310339944288,
+            "pinball_q50": 0.7346647097347954,
+            "cobertura_q50": 0.6847813201944091,
+            "pinball_q80": 0.8927089946245581,
+            "cobertura_q80": 0.8860597513047231,
+            "pinball_q95": 0.5486193976239325,
+            "cobertura_q95": 0.9698842238683028,
+            "brier_MEDIA": 0.05214381483553773,
+            "prevalencia_MEDIA": 0.07048383175297836,
+            "brier_FORTE": 0.0029068456795749184,
+            "prevalencia_FORTE": 0.003139435934840749
+          },
+          "ja_chove": {
+            "n": 62155,
+            "pinball": 1.8988594202251998,
+            "pinball_q50": 2.1566207415854004,
+            "cobertura_q50": 0.5335049473091464,
+            "pinball_q80": 2.290669968242728,
+            "cobertura_q80": 0.8401898479607433,
+            "pinball_q95": 1.2492875508474712,
+            "cobertura_q95": 0.9604054380178586,
+            "brier_MEDIA": 0.1421780667752863,
+            "prevalencia_MEDIA": 0.22773710884080123,
+            "brier_FORTE": 0.012102874708547115,
+            "prevalencia_FORTE": 0.013514600595285978
+          },
+          "ainda_nao_chove": {
+            "n": 266842,
+            "pinball": 0.45198329695837886,
+            "pinball_q50": 0.4034511932730899,
+            "cobertura_q50": 0.7200178382713366,
+            "pinball_q80": 0.5670846014809099,
+            "cobertura_q80": 0.8967441407274717,
+            "pinball_q95": 0.3854140961211367,
+            "cobertura_q95": 0.9720920994446152,
+            "brier_MEDIA": 0.031175686505676283,
+            "prevalencia_MEDIA": 0.033861026284729374,
+            "brier_FORTE": 0.0007651772295092844,
+            "prevalencia_FORTE": 0.0007231579144575379
+          },
+          "diff_para_o_escolhido": {
+            "diff": 0.0,
+            "ic95": [
+              0.0,
+              0.0
+            ],
+            "significativa": false
+          },
+          "FORTE": {
+            "limiar": 0.07263753038495933,
+            "todas": {
+              "precisao": 0.15258855585831063,
+              "recall": 0.37947725072604066,
+              "csi": 0.1221183800623053,
+              "acertos": 392,
+              "perdidos": 641,
+              "falsos": 2177
+            },
+            "ja_chove": {
+              "precisao": 0.16339590443686006,
+              "recall": 0.45595238095238094,
+              "csi": 0.13673687968582648,
+              "acertos": 383,
+              "perdidos": 457,
+              "falsos": 1961
+            },
+            "ainda_nao_chove": {
+              "precisao": 0.04,
+              "recall": 0.046632124352331605,
+              "csi": 0.022004889975550123,
+              "acertos": 9,
+              "perdidos": 184,
+              "falsos": 216
+            },
+            "eventos": {
+              "eventos": 28,
+              "detectados": 24,
+              "detectados_pct": 85.71428571428571,
+              "antecedencia_mediana_min": 195.0,
+              "antecedencia_ic95": [
+                40.0,
+                310.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_p90_min": 360.0,
+              "antecedencia_mediana_dos_detectados_min": 235.0,
+              "avisados_ainda_sem_chuva_pct": 7.142857142857142,
+              "antecedencia_ate_inicio_da_chuva_mediana_min": -125.0,
+              "avisados_antes_do_inicio_da_chuva_pct": 10.714285714285714,
+              "episodios_falsos": 320,
+              "falsos_por_evento": 11.428571428571429,
+              "horas_de_aviso_por_ponto_ano": 68.44212317838529
+            }
+          }
+        }
+      }
+    }
+  },
+  "eventos_FORTE_no_teste": 28
+}

@@ -1,0 +1,29 @@
+{
+  "train_rows": 248662,
+  "train_from": "2021-09-01 06:00:00+00:00",
+  "train_to": "2024-07-03 08:00:00+00:00",
+  "best_iteration": {
+    "gb_rede": {
+      "q_1h": 231,
+      "MEDIA_1h": 89,
+      "FORTE_1h": 133,
+      "q_3h": 191,
+      "MEDIA_3h": 69,
+      "FORTE_3h": 57,
+      "q_6h": 133,
+      "MEDIA_6h": 111,
+      "FORTE_6h": 25
+    },
+    "gb_rede_om": {
+      "q_1h": 246,
+      "MEDIA_1h": 90,
+      "FORTE_1h": 133,
+      "q_3h": 117,
+      "MEDIA_3h": 67,
+      "FORTE_3h": 47,
+      "q_6h": 91,
+      "MEDIA_6h": 70,
+      "FORTE_6h": 43
+    }
+  }
+}

@@ -1,0 +1,250 @@
+{
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "selection_criterion": "por horizonte: menor erro de quantil (pinball médio de 50%, 80% e 95%) na validação; fica o modelo mais simples cuja diferença para o melhor tem IC 95% contendo zero (bootstrap pareado por bloco de dia, 1000 reamostras)",
+  "alert_rule": "limiar de probabilidade com o maior CSI por linha na validação",
+  "thresholds_mm_h": {
+    "MEDIA": 5.03,
+    "FORTE": 25.15
+  },
+  "quantiles": [
+    0.5,
+    0.8,
+    0.95
+  ],
+  "horizons": {
+    "1h": {
+      "validacao": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 0.24689926506282955,
+          "diff_para_o_melhor": 0.09445298751298242,
+          "ic95": [
+            0.07469046083075195,
+            0.11679430153248857
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.18426869383163377,
+          "diff_para_o_melhor": 0.03182241628178668,
+          "ic95": [
+            0.02539697935396005,
+            0.0397349805799829
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.23859809057423367,
+          "diff_para_o_melhor": 0.08615181302438658,
+          "ic95": [
+            0.06700019623647484,
+            0.10888311849662759
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.15244627754984713,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.15252556369466672,
+          "diff_para_o_melhor": 7.928614481962343e-05,
+          "ic95": [
+            -0.0005604069461136754,
+            0.0006862238360154724
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "melhor": "gb_rede",
+      "escolhido": "gb_rede",
+      "limiar_aviso_FORTE": {
+        "climatologia": {
+          "csi_validacao": 0.0026130128037627383,
+          "limiar": 0.00967741935483871
+        },
+        "persistencia": {
+          "csi_validacao": 0.021517553793884484,
+          "limiar": 0.02933295726977859
+        },
+        "open_meteo": {
+          "csi_validacao": 0.003779350273399807,
+          "limiar": 0.0029276985743380856
+        },
+        "gb_rede": {
+          "csi_validacao": 0.13034188034188035,
+          "limiar": 0.10546652576991118
+        },
+        "gb_rede_om": {
+          "csi_validacao": 0.1400862068965517,
+          "limiar": 0.1014265688718116
+        }
+      }
+    },
+    "3h": {
+      "validacao": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 0.6048441110119046,
+          "diff_para_o_melhor": 0.20135413956530404,
+          "ic95": [
+            0.15522799805848767,
+            0.2575960983720223
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.4845214839657338,
+          "diff_para_o_melhor": 0.08103151251913324,
+          "ic95": [
+            0.066281768261063,
+            0.1004531523169836
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.5728263109063878,
+          "diff_para_o_melhor": 0.16933633945978732,
+          "ic95": [
+            0.12939915980412883,
+            0.2165790496095348
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.41417537762676376,
+          "diff_para_o_melhor": 0.010685406180163197,
+          "ic95": [
+            0.0046466290711862646,
+            0.016214874847363687
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.40348997144660054,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "melhor": "gb_rede_om",
+      "escolhido": "gb_rede_om",
+      "limiar_aviso_FORTE": {
+        "climatologia": {
+          "csi_validacao": 0.0075219044470160356,
+          "limiar": 0.011876484560570071
+        },
+        "persistencia": {
+          "csi_validacao": 0.04395008138903961,
+          "limiar": 0.0631891433418151
+        },
+        "open_meteo": {
+          "csi_validacao": 0.018372496451663774,
+          "limiar": 0.016148814390842193
+        },
+        "gb_rede": {
+          "csi_validacao": 0.13182140326009922,
+          "limiar": 0.15000842220783112
+        },
+        "gb_rede_om": {
+          "csi_validacao": 0.13665480427046264,
+          "limiar": 0.09341421391963936
+        }
+      }
+    },
+    "6h": {
+      "validacao": [
+        {
+          "modelo": "climatologia",
+          "pinball_validacao": 1.0509789030312697,
+          "diff_para_o_melhor": 0.29592226802448957,
+          "ic95": [
+            0.2318215748634127,
+            0.3836360073089564
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "persistencia",
+          "pinball_validacao": 0.8977419882227129,
+          "diff_para_o_melhor": 0.14268535321593254,
+          "ic95": [
+            0.11757522745796803,
+            0.171109328722821
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "open_meteo",
+          "pinball_validacao": 0.9779726499101441,
+          "diff_para_o_melhor": 0.22291601490336374,
+          "ic95": [
+            0.171863718634642,
+            0.2880144844163366
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede",
+          "pinball_validacao": 0.7895958593816303,
+          "diff_para_o_melhor": 0.034539224374850165,
+          "ic95": [
+            0.019877575419255514,
+            0.048780890774517714
+          ],
+          "empata_com_o_melhor": false
+        },
+        {
+          "modelo": "gb_rede_om",
+          "pinball_validacao": 0.7550566350067802,
+          "diff_para_o_melhor": 0.0,
+          "ic95": [
+            0.0,
+            0.0
+          ],
+          "empata_com_o_melhor": true
+        }
+      ],
+      "melhor": "gb_rede_om",
+      "escolhido": "gb_rede_om",
+      "limiar_aviso_FORTE": {
+        "climatologia": {
+          "csi_validacao": 0.012967340280320937,
+          "limiar": 0.017204301075268817
+        },
+        "persistencia": {
+          "csi_validacao": 0.060626473560121255,
+          "limiar": 0.09342756183745583
+        },
+        "open_meteo": {
+          "csi_validacao": 0.04191533657182512,
+          "limiar": 0.0384012539184953
+        },
+        "gb_rede": {
+          "csi_validacao": 0.12258436688779925,
+          "limiar": 0.07361562508394305
+        },
+        "gb_rede_om": {
+          "csi_validacao": 0.12118811881188118,
+          "limiar": 0.07263753038495933
+        }
+      }
+    }
+  }
+}
