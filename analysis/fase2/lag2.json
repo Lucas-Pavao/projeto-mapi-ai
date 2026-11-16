@@ -1,0 +1,94 @@
+{
+ "real": {
+  "eventos": 874,
+  "por_setor": [
+   {
+    "sector": "L",
+    "pares": 4575,
+    "com_inicio_em_2h": 0.34,
+    "mediana_min": 10.0,
+    "p_antes_30min": 0.13
+   },
+   {
+    "sector": "N",
+    "pares": 13390,
+    "com_inicio_em_2h": 0.36,
+    "mediana_min": 0.0,
+    "p_antes_30min": 0.102
+   },
+   {
+    "sector": "O",
+    "pares": 7259,
+    "com_inicio_em_2h": 0.325,
+    "mediana_min": -20.0,
+    "p_antes_30min": 0.067
+   },
+   {
+    "sector": "S",
+    "pares": 4492,
+    "com_inicio_em_2h": 0.351,
+    "mediana_min": 0.0,
+    "p_antes_30min": 0.089
+   }
+  ],
+  "por_anel": {
+   "0-5": 0.0,
+   "15-40": 20.0,
+   "5-15": 0.0
+  },
+  "melhor_mediana": 60.0,
+  "melhor_p10": 0.0,
+  "frac_alguma_30min": 0.7013729977116705,
+  "frac_alguma_60min": 0.5160183066361556,
+  "FORTE": {
+   "n": 80,
+   "melhor_mediana": 55.0
+  }
+ },
+ "controle_deslocado_3_dias": {
+  "eventos": 874,
+  "por_setor": [
+   {
+    "sector": "L",
+    "pares": 4575,
+    "com_inicio_em_2h": 0.108,
+    "mediana_min": 0.0,
+    "p_antes_30min": 0.04
+   },
+   {
+    "sector": "N",
+    "pares": 13390,
+    "com_inicio_em_2h": 0.114,
+    "mediana_min": 20.0,
+    "p_antes_30min": 0.052
+   },
+   {
+    "sector": "O",
+    "pares": 7259,
+    "com_inicio_em_2h": 0.114,
+    "mediana_min": 0.0,
+    "p_antes_30min": 0.046
+   },
+   {
+    "sector": "S",
+    "pares": 4492,
+    "com_inicio_em_2h": 0.128,
+    "mediana_min": 0.0,
+    "p_antes_30min": 0.048
+   }
+  ],
+  "por_anel": {
+   "0-5": 0.0,
+   "15-40": -10.0,
+   "5-15": 10.0
+  },
+  "melhor_mediana": 70.0,
+  "melhor_p10": -60.0,
+  "frac_alguma_30min": 0.37986270022883295,
+  "frac_alguma_60min": 0.32723112128146453,
+  "FORTE": {
+   "n": 80,
+   "melhor_mediana": 40.0
+  }
+ }
+}
