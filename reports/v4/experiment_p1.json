@@ -29,8 +29,8 @@
     "valid_end": "2025-07-31 00:00:00+00:00",
     "guard_h": 6
   },
-  "sensibilidade_rodada": false,
-  "code_commit": "0aba78a4e30969419ac9d1f730bee2c9f7138bf7",
+  "sensibilidade_rodada": true,
+  "code_commit": "945654ab1770b9210a0ccd264a7495eebdd993dc",
   "cenarios": {
     "f=1.0": {
       "f": 1.0,
@@ -43,6 +43,720 @@
       "prevalencia_y": 0.0,
       "treinavel": false,
       "nota": "eventos insuficientes: sem positivos não há o que treinar nem antecedência a medir"
+    },
+    "f=0.8": {
+      "f": 0.8,
+      "capacidade_mm_h": 48.1,
+      "eventos": {
+        "train": 1,
+        "validation": 0,
+        "test": 0
+      },
+      "prevalencia_y": 4.04364829502458e-05,
+      "treinavel": false,
+      "nota": "eventos insuficientes: sem positivos não há o que treinar nem antecedência a medir"
+    },
+    "f=0.6": {
+      "f": 0.6,
+      "capacidade_mm_h": 36.1,
+      "eventos": {
+        "train": 7,
+        "validation": 2,
+        "test": 0
+      },
+      "prevalencia_y": 0.00038125826781660325,
+      "treinavel": false,
+      "nota": "eventos insuficientes: sem positivos não há o que treinar nem antecedência a medir"
+    },
+    "f=0.4": {
+      "f": 0.4,
+      "capacidade_mm_h": 24.0,
+      "eventos": {
+        "train": 41,
+        "validation": 5,
+        "test": 5
+      },
+      "prevalencia_y": 0.0022702196856352282,
+      "treinavel": true,
+      "selecao": {
+        "pr_auc_validacao": {
+          "logistica": 0.078382051857477,
+          "xgboost": 0.17300676919506913
+        },
+        "diff_xgb_menos_logistica": 0.09462471733759213,
+        "ic95": [
+          0.015555488082863993,
+          0.18013212800619666
+        ],
+        "familia": "xgboost"
+      },
+      "bracos": {
+        "sem_previsao": {
+          "entradas": [
+            "rain_0_1h",
+            "rain_1_3h",
+            "rain_3_6h",
+            "rain_6_12h",
+            "rain_12_24h",
+            "tide_level",
+            "hour_sin",
+            "hour_cos",
+            "month_sin",
+            "month_cos",
+            "rua_rel_m",
+            "profundidade_depressao_m",
+            "area_contribuinte_m2"
+          ],
+          "pr_auc_validacao": 0.11164323080698718,
+          "pr_auc_teste": 0.19779543827578994,
+          "calibracao": {
+            "ece_antes": 0.16113446136734044,
+            "ece_depois": 0.01129271966383614,
+            "brier_antes": 0.08704955875873566,
+            "brier_depois": 0.002608633273517194,
+            "adotada": true
+          },
+          "medium": {
+            "orcamento_dias_por_ponto_ano": 50,
+            "validacao": {
+              "limiar": 0.737149947522532,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 180.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                240.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 132.0,
+              "com_1h_ou_mais_pct": 60.0,
+              "falsos": 205,
+              "falsos_por_evento": 41.0,
+              "dias_de_alerta_por_ponto_ano": 48.74626949086235
+            },
+            "teste": {
+              "limiar": 0.737149947522532,
+              "eventos": 5,
+              "detectados": 4,
+              "detectados_pct": 80.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 24.0,
+              "antecedencia_media_min": 228.0,
+              "com_1h_ou_mais_pct": 80.0,
+              "falsos": 190,
+              "falsos_por_evento": 38.0,
+              "dias_de_alerta_por_ponto_ano": 43.48974345791991
+            }
+          },
+          "high": {
+            "orcamento_dias_por_ponto_ano": 10,
+            "validacao": {
+              "limiar": 0.9331978133020474,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                180.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 48.0,
+              "com_1h_ou_mais_pct": 40.0,
+              "falsos": 31,
+              "falsos_por_evento": 6.2,
+              "dias_de_alerta_por_ponto_ano": 9.553288995696642
+            },
+            "teste": {
+              "limiar": 0.9331978133020474,
+              "eventos": 5,
+              "detectados": 4,
+              "detectados_pct": 80.0,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 96.0,
+              "com_1h_ou_mais_pct": 40.0,
+              "falsos": 35,
+              "falsos_por_evento": 7.0,
+              "dias_de_alerta_por_ponto_ano": 9.23875379157884
+            }
+          }
+        },
+        "com_previsao": {
+          "entradas": [
+            "rain_0_1h",
+            "rain_1_3h",
+            "rain_3_6h",
+            "rain_6_12h",
+            "rain_12_24h",
+            "tide_level",
+            "hour_sin",
+            "hour_cos",
+            "month_sin",
+            "month_cos",
+            "rua_rel_m",
+            "profundidade_depressao_m",
+            "area_contribuinte_m2",
+            "q50_1h",
+            "q80_1h",
+            "q95_1h",
+            "pMEDIA_1h",
+            "pFORTE_1h",
+            "q50_3h",
+            "q80_3h",
+            "q95_3h",
+            "pMEDIA_3h",
+            "pFORTE_3h",
+            "q50_6h",
+            "q80_6h",
+            "q95_6h",
+            "pMEDIA_6h",
+            "pFORTE_6h"
+          ],
+          "pr_auc_validacao": 0.17300676919506913,
+          "pr_auc_teste": 0.3936753352530077,
+          "calibracao": {
+            "ece_antes": 0.15530246080451537,
+            "ece_depois": 0.008330375609978404,
+            "brier_antes": 0.07918205857276917,
+            "brier_depois": 0.002437186559791617,
+            "adotada": true
+          },
+          "medium": {
+            "orcamento_dias_por_ponto_ano": 50,
+            "validacao": {
+              "limiar": 0.7425633979114475,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                60.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 156.0,
+              "antecedencia_media_min": 288.0,
+              "com_1h_ou_mais_pct": 100.0,
+              "falsos": 189,
+              "falsos_por_evento": 37.8,
+              "dias_de_alerta_por_ponto_ano": 48.74626949086235
+            },
+            "teste": {
+              "limiar": 0.7425633979114475,
+              "eventos": 5,
+              "detectados": 4,
+              "detectados_pct": 80.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 144.0,
+              "antecedencia_media_min": 288.0,
+              "com_1h_ou_mais_pct": 80.0,
+              "falsos": 177,
+              "falsos_por_evento": 35.4,
+              "dias_de_alerta_por_ponto_ano": 40.785717957945614
+            }
+          },
+          "high": {
+            "orcamento_dias_por_ponto_ano": 10,
+            "validacao": {
+              "limiar": 0.9345483808317164,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 180.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                240.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 132.0,
+              "com_1h_ou_mais_pct": 60.0,
+              "falsos": 38,
+              "falsos_por_evento": 7.6,
+              "dias_de_alerta_por_ponto_ano": 9.798245123791428
+            },
+            "teste": {
+              "limiar": 0.9345483808317164,
+              "eventos": 5,
+              "detectados": 4,
+              "detectados_pct": 80.0,
+              "antecedencia_mediana_min": 180.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 156.0,
+              "com_1h_ou_mais_pct": 60.0,
+              "falsos": 38,
+              "falsos_por_evento": 7.6,
+              "dias_de_alerta_por_ponto_ano": 9.464089249910032
+            }
+          }
+        },
+        "chuva_futura_verdadeira": {
+          "entradas": [
+            "rain_0_1h",
+            "rain_1_3h",
+            "rain_3_6h",
+            "rain_6_12h",
+            "rain_12_24h",
+            "tide_level",
+            "hour_sin",
+            "hour_cos",
+            "month_sin",
+            "month_cos",
+            "rua_rel_m",
+            "profundidade_depressao_m",
+            "area_contribuinte_m2",
+            "fut_1h",
+            "fut_3h",
+            "fut_6h",
+            "futpeak_3h",
+            "futpeak_6h"
+          ],
+          "pr_auc_validacao": 0.9698801821562015,
+          "pr_auc_teste": 0.9436308373692439,
+          "calibracao": {
+            "ece_antes": 0.0014370664387822582,
+            "ece_depois": 0.0012332549662607533,
+            "brier_antes": 0.0009095235727727413,
+            "brier_depois": 0.0008846553722922741,
+            "adotada": true
+          },
+          "medium": {
+            "orcamento_dias_por_ponto_ano": 50,
+            "validacao": {
+              "limiar": 0.0003365922907289699,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                360.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 360.0,
+              "antecedencia_media_min": 360.0,
+              "com_1h_ou_mais_pct": 100.0,
+              "falsos": 154,
+              "falsos_por_evento": 30.8,
+              "dias_de_alerta_por_ponto_ano": 49.481137875146715
+            },
+            "teste": {
+              "limiar": 0.0003365922907289699,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                360.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 360.0,
+              "antecedencia_media_min": 360.0,
+              "com_1h_ou_mais_pct": 100.0,
+              "falsos": 145,
+              "falsos_por_evento": 29.0,
+              "dias_de_alerta_por_ponto_ano": 41.461724332939184
+            }
+          },
+          "high": {
+            "orcamento_dias_por_ponto_ano": 10,
+            "validacao": {
+              "limiar": 0.010114355735219125,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                360.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 360.0,
+              "antecedencia_media_min": 360.0,
+              "com_1h_ou_mais_pct": 100.0,
+              "falsos": 25,
+              "falsos_por_evento": 5.0,
+              "dias_de_alerta_por_ponto_ano": 9.308332867601857
+            },
+            "teste": {
+              "limiar": 0.010114355735219125,
+              "eventos": 5,
+              "detectados": 5,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                360.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 360.0,
+              "antecedencia_media_min": 360.0,
+              "com_1h_ou_mais_pct": 100.0,
+              "falsos": 34,
+              "falsos_por_evento": 6.8,
+              "dias_de_alerta_por_ponto_ano": 11.04143745822837
+            }
+          }
+        }
+      }
+    },
+    "f=0.2": {
+      "f": 0.2,
+      "capacidade_mm_h": 12.0,
+      "eventos": {
+        "train": 162,
+        "validation": 29,
+        "test": 30
+      },
+      "prevalencia_y": 0.012171381368023985,
+      "treinavel": true,
+      "selecao": {
+        "pr_auc_validacao": {
+          "logistica": 0.43689409161750875,
+          "xgboost": 0.5219477683926942
+        },
+        "diff_xgb_menos_logistica": 0.08505367677518544,
+        "ic95": [
+          0.04490471939427837,
+          0.1239179747496324
+        ],
+        "familia": "xgboost"
+      },
+      "bracos": {
+        "sem_previsao": {
+          "entradas": [
+            "rain_0_1h",
+            "rain_1_3h",
+            "rain_3_6h",
+            "rain_6_12h",
+            "rain_12_24h",
+            "tide_level",
+            "hour_sin",
+            "hour_cos",
+            "month_sin",
+            "month_cos",
+            "rua_rel_m",
+            "profundidade_depressao_m",
+            "area_contribuinte_m2"
+          ],
+          "pr_auc_validacao": 0.4679021573173971,
+          "pr_auc_teste": 0.46709185728979746,
+          "calibracao": {
+            "ece_antes": 0.25696017376655683,
+            "ece_depois": 0.003261280338614009,
+            "brier_antes": 0.1413562148809433,
+            "brier_depois": 0.009354895605132621,
+            "adotada": true
+          },
+          "medium": {
+            "orcamento_dias_por_ponto_ano": 50,
+            "validacao": {
+              "limiar": 0.7707387454836843,
+              "eventos": 29,
+              "detectados": 29,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 180.0,
+              "antecedencia_ic95_min": [
+                120.0,
+                300.0
+              ],
+              "antecedencia_p10_min": 48.000000000000014,
+              "antecedencia_media_min": 184.13793103448276,
+              "com_1h_ou_mais_pct": 89.65517241379311,
+              "falsos": 166,
+              "falsos_por_evento": 5.724137931034483,
+              "dias_de_alerta_por_ponto_ano": 49.481137875146715
+            },
+            "teste": {
+              "limiar": 0.7707387454836843,
+              "eventos": 30,
+              "detectados": 30,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 180.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                270.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 166.0,
+              "com_1h_ou_mais_pct": 66.66666666666666,
+              "falsos": 164,
+              "falsos_por_evento": 5.466666666666667,
+              "dias_de_alerta_por_ponto_ano": 45.96843349956301
+            }
+          },
+          "high": {
+            "orcamento_dias_por_ponto_ano": 10,
+            "validacao": {
+              "limiar": 0.9702781833952255,
+              "eventos": 29,
+              "detectados": 28,
+              "detectados_pct": 96.55172413793103,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                0.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 14.482758620689655,
+              "com_1h_ou_mais_pct": 10.344827586206897,
+              "falsos": 10,
+              "falsos_por_evento": 0.3448275862068966,
+              "dias_de_alerta_por_ponto_ano": 9.798245123791428
+            },
+            "teste": {
+              "limiar": 0.9702781833952255,
+              "eventos": 30,
+              "detectados": 28,
+              "detectados_pct": 93.33333333333333,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                0.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 12.0,
+              "com_1h_ou_mais_pct": 6.666666666666667,
+              "falsos": 10,
+              "falsos_por_evento": 0.3333333333333333,
+              "dias_de_alerta_por_ponto_ano": 9.464089249910032
+            }
+          }
+        },
+        "com_previsao": {
+          "entradas": [
+            "rain_0_1h",
+            "rain_1_3h",
+            "rain_3_6h",
+            "rain_6_12h",
+            "rain_12_24h",
+            "tide_level",
+            "hour_sin",
+            "hour_cos",
+            "month_sin",
+            "month_cos",
+            "rua_rel_m",
+            "profundidade_depressao_m",
+            "area_contribuinte_m2",
+            "q50_1h",
+            "q80_1h",
+            "q95_1h",
+            "pMEDIA_1h",
+            "pFORTE_1h",
+            "q50_3h",
+            "q80_3h",
+            "q95_3h",
+            "pMEDIA_3h",
+            "pFORTE_3h",
+            "q50_6h",
+            "q80_6h",
+            "q95_6h",
+            "pMEDIA_6h",
+            "pFORTE_6h"
+          ],
+          "pr_auc_validacao": 0.5219477683926942,
+          "pr_auc_teste": 0.5059730025803006,
+          "calibracao": {
+            "ece_antes": 0.23992823698131993,
+            "ece_depois": 0.0034811560762608197,
+            "brier_antes": 0.12692031264305115,
+            "brier_depois": 0.00873398510417957,
+            "adotada": true
+          },
+          "medium": {
+            "orcamento_dias_por_ponto_ano": 50,
+            "validacao": {
+              "limiar": 0.798121708891661,
+              "eventos": 29,
+              "detectados": 29,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 180.0,
+              "antecedencia_ic95_min": [
+                120.0,
+                300.0
+              ],
+              "antecedencia_p10_min": 60.0,
+              "antecedencia_media_min": 198.6206896551724,
+              "com_1h_ou_mais_pct": 96.55172413793103,
+              "falsos": 161,
+              "falsos_por_evento": 5.551724137931035,
+              "dias_de_alerta_por_ponto_ano": 49.7260940032415
+            },
+            "teste": {
+              "limiar": 0.798121708891661,
+              "eventos": 30,
+              "detectados": 30,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 240.0,
+              "antecedencia_ic95_min": [
+                90.0,
+                300.0
+              ],
+              "antecedencia_p10_min": 54.00000000000002,
+              "antecedencia_media_min": 208.0,
+              "com_1h_ou_mais_pct": 90.0,
+              "falsos": 174,
+              "falsos_por_evento": 5.8,
+              "dias_de_alerta_por_ponto_ano": 47.545781707881346
+            }
+          },
+          "high": {
+            "orcamento_dias_por_ponto_ano": 10,
+            "validacao": {
+              "limiar": 0.9678094627937079,
+              "eventos": 29,
+              "detectados": 26,
+              "detectados_pct": 89.65517241379311,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                0.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 20.689655172413794,
+              "com_1h_ou_mais_pct": 10.344827586206897,
+              "falsos": 12,
+              "falsos_por_evento": 0.41379310344827586,
+              "dias_de_alerta_por_ponto_ano": 9.798245123791428
+            },
+            "teste": {
+              "limiar": 0.9678094627937079,
+              "eventos": 30,
+              "detectados": 27,
+              "detectados_pct": 90.0,
+              "antecedencia_mediana_min": 0.0,
+              "antecedencia_ic95_min": [
+                0.0,
+                0.0
+              ],
+              "antecedencia_p10_min": 0.0,
+              "antecedencia_media_min": 12.0,
+              "com_1h_ou_mais_pct": 6.666666666666667,
+              "falsos": 10,
+              "falsos_por_evento": 0.3333333333333333,
+              "dias_de_alerta_por_ponto_ano": 9.01341833324765
+            }
+          }
+        },
+        "chuva_futura_verdadeira": {
+          "entradas": [
+            "rain_0_1h",
+            "rain_1_3h",
+            "rain_3_6h",
+            "rain_6_12h",
+            "rain_12_24h",
+            "tide_level",
+            "hour_sin",
+            "hour_cos",
+            "month_sin",
+            "month_cos",
+            "rua_rel_m",
+            "profundidade_depressao_m",
+            "area_contribuinte_m2",
+            "fut_1h",
+            "fut_3h",
+            "fut_6h",
+            "futpeak_3h",
+            "futpeak_6h"
+          ],
+          "pr_auc_validacao": 0.9930898432864129,
+          "pr_auc_teste": 0.9958414274456038,
+          "calibracao": {
+            "ece_antes": 0.0009735598229861631,
+            "ece_depois": 0.0008368944739217474,
+            "brier_antes": 0.0008259863243438303,
+            "brier_depois": 0.0007736471970057698,
+            "adotada": true
+          },
+          "medium": {
+            "orcamento_dias_por_ponto_ano": 50,
+            "validacao": {
+              "limiar": 0.00010904172813263601,
+              "eventos": 29,
+              "detectados": 29,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                360.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 360.0,
+              "antecedencia_media_min": 351.7241379310345,
+              "com_1h_ou_mais_pct": 100.0,
+              "falsos": 118,
+              "falsos_por_evento": 4.068965517241379,
+              "dias_de_alerta_por_ponto_ano": 48.99122561895714
+            },
+            "teste": {
+              "limiar": 0.00010904172813263601,
+              "eventos": 30,
+              "detectados": 30,
+              "detectados_pct": 100.0,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                360.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 360.0,
+              "antecedencia_media_min": 360.0,
+              "com_1h_ou_mais_pct": 100.0,
+              "falsos": 135,
+              "falsos_por_evento": 4.5,
+              "dias_de_alerta_por_ponto_ano": 51.15114904118041
+            }
+          },
+          "high": {
+            "orcamento_dias_por_ponto_ano": 10,
+            "validacao": {
+              "limiar": 0.9997379697317545,
+              "eventos": 29,
+              "detectados": 28,
+              "detectados_pct": 96.55172413793103,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                360.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 216.00000000000003,
+              "antecedencia_media_min": 310.3448275862069,
+              "com_1h_ou_mais_pct": 96.55172413793103,
+              "falsos": 0,
+              "falsos_por_evento": 0.0,
+              "dias_de_alerta_por_ponto_ano": 9.553288995696642
+            },
+            "teste": {
+              "limiar": 0.9997379697317545,
+              "eventos": 30,
+              "detectados": 28,
+              "detectados_pct": 93.33333333333333,
+              "antecedencia_mediana_min": 360.0,
+              "antecedencia_ic95_min": [
+                300.0,
+                360.0
+              ],
+              "antecedencia_p10_min": 60.0,
+              "antecedencia_media_min": 296.0,
+              "com_1h_ou_mais_pct": 93.33333333333333,
+              "falsos": 0,
+              "falsos_por_evento": 0.0,
+              "dias_de_alerta_por_ponto_ano": 9.689424708241223
+            }
+          }
+        }
+      }
     }
   }
 }

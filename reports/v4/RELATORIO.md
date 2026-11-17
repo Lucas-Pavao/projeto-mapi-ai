@@ -43,15 +43,42 @@ Critérios iguais aos do v3: família escolhida na validação, Platt se melhora
 
 **Resultado no cenário central: não treinável** (0 evento em treino, validação e teste; `experiment_p1.json`).
 
-### Decisão que depende de você
+### Faixa pré-registrada de capacidade (`--sensibilidade`, aprovada pelo Lucas em 2026-11-16)
 
-Para o experimento ter evento, é preciso um destes caminhos:
+> **CONDICIONAL a um parâmetro sem fonte** (capacidade da galeria `f`, `PARAMETROS-MODELO-FISICO.md`). RÓTULO DO MODELO FÍSICO (balde M1a), não alagamento observado. Nenhum `f` foi escolhido para acertar a frequência: a faixa inteira é reportada.
 
-1. Rodar a faixa pré-registrada de capacidade (`--sensibilidade`). Cenários com evento em todas as partes: provavelmente f = 0,4 e f = 0,2. A resposta sai **condicional** a um parâmetro sem fonte.
-2. Rodar o balde em passo de 10 min com a chuva de 10 min. É mudar o modelo físico (a capacidade vem de uma IDF de 60 min): pede emenda ao ADR 0014.
-3. Esperar o cadastro de microdrenagem (pedido por LAI à EMLURB, já proposto em `PARAMETROS-MODELO-FISICO.md`).
+Eventos do balde (4 pontos, treino / validação / teste; mínimo para treinar: 20 / 5 / 5):
 
-Recomendo a 1, com a resposta dada como faixa e a etiqueta de condicional.
+| f | capacidade (mm/h) | eventos | por ponto por ano (aprox.) | treinável |
+|---|---|---|---|---|
+| 1,0 (central) | 60,1 | 0 / 0 / 0 | 0 | não |
+| 0,8 | 48,1 | 1 / 0 / 0 | 0,05 | não |
+| 0,6 | 36,1 | 7 / 2 / 0 | 0,45 | não |
+| 0,4 | 24,0 | 41 / 5 / 5 | 2,5 | sim (no limite) |
+| 0,2 | 12,0 | 162 / 29 / 30 | 11 | sim |
+
+A frequência declarada (~3,6 por ano, cidade inteira) cai entre f = 0,4 e f = 0,6. Isso é registro, não calibração.
+
+Três braços no teste, família `xgboost` nos dois cenários (escolhida na validação, IC da diferença acima de 0). Orçamento **alto** (~9 a 11 dias de alerta por ponto por ano):
+
+| f | Braço | PR-AUC teste | detectados | antecedência mediana (IC95) | p10 | ≥ 1 h | falsos por evento |
+|---|---|---|---|---|---|---|---|
+| 0,4 | sem previsão | 0,198 | 4 / 5 | 0 min (0–360) | 0 | 40% | 7,0 |
+| 0,4 | com previsão | 0,394 | 4 / 5 | 180 min (0–360) | 0 | 60% | 7,6 |
+| 0,4 | chuva futura verdadeira | 0,944 | 5 / 5 | 360 min (360–360) | 360 | 100% | 6,8 |
+| 0,2 | sem previsão | 0,467 | 28 / 30 | 0 min (0–0) | 0 | 7% | 0,33 |
+| 0,2 | com previsão | 0,506 | 27 / 30 | **0 min (0–0)** | 0 | 7% | 0,33 |
+| 0,2 | chuva futura verdadeira | 0,996 | 28 / 30 | 360 min (300–360) | 60 | 93% | 0,00 |
+
+Orçamento **médio** (~41 a 48 dias de alerta por ponto por ano), f = 0,2: sem previsão 180 min (0–270), p10 0; **com previsão 240 min (90–300)**, p10 54; teto 360 min (360–360). Em f = 0,4 os três braços dão mediana de 360 min, com IC de 0 a 360 (5 eventos) e ~35 falsos por evento.
+
+Leitura:
+
+- **O teto é 360 min por construção**: o horizonte é de 6 h, e o aviso só conta a partir de `início − 6 h`.
+- **A previsão de chuva sobe a PR-AUC** (0,198 → 0,394 em f = 0,4; 0,467 → 0,506 em f = 0,2), **mas no orçamento alto não muda a antecedência** no único cenário com eventos suficientes (f = 0,2: 0 min nos dois braços).
+- No orçamento médio ganha cerca de 1 h de mediana (180 → 240 min), pagando 45 a 48 dias de alerta por ponto por ano. Isso é ~12 vezes a frequência declarada de eventos.
+- Em f = 0,4 o teste tem 5 eventos: os IC vão de 0 a 360 min e não sustentam nenhuma conclusão.
+- **A diferença entre "com previsão" e "teto" é quase toda a antecedência possível**: a previsão `rain_v1` entrega pouco do que uma previsão perfeita daria, coerente com a Fase 3 (o modelo de chuva não prevê o início).
 
 ## Limitações
 
