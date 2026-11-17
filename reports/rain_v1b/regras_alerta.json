@@ -1,0 +1,203 @@
+{
+  "regra": "1. L_desliga em {1,0; 0,8; 0,6; 0,5; 0,4; 0,3} x L_liga. Fica o que dá MENOS trocas de estado por evento FORTE na\n   validação, desde que não perca evento: avisados >= os do sem histerese e antecedência mediana >= a do sem histerese.\n   Empate: o maior L_desliga (mais perto de não ter histerese).\n2. Com esse L_desliga, duração mínima em {0, 10, 20, 30} min: fica a menor cujo passo seguinte reduz menos de\n   0,1 troca por evento (cotovelo), sem perder evento pelo mesmo critério.\n3. Expiração 60 min, cancelamento (0,2 mm em 30 min) e agrupamento (60 min) vêm do prompt, não são escolhidos.",
+  "L_liga": 0.10546652576991118,
+  "partes": {},
+  "validacao": {
+    "sem_histerese": {
+      "eventos": 29,
+      "avisados": 23,
+      "antecedencia_mediana_min": 30.0,
+      "antecedencia_ic95": [
+        20.0,
+        40.0
+      ],
+      "trocas_por_evento": 9.655172413793103,
+      "episodios": 140,
+      "eventos_agrupados": 84,
+      "falsos_por_evento_antes_do_agrupamento": 2.2758620689655173,
+      "falsos_por_evento_depois": 2.0344827586206895
+    },
+    "grade_L_desliga": {
+      "1.0": {
+        "eventos": 29,
+        "avisados": 23,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 9.655172413793103,
+        "episodios": 140,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2758620689655173,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "0.8": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 8.96551724137931,
+        "episodios": 130,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2758620689655173,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "0.6": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 8.344827586206897,
+        "episodios": 121,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2758620689655173,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "0.5": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 7.931034482758621,
+        "episodios": 115,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2413793103448274,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "0.4": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 7.931034482758621,
+        "episodios": 115,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2413793103448274,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "0.3": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 7.724137931034483,
+        "episodios": 112,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2413793103448274,
+        "falsos_por_evento_depois": 2.0344827586206895
+      }
+    },
+    "grade_duracao_minima": {
+      "0": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 7.724137931034483,
+        "episodios": 112,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2413793103448274,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "10": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 7.724137931034483,
+        "episodios": 112,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2413793103448274,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "20": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 7.724137931034483,
+        "episodios": 112,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2413793103448274,
+        "falsos_por_evento_depois": 2.0344827586206895
+      },
+      "30": {
+        "eventos": 29,
+        "avisados": 24,
+        "antecedencia_mediana_min": 30.0,
+        "antecedencia_ic95": [
+          20.0,
+          40.0
+        ],
+        "trocas_por_evento": 7.724137931034483,
+        "episodios": 112,
+        "eventos_agrupados": 84,
+        "falsos_por_evento_antes_do_agrupamento": 2.2413793103448274,
+        "falsos_por_evento_depois": 2.0344827586206895
+      }
+    }
+  },
+  "escolha": {
+    "L_desliga_fator": 0.3,
+    "L_desliga": 0.031639957730973355,
+    "duracao_minima_min": 0,
+    "expiracao_min": 60,
+    "cancelamento": "chuva < 0,2 mm em 30 min e p < L_desliga",
+    "agrupamento_min": 60
+  },
+  "teste": {
+    "sem_histerese": {
+      "eventos": 28,
+      "avisados": 19,
+      "antecedencia_mediana_min": 20.0,
+      "antecedencia_ic95": [
+        5.0,
+        40.0
+      ],
+      "trocas_por_evento": 9.642857142857142,
+      "episodios": 135,
+      "eventos_agrupados": 84,
+      "falsos_por_evento_antes_do_agrupamento": 2.607142857142857,
+      "falsos_por_evento_depois": 2.25
+    },
+    "escolhido": {
+      "eventos": 28,
+      "avisados": 19,
+      "antecedencia_mediana_min": 20.0,
+      "antecedencia_ic95": [
+        5.0,
+        40.0
+      ],
+      "trocas_por_evento": 7.857142857142857,
+      "episodios": 110,
+      "eventos_agrupados": 84,
+      "falsos_por_evento_antes_do_agrupamento": 2.607142857142857,
+      "falsos_por_evento_depois": 2.25
+    }
+  }
+}
