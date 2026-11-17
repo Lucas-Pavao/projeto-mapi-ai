@@ -1,0 +1,89 @@
+{
+  "regras": "Item 2.4.3 do prompt do alerta de 20 min: efeito do controle de qualidade ao vivo sobre os 5 anos, na simulação do\ndado como chega (cenário estável). Mesmas regras da API (emenda ao ADR 0022):\n- pico isolado: hora de uma estação com 10 mm ou mais, com pelo menos 2 vizinhas a até 6 km informando a mesma hora,\n  todas abaixo de 1 mm (RainSpatialCheck) -> as leituras dessa hora saem;\n- estação suspeita: critérios da checagem mensal (StationMonthChecker: cobertura parcial < 80%, travada em zero,\n  subcaptação < 0,5, excesso > 2, com pelo menos 2 vizinhas a até 10 km com 20 mm ou mais nas horas em comum) numa janela\n  móvel de 30 dias terminando no início de cada dia -> a estação sai naquele dia.\nLeitura retirada some (a estação fica ausente se não sobrar leitura em 70 min), nunca vira zero.\nUso: python -m mapi_ai.rain.live_qc",
+  "filtro": {
+    "leituras": 1485181,
+    "retiradas_pico_isolado": 489,
+    "retiradas_estacao_suspeita": 154690,
+    "estacao_dias_reprovados": 7422,
+    "estacao_dias": 87538,
+    "horas_pico_isolado": 151
+  },
+  "partes": {
+    "valid": {
+      "sem_filtro": {
+        "eventos": 29,
+        "avisados": 23,
+        "antecedencia": {
+          "eventos": 29,
+          "avisados": 23,
+          "mediana_min": 26.0,
+          "ic95": [
+            13.0,
+            36.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 53.599999999999994
+        },
+        "episodios_falsos": 82,
+        "falsos_por_evento": 2.8275862068965516
+      },
+      "com_filtro": {
+        "eventos": 29,
+        "avisados": 23,
+        "antecedencia": {
+          "eventos": 29,
+          "avisados": 23,
+          "mediana_min": 23.0,
+          "ic95": [
+            6.0,
+            36.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 53.599999999999994
+        },
+        "episodios_falsos": 66,
+        "falsos_por_evento": 2.2758620689655173
+      },
+      "alarmes_falsos_evitados": 16,
+      "eventos_que_deixariam_de_avisar": 0
+    },
+    "test": {
+      "sem_filtro": {
+        "eventos": 28,
+        "avisados": 19,
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 19,
+          "mediana_min": 16.0,
+          "ic95": [
+            3.0,
+            33.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 43.900000000000006
+        },
+        "episodios_falsos": 87,
+        "falsos_por_evento": 3.107142857142857
+      },
+      "com_filtro": {
+        "eventos": 28,
+        "avisados": 18,
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 18,
+          "mediana_min": 6.0,
+          "ic95": [
+            0.0,
+            16.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 38.10000000000001
+        },
+        "episodios_falsos": 73,
+        "falsos_por_evento": 2.607142857142857
+      },
+      "alarmes_falsos_evitados": 14,
+      "eventos_que_deixariam_de_avisar": 1
+    }
+  }
+}
