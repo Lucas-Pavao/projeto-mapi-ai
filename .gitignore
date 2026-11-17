@@ -7,3 +7,8 @@ avaliacao/saida-repro/
 data/rain/dataset.pkl.gz
 data/rain/oof.pkl.gz
 data/rain/predictions.pkl.gz
+
+# Etapa 2.3: datasets simulados (regeneram com python -m mapi_ai.rain.simulate_v1b) e a primeira versão no relógio
+data/rain_v1b/*.pkl.gz
+data/rain_v1b/relogio_ingenuo/
+models/rain_v1b/relogio_ingenuo/

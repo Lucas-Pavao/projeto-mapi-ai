@@ -1,0 +1,177 @@
+{
+  "metodo": "UTide solve (OLS, constituintes 'auto' pelo critério de Rayleigh) sobre série de 10 min interpolada por cosseno entre os extremos oficiais da DHN",
+  "ajuste": {
+    "de": "2021-10-01",
+    "ate": "2025-01-01",
+    "extremos": 4591,
+    "passos_10min": 171027
+  },
+  "utide": "0.4.0",
+  "constituintes": 68,
+  "nivel_medio_m": 1.2920958877212165,
+  "principais": {
+    "M2": {
+      "amp_m": 0.7759551767191214,
+      "fase_graus": 199.69432531326515
+    },
+    "S2": {
+      "amp_m": 0.27310689294634544,
+      "fase_graus": 218.61548432731445
+    },
+    "N2": {
+      "amp_m": 0.15767887731113164,
+      "fase_graus": 190.46816490144295
+    },
+    "K2": {
+      "amp_m": 0.07388981530464295,
+      "fase_graus": 220.48117521534041
+    },
+    "O1": {
+      "amp_m": 0.05820022228640429,
+      "fase_graus": 188.42668156983035
+    },
+    "MU2": {
+      "amp_m": 0.04902085437645752,
+      "fase_graus": 160.2358449635719
+    },
+    "K1": {
+      "amp_m": 0.03160055474698012,
+      "fase_graus": 278.7601962998747
+    },
+    "NU2": {
+      "amp_m": 0.029473568289913595,
+      "fase_graus": 192.5564787383792
+    }
+  },
+  "fontes": [
+    [
+      "dhn-pe02-2021.csv",
+      "70ba18a5ffd851ce6da27f5da2545ccad35605ef25bab98b18c4c4e7cb530c16"
+    ],
+    [
+      "dhn-pe02-2022.csv",
+      "ce89e220471378646b029b10594f41527ce978f42c32c3ee69734d4dfb61b064"
+    ],
+    [
+      "dhn-pe02-2023.csv",
+      "b5b772138f6f9848c550b011bea4689a94eb898c6905b1ecf59db4f32ca8f0d8"
+    ],
+    [
+      "dhn-pe02-2024.csv",
+      "4e1c2e26e87be757ae8c62af8f36007031599ebef49f603852d968bd59fdcb97"
+    ],
+    [
+      "dhn-pe02-2025.csv",
+      "6086ee27e1c68952bab58cb7adc06ca6578f8d236ea8a6b43bc03a792217c849"
+    ],
+    [
+      "dhn-pe02-2026.csv",
+      "14508eaa31c4c084cf94b45e52f8d7da54dd21e3714f864dfcfe69ca9f7ccaa3"
+    ]
+  ],
+  "validacao": {
+    "2025": {
+      "extremos_oficiais": 1411,
+      "pareados": 1411,
+      "todos": {
+        "n": 1411,
+        "altura_cm": {
+          "media": 0.2871630442730828,
+          "media_abs": 0.765047067805986,
+          "p95_abs": 1.812775596156091,
+          "max_abs": 3.065281842043943
+        },
+        "horario_min": {
+          "media": -2.8873139617292702,
+          "media_abs": 3.2969525159461375,
+          "p95_abs": 8.0,
+          "max_abs": 16.0
+        }
+      },
+      "PM": {
+        "n": 705,
+        "altura_cm": {
+          "media": 0.32944343114443625,
+          "media_abs": 0.7108455918010151,
+          "p95_abs": 1.6744699800876088,
+          "max_abs": 2.8628471818058276
+        },
+        "horario_min": {
+          "media": -2.097872340425532,
+          "media_abs": 2.7390070921985816,
+          "p95_abs": 6.0,
+          "max_abs": 13.0
+        }
+      },
+      "BM": {
+        "n": 706,
+        "altura_cm": {
+          "media": 0.24494254463525816,
+          "media_abs": 0.8191717711820549,
+          "p95_abs": 1.946078852798351,
+          "max_abs": 3.065281842043943
+        },
+        "horario_min": {
+          "media": -3.6756373937677056,
+          "media_abs": 3.8541076487252126,
+          "p95_abs": 9.0,
+          "max_abs": 16.0
+        }
+      }
+    },
+    "2026": {
+      "extremos_oficiais": 1410,
+      "pareados": 1410,
+      "todos": {
+        "n": 1410,
+        "altura_cm": {
+          "media": 0.23217447213933384,
+          "media_abs": 0.9275919756001145,
+          "p95_abs": 2.214688751075764,
+          "max_abs": 3.5631084983339556
+        },
+        "horario_min": {
+          "media": -2.8631205673758866,
+          "media_abs": 3.3851063829787233,
+          "p95_abs": 8.0,
+          "max_abs": 20.0
+        }
+      },
+      "PM": {
+        "n": 705,
+        "altura_cm": {
+          "media": 0.21871171801986677,
+          "media_abs": 0.8272724217666064,
+          "p95_abs": 1.897601214775948,
+          "max_abs": 2.7938054403610746
+        },
+        "horario_min": {
+          "media": -1.9900709219858157,
+          "media_abs": 2.6851063829787236,
+          "p95_abs": 6.0,
+          "max_abs": 13.0
+        }
+      },
+      "BM": {
+        "n": 705,
+        "altura_cm": {
+          "media": 0.24563722625880094,
+          "media_abs": 1.0279115294336225,
+          "p95_abs": 2.3917981716153687,
+          "max_abs": 3.5631084983339556
+        },
+        "horario_min": {
+          "media": -3.7361702127659573,
+          "media_abs": 4.085106382978723,
+          "p95_abs": 10.0,
+          "max_abs": 20.0
+        }
+      }
+    }
+  },
+  "previsao_2027": {
+    "arquivo": "data/tide/harmonic-pe02-2027.csv",
+    "extremos": 1410,
+    "sha256": "d4daed1cd18d054e52eb40cd148921cc8dcffbea71130a700406dddbfa28fb12"
+  }
+}
