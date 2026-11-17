@@ -1,0 +1,12 @@
+{
+  "tarefa": "ALERTA-E1 (IA) — balde M1a a 10 min e endpoint",
+  "data": "2026-11-17",
+  "branch": "alerta-20min",
+  "modulo": "mapi_ai/bucket10.py (versão balde-M1a-10min); avaliacao/balde.py congelado, não mudou",
+  "endpoint": "POST /v1/bucket/point10: rain_10min_mm (sem lacuna), point (area, curva, rua_rel), tr_anos, te_min, forecast_1h_q50_mm, forecast_1h_q80_mm -> h_now_mm, projection.q50/q80 {h_mm[6], minutes_to_hcrit, h_max_mm}, i_cap_mm_h, runtime_ms",
+  "capacidade": {"idf": "Silva e Araújo (2013) Eq. 16", "tr_anos": 5, "te_min": 10, "i_mm_h": 125.4, "lamina_10min_mm": 20.9},
+  "parametros": {"C": 0.86, "hcrit_mm": 150, "ajustado_para_frequencia": false},
+  "health": "/health devolve bucket_version, code_version e code_dirty (build arg GIT_COMMIT)",
+  "testes": {"pytest": "84 passed", "novos": "tests/test_bucket10.py (13), inclui chuva constante 1 h = balde horário"},
+  "pendente_na_etapa": "rodada dos 5 anos por ponto e TR (item 1.4.6) depois da exportação da série de 10 min pela API"
+}

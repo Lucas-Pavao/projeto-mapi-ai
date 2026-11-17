@@ -16,6 +16,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project files
 COPY . .
 
+# Versão do código servido (alerta 20 min, item 8): o commit entra no build e o /health devolve.
+ARG GIT_COMMIT=unknown-build-without-git
+ARG GIT_DIRTY=unknown
+ENV MAPI_CODE_VERSION=${GIT_COMMIT} MAPI_CODE_DIRTY=${GIT_DIRTY}
+
 # Expose API port
 EXPOSE 8000
 

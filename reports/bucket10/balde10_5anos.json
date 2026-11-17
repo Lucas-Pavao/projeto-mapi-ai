@@ -1,0 +1,172 @@
+{
+  "regra": "Item 1.4.6 do prompt do alerta de 20 min: o balde M1a a 10 min sobre os 5 anos, por ponto e TR. REGISTRO, não\ncalibração: nenhum parâmetro é mexido para acertar frequência.\nEntradas: data/bucket10/serie10min_<ponto>.csv.gz (exportada por GET /api/alerta/serie-10min.csv, mesma regra do alerta)\ne data/bucket10/terreno.json (point_terrain, terrain_run 2).\nSérie com lacuna: o balde roda por trecho contínuo, começando vazio depois de cada lacuna (ausente nunca vira zero).\nEvento = episódio com lâmina >= 15 cm, separado do seguinte por pelo menos 1 passo abaixo de 15 cm.\nUso: python -m mapi_ai.bucket10_5anos",
+  "pontos": {
+    "AV_RECIFE_IBURA": {
+      "passos": 271728,
+      "passos_sem_estacao_pct": 4.22,
+      "chuva_total_mm": 23287.8,
+      "maior_chuva_10min_mm": 19.1,
+      "passos_com_bloco_longo_e_chuva_pct": 66.4,
+      "anos": 5.17,
+      "terreno": {
+        "area_m2": 208,
+        "rua_rel_m": 0.062,
+        "volume_topo_m3": 348.041
+      },
+      "balde": {
+        "TR2": {
+          "capacidade_mm_h": 105.0,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.1,
+          "passos_com_lamina_gt_0": 1,
+          "datas": []
+        },
+        "TR5": {
+          "capacidade_mm_h": 125.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        },
+        "TR10": {
+          "capacidade_mm_h": 143.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        }
+      }
+    },
+    "CIN_UFPE": {
+      "passos": 271728,
+      "passos_sem_estacao_pct": 0.44,
+      "chuva_total_mm": 28003.6,
+      "maior_chuva_10min_mm": 20.8,
+      "passos_com_bloco_longo_e_chuva_pct": 64.4,
+      "anos": 5.17,
+      "terreno": {
+        "area_m2": 82378,
+        "rua_rel_m": 0.109,
+        "volume_topo_m3": 57586.919
+      },
+      "balde": {
+        "TR2": {
+          "capacidade_mm_h": 105.0,
+          "eventos_ge_15cm": 1,
+          "eventos_por_ano": 0.19,
+          "lamina_max_cm": 32.5,
+          "passos_com_lamina_gt_0": 2,
+          "datas": [
+            "2022-05-28 10:40:00+00:00"
+          ]
+        },
+        "TR5": {
+          "capacidade_mm_h": 125.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        },
+        "TR10": {
+          "capacidade_mm_h": 143.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        }
+      }
+    },
+    "AGAMENON_DERBY": {
+      "passos": 271728,
+      "passos_sem_estacao_pct": 0.29,
+      "chuva_total_mm": 26785.8,
+      "maior_chuva_10min_mm": 17.6,
+      "passos_com_bloco_longo_e_chuva_pct": 66.2,
+      "anos": 5.17,
+      "terreno": {
+        "area_m2": 62,
+        "rua_rel_m": 0.081,
+        "volume_topo_m3": 117.005
+      },
+      "balde": {
+        "TR2": {
+          "capacidade_mm_h": 105.0,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        },
+        "TR5": {
+          "capacidade_mm_h": 125.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        },
+        "TR10": {
+          "capacidade_mm_h": 143.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        }
+      }
+    },
+    "MASCARENHAS_IMBIRIBEIRA": {
+      "passos": 271728,
+      "passos_sem_estacao_pct": 3.64,
+      "chuva_total_mm": 21913.0,
+      "maior_chuva_10min_mm": 19.1,
+      "passos_com_bloco_longo_e_chuva_pct": 65.7,
+      "anos": 5.17,
+      "terreno": {
+        "area_m2": 10103,
+        "rua_rel_m": 0.037,
+        "volume_topo_m3": 4795.846
+      },
+      "balde": {
+        "TR2": {
+          "capacidade_mm_h": 105.0,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 7.1,
+          "passos_com_lamina_gt_0": 3,
+          "datas": []
+        },
+        "TR5": {
+          "capacidade_mm_h": 125.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        },
+        "TR10": {
+          "capacidade_mm_h": 143.4,
+          "eventos_ge_15cm": 0,
+          "eventos_por_ano": 0.0,
+          "lamina_max_cm": 0.0,
+          "passos_com_lamina_gt_0": 0,
+          "datas": []
+        }
+      }
+    },
+    "JABOATAO_CENTRO": {
+      "passos": 271728,
+      "passos_sem_estacao_pct": 0.26,
+      "chuva_total_mm": 21972.1,
+      "maior_chuva_10min_mm": 22.1,
+      "passos_com_bloco_longo_e_chuva_pct": 69.2,
+      "balde": "sem terreno (SEM_DADO no alerta)"
+    }
+  },
+  "referencia_cidade": "3,6 dias por ano com alagamento registrado na cidade inteira (CKAN, Defesa Civil). A comparação mistura unidades: cidade inteira contra um ponto."
+}

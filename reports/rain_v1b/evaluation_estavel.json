@@ -1,0 +1,858 @@
+{
+  "cenario": "estavel",
+  "ciclos_min_apos_ancora": [
+    1,
+    4,
+    7
+  ],
+  "treino_v1b_ciclo": 4,
+  "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC",
+  "eventos_FORTE_no_teste": 28,
+  "eventos_em_dias_distintos": 15,
+  "horizons": {
+    "1h": {
+      "modelo": "gb_rede",
+      "laboratorio_rain_v1": {
+        "limiar": 0.10546652576991118,
+        "todas": {
+          "precisao": 0.14912280701754385,
+          "recall": 0.3128834355828221,
+          "csi": 0.11233480176211454,
+          "acertos": 51,
+          "perdidos": 112,
+          "falsos": 291
+        },
+        "ja_chove": {
+          "precisao": 0.14912280701754385,
+          "recall": 0.32075471698113206,
+          "csi": 0.11333333333333333,
+          "acertos": 51,
+          "perdidos": 108,
+          "falsos": 291
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.0,
+          "recall": 0.0,
+          "csi": 0.0,
+          "acertos": 0,
+          "perdidos": 4,
+          "falsos": 0
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 20,
+          "detectados_pct": 71.42857142857143,
+          "antecedencia_mediana_min": 20.0,
+          "antecedencia_ic95": [
+            10.0,
+            40.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 50.0,
+          "antecedencia_mediana_dos_detectados_min": 40.0,
+          "avisados_ainda_sem_chuva_pct": 0.0,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -370.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 85,
+          "falsos_por_evento": 3.0357142857142856,
+          "horas_de_aviso_por_ponto_ano": 9.11140760101509
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 20,
+          "mediana_min": 20.0,
+          "ic95": [
+            10.0,
+            40.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 50.0
+        }
+      },
+      "simulacao_rain_v1": {
+        "limiar": 0.10546652576991118,
+        "todas": {
+          "precisao": 0.14626865671641792,
+          "recall": 0.3006134969325153,
+          "csi": 0.1091314031180401,
+          "acertos": 49,
+          "perdidos": 114,
+          "falsos": 286
+        },
+        "ja_chove": {
+          "precisao": 0.14626865671641792,
+          "recall": 0.3081761006289308,
+          "csi": 0.1101123595505618,
+          "acertos": 49,
+          "perdidos": 110,
+          "falsos": 286
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.0,
+          "recall": 0.0,
+          "csi": 0.0,
+          "acertos": 0,
+          "perdidos": 4,
+          "falsos": 0
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 19,
+          "detectados_pct": 67.85714285714286,
+          "antecedencia_mediana_min": 20.0,
+          "antecedencia_ic95": [
+            5.0,
+            40.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 50.0,
+          "antecedencia_mediana_dos_detectados_min": 40.0,
+          "avisados_ainda_sem_chuva_pct": 0.0,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -370.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 87,
+          "falsos_por_evento": 3.107142857142857,
+          "horas_de_aviso_por_ponto_ano": 8.924916802163905
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 19,
+          "mediana_min": 16.0,
+          "ic95": [
+            3.0,
+            33.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 43.900000000000006
+        }
+      },
+      "simulacao_rain_v1b": {
+        "limiar": 0.10286452215229816,
+        "todas": {
+          "precisao": 0.12095032397408208,
+          "recall": 0.34355828220858897,
+          "csi": 0.09824561403508772,
+          "acertos": 56,
+          "perdidos": 107,
+          "falsos": 407
+        },
+        "ja_chove": {
+          "precisao": 0.12095032397408208,
+          "recall": 0.3522012578616352,
+          "csi": 0.0989399293286219,
+          "acertos": 56,
+          "perdidos": 103,
+          "falsos": 407
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.0,
+          "recall": 0.0,
+          "csi": 0.0,
+          "acertos": 0,
+          "perdidos": 4,
+          "falsos": 0
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 20,
+          "detectados_pct": 71.42857142857143,
+          "antecedencia_mediana_min": 20.0,
+          "antecedencia_ic95": [
+            10.0,
+            40.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 50.0,
+          "antecedencia_mediana_dos_detectados_min": 40.0,
+          "avisados_ainda_sem_chuva_pct": 0.0,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -365.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 106,
+          "falsos_por_evento": 3.7857142857142856,
+          "horas_de_aviso_por_ponto_ano": 12.335034266871306
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 20,
+          "mediana_min": 16.0,
+          "ic95": [
+            3.0,
+            36.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 46.0
+        }
+      },
+      "limiar_rain_v1b_validacao": {
+        "limiar": 0.10286452215229816,
+        "csi_validacao": 0.125531914893617
+      },
+      "dif_v1b_menos_v1_sim": {
+        "diff_mediana_min": 0.0,
+        "ic95_lo": -10.0,
+        "ic95_hi": 16.01249999999999
+      },
+      "dif_sim_menos_lab_v1": {
+        "diff_mediana_min": -4.0,
+        "ic95_lo": -20.0,
+        "ic95_hi": -4.0
+      },
+      "fica": "rain_v1",
+      "antecedencia_por_evento": {
+        "lab": [
+          40.0,
+          10.0,
+          20.0,
+          0.0,
+          30.0,
+          20.0,
+          10.0,
+          50.0,
+          60.0,
+          20.0,
+          0.0,
+          0.0,
+          40.0,
+          50.0,
+          20.0,
+          0.0,
+          0.0,
+          0.0,
+          10.0,
+          60.0,
+          40.0,
+          30.0,
+          50.0,
+          0.0,
+          50.0,
+          40.0,
+          40.0,
+          0.0
+        ],
+        "sim_v1": [
+          36.0,
+          3.0,
+          16.0,
+          0.0,
+          23.0,
+          16.0,
+          6.0,
+          43.0,
+          56.0,
+          16.0,
+          0.0,
+          0.0,
+          33.0,
+          43.0,
+          13.0,
+          0.0,
+          0.0,
+          0.0,
+          6.0,
+          56.0,
+          0.0,
+          26.0,
+          43.0,
+          0.0,
+          46.0,
+          36.0,
+          33.0,
+          0.0
+        ],
+        "sim_v1b": [
+          36.0,
+          6.0,
+          16.0,
+          0.0,
+          26.0,
+          16.0,
+          3.0,
+          0.0,
+          56.0,
+          26.0,
+          0.0,
+          0.0,
+          33.0,
+          43.0,
+          16.0,
+          0.0,
+          0.0,
+          0.0,
+          3.0,
+          56.0,
+          46.0,
+          36.0,
+          43.0,
+          3.0,
+          43.0,
+          43.0,
+          46.0,
+          0.0
+        ]
+      }
+    },
+    "3h": {
+      "modelo": "gb_rede_om",
+      "laboratorio_rain_v1": {
+        "limiar": 0.09341421391963936,
+        "todas": {
+          "precisao": 0.19865642994241842,
+          "recall": 0.391304347826087,
+          "csi": 0.15175953079178886,
+          "acertos": 207,
+          "perdidos": 322,
+          "falsos": 835
+        },
+        "ja_chove": {
+          "precisao": 0.2,
+          "recall": 0.44251626898047725,
+          "csi": 0.15974941268598278,
+          "acertos": 204,
+          "perdidos": 257,
+          "falsos": 816
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.13636363636363635,
+          "recall": 0.04411764705882353,
+          "csi": 0.034482758620689655,
+          "acertos": 3,
+          "perdidos": 65,
+          "falsos": 19
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 21,
+          "detectados_pct": 75.0,
+          "antecedencia_mediana_min": 40.0,
+          "antecedencia_ic95": [
+            20.0,
+            140.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 180.0,
+          "antecedencia_mediana_dos_detectados_min": 130.0,
+          "avisados_ainda_sem_chuva_pct": 3.571428571428571,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -250.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 118,
+          "falsos_por_evento": 4.214285714285714,
+          "horas_de_aviso_por_ponto_ano": 27.760487486133695
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 21,
+          "mediana_min": 40.0,
+          "ic95": [
+            20.0,
+            145.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 180.0
+        }
+      },
+      "simulacao_rain_v1": {
+        "limiar": 0.09341421391963936,
+        "todas": {
+          "precisao": 0.19579751671442217,
+          "recall": 0.387523629489603,
+          "csi": 0.14952589350838805,
+          "acertos": 205,
+          "perdidos": 324,
+          "falsos": 842
+        },
+        "ja_chove": {
+          "precisao": 0.197265625,
+          "recall": 0.43817787418655096,
+          "csi": 0.15744349181605613,
+          "acertos": 202,
+          "perdidos": 259,
+          "falsos": 822
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.13043478260869565,
+          "recall": 0.04411764705882353,
+          "csi": 0.03409090909090909,
+          "acertos": 3,
+          "perdidos": 65,
+          "falsos": 20
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 22,
+          "detectados_pct": 78.57142857142857,
+          "antecedencia_mediana_min": 40.0,
+          "antecedencia_ic95": [
+            20.0,
+            145.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 180.0,
+          "antecedencia_mediana_dos_detectados_min": 90.0,
+          "avisados_ainda_sem_chuva_pct": 3.571428571428571,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -240.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 119,
+          "falsos_por_evento": 4.25,
+          "horas_de_aviso_por_ponto_ano": 27.893695199598827
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 22,
+          "mediana_min": 36.0,
+          "ic95": [
+            16.0,
+            139.5
+          ],
+          "p10_min": 0.0,
+          "p90_min": 179.0
+        }
+      },
+      "simulacao_rain_v1b": {
+        "limiar": 0.12406288087368011,
+        "todas": {
+          "precisao": 0.21506550218340612,
+          "recall": 0.3724007561436673,
+          "csi": 0.1578525641025641,
+          "acertos": 197,
+          "perdidos": 332,
+          "falsos": 719
+        },
+        "ja_chove": {
+          "precisao": 0.21739130434782608,
+          "recall": 0.4229934924078091,
+          "csi": 0.16766981943250214,
+          "acertos": 195,
+          "perdidos": 266,
+          "falsos": 702
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.10526315789473684,
+          "recall": 0.029411764705882353,
+          "csi": 0.023529411764705882,
+          "acertos": 2,
+          "perdidos": 66,
+          "falsos": 17
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 22,
+          "detectados_pct": 78.57142857142857,
+          "antecedencia_mediana_min": 40.0,
+          "antecedencia_ic95": [
+            20.0,
+            150.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 180.0,
+          "antecedencia_mediana_dos_detectados_min": 95.0,
+          "avisados_ainda_sem_chuva_pct": 3.571428571428571,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -245.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 0.0,
+          "episodios_falsos": 107,
+          "falsos_por_evento": 3.8214285714285716,
+          "horas_de_aviso_por_ponto_ano": 24.403653106812342
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 22,
+          "mediana_min": 36.0,
+          "ic95": [
+            13.0,
+            143.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 176.0
+        }
+      },
+      "limiar_rain_v1b_validacao": {
+        "limiar": 0.12406288087368011,
+        "csi_validacao": 0.13296903460837886
+      },
+      "dif_v1b_menos_v1_sim": {
+        "diff_mediana_min": 0.0,
+        "ic95_lo": -3.0,
+        "ic95_hi": 10.0
+      },
+      "dif_sim_menos_lab_v1": {
+        "diff_mediana_min": -4.0,
+        "ic95_lo": -7.0,
+        "ic95_hi": 11.124999999999886
+      },
+      "fica": "rain_v1",
+      "antecedencia_por_evento": {
+        "lab": [
+          40.0,
+          10.0,
+          20.0,
+          0.0,
+          180.0,
+          140.0,
+          20.0,
+          30.0,
+          180.0,
+          160.0,
+          0.0,
+          0.0,
+          150.0,
+          180.0,
+          130.0,
+          0.0,
+          0.0,
+          20.0,
+          40.0,
+          180.0,
+          180.0,
+          40.0,
+          0.0,
+          20.0,
+          50.0,
+          180.0,
+          180.0,
+          0.0
+        ],
+        "sim_v1": [
+          36.0,
+          6.0,
+          6.0,
+          0.0,
+          179.0,
+          136.0,
+          16.0,
+          26.0,
+          179.0,
+          153.0,
+          0.0,
+          36.0,
+          143.0,
+          176.0,
+          126.0,
+          0.0,
+          0.0,
+          13.0,
+          36.0,
+          179.0,
+          176.0,
+          36.0,
+          0.0,
+          16.0,
+          46.0,
+          179.0,
+          173.0,
+          0.0
+        ],
+        "sim_v1b": [
+          36.0,
+          13.0,
+          6.0,
+          0.0,
+          179.0,
+          146.0,
+          16.0,
+          26.0,
+          176.0,
+          136.0,
+          0.0,
+          36.0,
+          163.0,
+          176.0,
+          143.0,
+          0.0,
+          0.0,
+          13.0,
+          36.0,
+          179.0,
+          176.0,
+          36.0,
+          0.0,
+          3.0,
+          46.0,
+          176.0,
+          156.0,
+          0.0
+        ]
+      }
+    },
+    "6h": {
+      "modelo": "gb_rede_om",
+      "laboratorio_rain_v1": {
+        "limiar": 0.07263753038495933,
+        "todas": {
+          "precisao": 0.15258855585831063,
+          "recall": 0.37947725072604066,
+          "csi": 0.1221183800623053,
+          "acertos": 392,
+          "perdidos": 641,
+          "falsos": 2177
+        },
+        "ja_chove": {
+          "precisao": 0.16339590443686006,
+          "recall": 0.45595238095238094,
+          "csi": 0.13673687968582648,
+          "acertos": 383,
+          "perdidos": 457,
+          "falsos": 1961
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.04,
+          "recall": 0.046632124352331605,
+          "csi": 0.022004889975550123,
+          "acertos": 9,
+          "perdidos": 184,
+          "falsos": 216
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 24,
+          "detectados_pct": 85.71428571428571,
+          "antecedencia_mediana_min": 195.0,
+          "antecedencia_ic95": [
+            40.0,
+            300.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 360.0,
+          "antecedencia_mediana_dos_detectados_min": 235.0,
+          "avisados_ainda_sem_chuva_pct": 7.142857142857142,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -125.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 10.714285714285714,
+          "episodios_falsos": 320,
+          "falsos_por_evento": 11.428571428571429,
+          "horas_de_aviso_por_ponto_ano": 68.44212317838529
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 24,
+          "mediana_min": 195.0,
+          "ic95": [
+            40.0,
+            300.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 360.0
+        }
+      },
+      "simulacao_rain_v1": {
+        "limiar": 0.07263753038495933,
+        "todas": {
+          "precisao": 0.15354637568199533,
+          "recall": 0.3814133591481123,
+          "csi": 0.12293291731669266,
+          "acertos": 394,
+          "perdidos": 639,
+          "falsos": 2172
+        },
+        "ja_chove": {
+          "precisao": 0.16467065868263472,
+          "recall": 0.4583333333333333,
+          "csi": 0.13784461152882205,
+          "acertos": 385,
+          "perdidos": 455,
+          "falsos": 1953
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.039473684210526314,
+          "recall": 0.046632124352331605,
+          "csi": 0.021844660194174758,
+          "acertos": 9,
+          "perdidos": 184,
+          "falsos": 219
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 24,
+          "detectados_pct": 85.71428571428571,
+          "antecedencia_mediana_min": 195.0,
+          "antecedencia_ic95": [
+            40.0,
+            310.0
+          ],
+          "antecedencia_p10_min": 0.0,
+          "antecedencia_p90_min": 360.0,
+          "antecedencia_mediana_dos_detectados_min": 235.0,
+          "avisados_ainda_sem_chuva_pct": 7.142857142857142,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -125.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 10.714285714285714,
+          "episodios_falsos": 316,
+          "falsos_por_evento": 11.285714285714286,
+          "horas_de_aviso_por_ponto_ano": 68.3621985503062
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 24,
+          "mediana_min": 189.5,
+          "ic95": [
+            36.0,
+            293.0
+          ],
+          "p10_min": 0.0,
+          "p90_min": 359.0
+        }
+      },
+      "simulacao_rain_v1b": {
+        "limiar": 0.06803113000790327,
+        "todas": {
+          "precisao": 0.15897230028101164,
+          "recall": 0.38334946757018395,
+          "csi": 0.1265984654731458,
+          "acertos": 396,
+          "perdidos": 637,
+          "falsos": 2095
+        },
+        "ja_chove": {
+          "precisao": 0.16680960548885077,
+          "recall": 0.4630952380952381,
+          "csi": 0.13977721882860222,
+          "acertos": 389,
+          "perdidos": 451,
+          "falsos": 1943
+        },
+        "ainda_nao_chove": {
+          "precisao": 0.0440251572327044,
+          "recall": 0.03626943005181347,
+          "csi": 0.020289855072463767,
+          "acertos": 7,
+          "perdidos": 186,
+          "falsos": 152
+        },
+        "eventos": {
+          "eventos": 28,
+          "detectados": 25,
+          "detectados_pct": 89.28571428571429,
+          "antecedencia_mediana_min": 255.0,
+          "antecedencia_ic95": [
+            40.0,
+            320.0
+          ],
+          "antecedencia_p10_min": 7.000000000000002,
+          "antecedencia_p90_min": 360.0,
+          "antecedencia_mediana_dos_detectados_min": 260.0,
+          "avisados_ainda_sem_chuva_pct": 7.142857142857142,
+          "antecedencia_ate_inicio_da_chuva_mediana_min": -80.0,
+          "avisados_antes_do_inicio_da_chuva_pct": 7.142857142857142,
+          "episodios_falsos": 311,
+          "falsos_por_evento": 11.107142857142858,
+          "horas_de_aviso_por_ponto_ano": 66.3640828483292
+        },
+        "antecedencia": {
+          "eventos": 28,
+          "avisados": 25,
+          "mediana_min": 252.5,
+          "ic95": [
+            31.0,
+            316.0
+          ],
+          "p10_min": 4.200000000000001,
+          "p90_min": 359.0
+        }
+      },
+      "limiar_rain_v1b_validacao": {
+        "limiar": 0.06803113000790327,
+        "csi_validacao": 0.11150372987828819
+      },
+      "dif_v1b_menos_v1_sim": {
+        "diff_mediana_min": 63.0,
+        "ic95_lo": -26.5,
+        "ic95_hi": 85.03749999999997
+      },
+      "dif_sim_menos_lab_v1": {
+        "diff_mediana_min": -5.5,
+        "ic95_lo": -7.0,
+        "ic95_hi": -4.0
+      },
+      "fica": "rain_v1",
+      "antecedencia_por_evento": {
+        "lab": [
+          70.0,
+          20.0,
+          360.0,
+          360.0,
+          340.0,
+          320.0,
+          10.0,
+          190.0,
+          360.0,
+          170.0,
+          0.0,
+          30.0,
+          260.0,
+          360.0,
+          320.0,
+          0.0,
+          0.0,
+          40.0,
+          300.0,
+          360.0,
+          210.0,
+          40.0,
+          50.0,
+          20.0,
+          200.0,
+          360.0,
+          270.0,
+          0.0
+        ],
+        "sim_v1": [
+          66.0,
+          13.0,
+          359.0,
+          359.0,
+          336.0,
+          316.0,
+          6.0,
+          186.0,
+          359.0,
+          166.0,
+          0.0,
+          26.0,
+          256.0,
+          359.0,
+          316.0,
+          0.0,
+          0.0,
+          36.0,
+          293.0,
+          359.0,
+          206.0,
+          36.0,
+          43.0,
+          16.0,
+          193.0,
+          359.0,
+          266.0,
+          0.0
+        ],
+        "sim_v1b": [
+          36.0,
+          6.0,
+          359.0,
+          359.0,
+          336.0,
+          316.0,
+          16.0,
+          249.0,
+          359.0,
+          266.0,
+          0.0,
+          26.0,
+          256.0,
+          359.0,
+          316.0,
+          13.0,
+          0.0,
+          16.0,
+          289.0,
+          359.0,
+          206.0,
+          36.0,
+          43.0,
+          16.0,
+          256.0,
+          359.0,
+          336.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "segundos": 359.6
+}

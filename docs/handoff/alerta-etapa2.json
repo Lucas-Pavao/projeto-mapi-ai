@@ -1,0 +1,18 @@
+{
+  "tarefa": "ALERTA-E2 (IA) — simulação do dado como chega, rain_v1b; O3 maré harmônica",
+  "data": "2026-11-17",
+  "branch": "alerta-20min",
+  "relatorio": "reports/rain_v1b/SIMULACAO.md",
+  "formato_ao_vivo": "igual ao da PED: 2142 blocos iguais, 0 diferentes; só atraso e parada",
+  "atraso_estavel_min": {"seco": {"n": 1487, "mediana": 3.6, "p90": 7.7, "max": 12.8}, "chuva": {"n": 11, "mediana": 8.7, "p90": 18.0, "max": 274.5}},
+  "antecedencia_1h": {"laboratorio": {"mediana": 20, "ic95": [10, 40]}, "sim_estavel_v1": {"mediana": 16, "ic95": [3, 33]},
+                       "sim_chuva_v1": {"mediana": 0, "ic95": [0, 8]}, "sim_chuva_v1b": {"mediana": 13, "ic95": [0, 23]}},
+  "fica": {"1h": "rain_v1 (nos dois cenários)", "3h": "rain_v1 no estável, rain_v1b no chuva", "6h": "rain_v1"},
+  "pare": "condição da Etapa 2.3 cumprida no cenário chuva (0 min), não no estável (16 min): decisão do Lucas",
+  "achado": "cálculo no relógio sem âncora dá 0 min: a âncora na leitura mais nova (serve.py) sustenta a antecedência",
+  "modelos": "models/rain_v1b/{gb_rede,gb_rede_om}_{estavel,chuva}.joblib (não servidos)",
+  "mare_O3": {"script": "mapi_ai/tide/harmonic_pe02.py", "saida": "data/tide/harmonic-pe02-2027.csv", "relatorio": "reports/tide/harmonica_2027.json",
+              "validacao_2025": {"altura_cm_p95": 1.8, "altura_cm_media": 0.3, "horario_min_p95": 8, "horario_min_media": -2.9},
+              "validacao_2026": {"altura_cm_p95": 2.2, "horario_min_p95": 8},
+              "nota": "a F-41 não tem constantes harmônicas; constantes do UTide sobre a tábua DHN 2021-10..2024-12 interpolada por cosseno"}
+}
