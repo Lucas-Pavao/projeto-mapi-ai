@@ -423,7 +423,7 @@ class BucketInput(BaseModel):
 
 @app.exception_handler(RequestValidationError)
 async def _validacao(request: Request, exc: RequestValidationError):
-    if request.url.path != "/v1/simulate/bucket":
+    if request.url.path not in ("/v1/simulate/bucket", "/v1/bucket/point10"):
         return await request_validation_exception_handler(request, exc)
     # NaN/Inf no corpo quebram a serializacao do campo "input" no handler padrao: omite input e ctx.
     erros = [{"type": e["type"], "loc": list(e["loc"]), "msg": e["msg"]} for e in exc.errors()]
@@ -453,6 +453,44 @@ def simulate_bucket(data: BucketInput):
         "model": "M1a",
         "illustrative": True,
     }
+
+
+# --- Balde M1a a 10 min para o nível ALAGAMENTO_PROVAVEL do alerta (mapi_ai/bucket10.py) ---
+from mapi_ai import bucket10 as B10
+
+
+class Bucket10Input(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    rain_10min_mm: list[float] = Field(min_length=1, max_length=288, description="chuva medida por passo de 10 min, em ordem; sem lacuna")
+    point: BucketPoint
+    tr_anos: float = Field(default=5.0, ge=2.0, le=10.0)
+    te_min: float = Field(default=10.0, ge=5.0, le=15.0)
+    forecast_1h_q50_mm: Optional[float] = Field(default=None, ge=0)
+    forecast_1h_q80_mm: Optional[float] = Field(default=None, ge=0)
+
+    @field_validator("rain_10min_mm")
+    @classmethod
+    def _p10_valida(cls, v):
+        a = np.asarray(v, dtype=float)
+        if not np.isfinite(a).all() or (a < 0).any():
+            raise ValueError("rain_10min_mm deve ser finito e >= 0 (ausente não vira zero: mande a série sem lacuna)")
+        return v
+
+
+@app.post("/v1/bucket/point10")
+def bucket_point10(data: Bucket10Input):
+    """Lâmina do balde M1a a 10 min (agora) e projeção dos próximos 60 min com a chuva prevista q50 e q80."""
+    import time as _t
+    t0 = _t.perf_counter()
+    p = B10.Params10(tr_anos=data.tr_anos, te_min=data.te_min)
+    terr = B10.Terreno(area_m2=data.point.area_m2, z_curva_m=np.asarray(data.point.z_curva_m, dtype=float),
+                       v_curva_m3=np.asarray(data.point.v_curva_m3, dtype=float), rua_rel_m=data.point.rua_rel_m)
+    out = B10.avaliar(np.asarray(data.rain_10min_mm, dtype=float), terr, p, data.forecast_1h_q50_mm, data.forecast_1h_q80_mm)
+    out["slug"] = data.point.slug
+    out["projection_rule"] = "chuva prevista de 1 h distribuída por igual nos 6 passos de 10 min"
+    out["validated"] = False
+    out["runtime_ms"] = round((_t.perf_counter() - t0) * 1000, 3)
+    return out
 
 
 class RainReading(BaseModel):
@@ -498,6 +536,9 @@ async def health():
         "model_version": (v3_model.meta["model_version"] if v3_model is not None
                           else metadata["model_version"] if metadata else "unversioned"),
         "rain_model_version": rain_model.meta["model_version"] if rain_model is not None else None,
+        "bucket_version": B10.VERSION,
+        "code_version": os.getenv("MAPI_CODE_VERSION", "unknown"),
+        "code_dirty": os.getenv("MAPI_CODE_DIRTY", "unknown"),
         "xgboost_loaded": model is not None,
         "lstm_loaded": lstm_model is not None
     }

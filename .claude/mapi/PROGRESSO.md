@@ -36,3 +36,4 @@ Contrato de entrada: `projeto-mapi-api/docs/handoff/etapa0.json`.
 | 2 Medidas da descoberta | concluida | 4ff6ca1 | `analysis/fase2/` |
 | 3 Previsão de chuva `rain_v1` | concluida | 0aba78a | `reports/v4/rain/RELATORIO.md`; rede em 1 h, rede + Open-Meteo da véspera em 3 h e 6 h; antecedência FORTE 20 min (IC 10–40) |
 | 4 Rótulo do balde e v4 | parcial | 0636f2b | balde central: 0 evento em 5 anos; v4 não treinável; `--sensibilidade` à espera do ok do Lucas |
+| ALERTA-E1-IA | 10 | IA | Opus 5.5 | Balde M1a a 10 min (`mapi_ai/bucket10.py`, `balde-M1a-10min`), `POST /v1/bucket/point10`, versão do código no `/health` | concluido (sem push/PR) | `alerta-20min` | 2026-11-17 · `docs/handoff/alerta-etapa1.json`; capacidade pela IDF em Te = 10 min, TR 5: 125,4 mm/h; chuva constante de 1 h dá a mesma lâmina do balde horário; pytest 84 passed |
