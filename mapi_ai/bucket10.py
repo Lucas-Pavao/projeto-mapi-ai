@@ -55,10 +55,24 @@ class Terreno:
     rua_rel_m: float         # cota da rua - fundo (m)
 
 
-def simular(P_mm_passo: np.ndarray, t: Terreno, p: Params10, i_cap_mm_h: float | None = None, V0: float = 0.0):
+def fator_refluxo(mare_nr_m: np.ndarray, soleira_nr_m: float, diametro_m: float) -> np.ndarray:
+    """
+    Refluxo de maré (variante M1b, ADR 0009 emenda 3): fração da capacidade da galeria livre por passo.
+    1 com a maré abaixo da soleira da saída; 0 com o tubo todo submerso (maré >= soleira + D); linear no meio.
+    Simplificação declarada: ignora a carga hidráulica entre a rua e o canal.
+    """
+    m = np.asarray(mare_nr_m, dtype=float)
+    if diametro_m <= 0:
+        raise ValueError("diametro_m deve ser > 0")
+    return np.clip((soleira_nr_m + diametro_m - m) / diametro_m, 0.0, 1.0)
+
+
+def simular(P_mm_passo: np.ndarray, t: Terreno, p: Params10, i_cap_mm_h: float | None = None, V0: float = 0.0,
+            f_passo: np.ndarray | None = None):
     """
     Devolve (h_mm[k], V_m3[k], n_fora_da_curva). P em mm por passo, sem NaN.
     i_cap_mm_h: capacidade em mm/h; padrão = IDF na duração Te (só o teste de equivalência com o horário a troca).
+    f_passo: fração da capacidade por passo (refluxo de maré); None = 1 em todos os passos.
     """
     P = np.asarray(P_mm_passo, dtype=float)
     if np.isnan(P).any():
@@ -75,9 +89,13 @@ def simular(P_mm_passo: np.ndarray, t: Terreno, p: Params10, i_cap_mm_h: float |
     Vs = np.zeros(n)
     V = float(V0)
     fora = 0
+    fp = np.ones(n) if f_passo is None else np.asarray(f_passo, dtype=float)
+    if len(fp) != n:
+        raise ValueError("f_passo precisa ter um valor por passo")
     for k in range(n):
         v_disp = V + qin[k]
-        qout = q if q < v_disp else v_disp
+        qk = q * fp[k]
+        qout = qk if qk < v_disp else v_disp
         V = v_disp - qout
         if V <= 0.0:
             V = 0.0
@@ -135,12 +153,13 @@ def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 
 
 
 def avaliar(P_medido: np.ndarray, t: Terreno, p: Params10, chuva_prevista_1h_q50: float | None,
-            chuva_prevista_1h_q80: float | None, passos_projecao: int = 6, i_cap_mm_h: float | None = None) -> dict:
+            chuva_prevista_1h_q80: float | None, passos_projecao: int = 6, i_cap_mm_h: float | None = None,
+            f_medido: np.ndarray | None = None, f_projecao: np.ndarray | None = None) -> dict:
     """
     Lâmina medida (última posição da série) e projeção dos próximos 60 min com a chuva prevista distribuída por igual
     nos 6 passos (declarado), uma vez com q50 e outra com q80. A projeção parte do volume do fim da série medida.
     """
-    h, V, fora = simular(P_medido, t, p, i_cap_mm_h=i_cap_mm_h)
+    h, V, fora = simular(P_medido, t, p, i_cap_mm_h=i_cap_mm_h, f_passo=f_medido)
     h_now = float(h[-1]) if len(h) else 0.0
     V_end = float(V[-1]) if len(V) else 0.0
     out = {"version": VERSION, "h_now_mm": h_now, "h_series_mm": h.tolist(), "n_fora_da_curva": int(fora),
@@ -151,7 +170,7 @@ def avaliar(P_medido: np.ndarray, t: Terreno, p: Params10, chuva_prevista_1h_q50
             out["projection"][nome] = None
             continue
         Pp = np.full(passos_projecao, float(q) / passos_projecao)
-        hp, _, fp = simular(Pp, t, p, i_cap_mm_h=i_cap_mm_h, V0=V_end)
+        hp, _, fp = simular(Pp, t, p, i_cap_mm_h=i_cap_mm_h, V0=V_end, f_passo=f_projecao)
         cruz = np.flatnonzero(hp >= p.hcrit_mm)
         out["projection"][nome] = {"h_mm": hp.tolist(), "rain_1h_mm": float(q),
                                     "minutes_to_hcrit": int((cruz[0] + 1) * p.dt_min) if cruz.size else None,

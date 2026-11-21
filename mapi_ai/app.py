@@ -133,6 +133,20 @@ class Bucket10Input(BaseModel):
     days_since_cleaning: Optional[float] = Field(default=None, ge=0, le=36500)
     lambda_re_per_day: Optional[float] = Field(default=None, gt=0, le=10)
     f_clogged: float = Field(default=0.0, ge=0.0, le=1.0)
+    # refluxo de maré (ADR 0009 emenda 3): maré prevista (m, NR DHN) em cada passo da série e nos 6 da projeção,
+    # soleira e diâmetro da saída da galeria; sem eles, nenhum refluxo
+    tide_nr_m: Optional[list[float]] = Field(default=None, max_length=300)
+    outlet_sill_nr_m: Optional[float] = Field(default=None, ge=-5, le=10)
+    outlet_diameter_m: Optional[float] = Field(default=None, gt=0, le=5)
+
+    @model_validator(mode="after")
+    def _refluxo_completo(self):
+        campos = (self.tide_nr_m, self.outlet_sill_nr_m, self.outlet_diameter_m)
+        if any(c is not None for c in campos) and not all(c is not None for c in campos):
+            raise ValueError("refluxo precisa de tide_nr_m, outlet_sill_nr_m e outlet_diameter_m juntos")
+        if self.tide_nr_m is not None and len(self.tide_nr_m) != len(self.rain_10min_mm) + 6:
+            raise ValueError("tide_nr_m precisa de um valor por passo da série mais 6 da projeção")
+        return self
 
     @field_validator("rain_10min_mm")
     @classmethod
@@ -151,11 +165,21 @@ def bucket_point10(data: Bucket10Input):
     p = B10.Params10(tr_anos=data.tr_anos, te_min=data.te_min)
     terr = B10.Terreno(area_m2=data.point.area_m2, z_curva_m=np.asarray(data.point.z_curva_m, dtype=float),
                        v_curva_m3=np.asarray(data.point.v_curva_m3, dtype=float), rua_rel_m=data.point.rua_rel_m)
-    out = B10.avaliar(np.asarray(data.rain_10min_mm, dtype=float), terr, p, data.forecast_1h_q50_mm, data.forecast_1h_q80_mm)
+    fm = fpj = None
+    if data.tide_nr_m is not None:
+        f = B10.fator_refluxo(np.asarray(data.tide_nr_m, dtype=float), data.outlet_sill_nr_m, data.outlet_diameter_m)
+        n = len(data.rain_10min_mm)
+        fm, fpj = f[:n], f[n:]
+    out = B10.avaliar(np.asarray(data.rain_10min_mm, dtype=float), terr, p, data.forecast_1h_q50_mm, data.forecast_1h_q80_mm,
+                      f_medido=fm, f_projecao=fpj)
+    out["refluxo"] = None if fm is None else {
+        "fator_agora": float(fm[-1]), "fator_min_projecao": float(fpj.min()), "soleira_nr_m": data.outlet_sill_nr_m,
+        "diametro_m": data.outlet_diameter_m, "mare_agora_nr_m": float(data.tide_nr_m[n - 1]),
+        "regra": "capacidade x clamp((soleira + D - maré)/D, 0, 1)"}
     from mapi_ai import entupimento as ENT
     out["limpeza"] = ENT.avaliar_com_limpeza(np.asarray(data.rain_10min_mm, dtype=float), terr, p, data.forecast_1h_q50_mm,
                                              data.forecast_1h_q80_mm, data.days_since_cleaning, data.lambda_re_per_day,
-                                             data.f_clogged)
+                                             data.f_clogged, f_medido=fm, f_projecao=fpj)
     out["slug"] = data.point.slug
     out["projection_rule"] = "chuva prevista de 1 h distribuída por igual nos 6 passos de 10 min"
     out["validated"] = False

@@ -74,7 +74,8 @@ def _alaga(av: dict, nome: str | None, hcrit: float) -> bool:
 
 def avaliar_com_limpeza(P_medido: np.ndarray, t: B.Terreno, p: B.Params10, q50: float | None, q80: float | None,
                         dias_desde_limpeza: float | None, lambda_re_por_dia: float | None,
-                        f_entupida: float = F_ENTUPIDA) -> dict | None:
+                        f_entupida: float = F_ENTUPIDA, f_medido: np.ndarray | None = None,
+                        f_projecao: np.ndarray | None = None) -> dict | None:
     """
     Bloco "limpeza" da resposta do /v1/bucket/point10. None se faltar a data da limpeza ou a taxa (comportamento de hoje).
     prob_* = (1 - p_E) * 1[galeria livre alaga] + p_E * 1[galeria entupida alaga], agora e até 60 min (q50, q80).
@@ -82,8 +83,8 @@ def avaliar_com_limpeza(P_medido: np.ndarray, t: B.Terreno, p: B.Params10, q50: 
     pe = p_entupida(dias_desde_limpeza, lambda_re_por_dia)
     if pe is None:
         return None
-    livre = B.avaliar(P_medido, t, p, q50, q80)
-    ent = B.avaliar(P_medido, t, p, q50, q80, i_cap_mm_h=f_entupida * p.i_cap_mm_h)
+    livre = B.avaliar(P_medido, t, p, q50, q80, f_medido=f_medido, f_projecao=f_projecao)
+    ent = B.avaliar(P_medido, t, p, q50, q80, i_cap_mm_h=f_entupida * p.i_cap_mm_h, f_medido=f_medido, f_projecao=f_projecao)
     out = {"dias_desde_limpeza": float(dias_desde_limpeza), "lambda_re_por_dia": float(lambda_re_por_dia),
            "p_entupida": pe, "f_entupida": f_entupida, "h_now_entupida_mm": ent["h_now_mm"],
            "projection_entupida": ent["projection"]}
