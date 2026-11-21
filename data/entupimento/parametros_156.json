@@ -7,7 +7,7 @@
  "pontos": {
   "AV_RECIFE_IBURA": {
    "bairro": "IPSEP",
-   "lambda_re_por_dia_ponto": 0.02349,
+   "lambda_re_por_dia_ponto": 0.02337,
    "limpezas_ponto": 53,
    "reentupimentos_ponto": 53,
    "lambda_re_por_dia_rua_sensibilidade": 0.03653,
@@ -31,9 +31,9 @@
   },
   "AGAMENON_DERBY": {
    "bairro": "BOA VISTA",
-   "lambda_re_por_dia_ponto": 0.00529,
-   "limpezas_ponto": 24,
-   "reentupimentos_ponto": 24,
+   "lambda_re_por_dia_ponto": 0.00981,
+   "limpezas_ponto": 35,
+   "reentupimentos_ponto": 35,
    "lambda_re_por_dia_rua_sensibilidade": 0.04676,
    "limpezas_rua": 195,
    "lambda_re_por_dia_bairro": 0.21732,
@@ -42,16 +42,16 @@
    "ultima_limpeza_conhecida_ponto": "2024-07-05"
   },
   "MASCARENHAS_IMBIRIBEIRA": {
-   "bairro": "BOA VIAGEM",
-   "lambda_re_por_dia_ponto": 0.00078,
-   "limpezas_ponto": 4,
-   "reentupimentos_ponto": 3,
+   "bairro": "IMBIRIBEIRA",
+   "lambda_re_por_dia_ponto": 0.03331,
+   "limpezas_ponto": 130,
+   "reentupimentos_ponto": 130,
    "lambda_re_por_dia_rua_sensibilidade": 0.02641,
    "limpezas_rua": 114,
-   "lambda_re_por_dia_bairro": 0.51603,
-   "limpezas_bairro": 1626,
-   "reentupimentos_bairro": 1626,
-   "ultima_limpeza_conhecida_ponto": "2019-06-05"
+   "lambda_re_por_dia_bairro": 0.2499,
+   "limpezas_bairro": 652,
+   "reentupimentos_bairro": 652,
+   "ultima_limpeza_conhecida_ponto": "2023-08-31"
   }
  }
 }

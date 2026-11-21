@@ -28,10 +28,17 @@ def test_sem_dado_nunca_vira_numero():
 
 
 def test_parametros_do_156():
-    assert E.lambda_do_ponto("AV_RECIFE_IBURA") == pytest.approx(0.02349)
+    # posições alinhadas por notícia (2026-11-21; api docs/ALINHAMENTO-PONTOS.md)
+    assert E.lambda_do_ponto("AV_RECIFE_IBURA") == pytest.approx(0.02337)
     assert E.lambda_do_ponto("CIN_UFPE") is None                    # nenhuma limpeza casada
-    assert E.lambda_do_ponto("MASCARENHAS_IMBIRIBEIRA") is None     # 4 limpezas < MIN_LIMPEZAS
-    assert E.lambda_do_ponto("AGAMENON_DERBY") is not None          # 24 limpezas
+    assert E.lambda_do_ponto("MASCARENHAS_IMBIRIBEIRA") == pytest.approx(0.03331)   # 130 limpezas
+    assert E.lambda_do_ponto("AGAMENON_DERBY") == pytest.approx(0.00981)            # 35 limpezas
+
+
+def test_minimo_de_limpezas(tmp_path):
+    f = tmp_path / "p.json"
+    f.write_text('{"pontos": {"X": {"lambda_re_por_dia_ponto": 0.01, "limpezas_ponto": 4}}}', encoding="utf-8")
+    assert E.lambda_do_ponto("X", f) is None
 
 
 def test_limpeza_recente_da_menos_chance_de_alagar():
