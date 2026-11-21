@@ -24,6 +24,11 @@ class RainForecaster:
 
     def forecast(self, latitude: float, longitude: float, readings: list, open_meteo: list | None = None,
                  issued_at: str | None = None, now: str | None = None) -> dict:
+        return self.forecast_with_inputs(latitude, longitude, readings, open_meteo, issued_at, now)[0]
+
+    def forecast_with_inputs(self, latitude: float, longitude: float, readings: list, open_meteo: list | None = None,
+                             issued_at: str | None = None, now: str | None = None) -> tuple[dict, pd.DataFrame]:
+        """A mesma previsão de `forecast` e a linha de entradas usada (para o SHAP local do alerta por regressão)."""
         r = pd.DataFrame(readings, columns=["station_id", "latitude", "longitude", "ts", "mm"])
         r = r.dropna(subset=["mm"])                                   # leitura sem valor não é zero: sai
         if r.empty:
@@ -64,7 +69,7 @@ class RainForecaster:
                 "latest_reading_utc": _iso(latest), "latest_reading_age_minutes": round((ref - latest).total_seconds() / 60, 1),
                 "stations_valid_near": int(row["n_near_valid"]), "network_valid_fraction": round(float(row["net_valid_frac"]), 3),
                 "rain_last_60min_mm": None if pd.isna(row["p_60"]) else round(float(row["p_60"]), 2),
-                "thresholds_mm_h": C.THRESHOLDS, "target": "MEASURED", "attribution": C.ATTRIBUTION}
+                "thresholds_mm_h": C.THRESHOLDS, "target": "MEASURED", "attribution": C.ATTRIBUTION}, x
 
 
 def _iso(t: pd.Timestamp) -> str:

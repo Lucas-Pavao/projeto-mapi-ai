@@ -529,16 +529,61 @@ def forecast_rain(data: RainForecastInput):
         return JSONResponse(status_code=422, content={"detail": str(e), "missing_features": e.missing_features})
 
 
+class FloodForecastInput(BaseModel):
+    """Alerta de alagamento por regressão (mapi_ai/flood). Falta de dado vira SEM_DADO com motivo (HTTP 200), nunca zero."""
+    model_config = ConfigDict(extra="forbid")
+    latitude: float
+    longitude: float
+    readings: List[RainReading] = Field(..., description="leituras de 10 min das últimas 6 h, estações a até 40 km (para o rain_v1)")
+    open_meteo: Optional[List[OpenMeteoHour]] = None
+    issued_at: Optional[datetime] = None
+    rain_10min_mm: List[Optional[float]] = Field(..., max_length=288,
+                                                 description="chuva MEDIDA do ponto por passo de 10 min, terminando em t; null = lacuna")
+    point: Optional[BucketPoint] = Field(None, description="terreno do ponto; ausente = SEM_TERRENO")
+    terrain_status: Literal["OK", "SEM_TERRENO", "EM_REVISAO"] = "OK"
+    tr_anos: float = Field(default=5.0, ge=2.0, le=10.0)
+    te_min: float = Field(default=10.0, ge=5.0, le=15.0)
+
+    @field_validator("rain_10min_mm")
+    @classmethod
+    def _sem_negativo(cls, v):
+        if any(x is not None and (not np.isfinite(x) or x < 0) for x in v):
+            raise ValueError("rain_10min_mm deve ser >= 0 e finito (use null para lacuna)")
+        return v
+
+
+@app.post("/v1/flood/forecast")
+def flood_forecast(data: FloodForecastInput):
+    """Lâmina prevista (q50 e q95) em 1, 3 e 6 h e nível ALERTA / ATENCAO / SEM_ALERTA / SEM_DADO. Experimental."""
+    from mapi_ai.flood.forecast import forecast_point
+    terr = None
+    if data.point is not None:
+        terr = B10.Terreno(area_m2=data.point.area_m2, z_curva_m=np.asarray(data.point.z_curva_m, dtype=float),
+                           v_curva_m3=np.asarray(data.point.v_curva_m3, dtype=float), rua_rel_m=data.point.rua_rel_m)
+    return forecast_point(
+        latitude=data.latitude, longitude=data.longitude,
+        readings=[{"station_id": r.station_id, "latitude": r.latitude, "longitude": r.longitude, "ts": r.ts, "mm": r.mm}
+                  for r in data.readings],
+        rain_10min_mm=data.rain_10min_mm, terrain=terr, terrain_status=data.terrain_status,
+        open_meteo=[{"hour_end_utc": o.hour_end_utc, "mm": o.mm} for o in data.open_meteo] if data.open_meteo else None,
+        issued_at=data.issued_at.isoformat() if data.issued_at else None, rain_model=rain_model,
+        tr_anos=data.tr_anos, te_min=data.te_min, slug=data.point.slug if data.point else None)
+
+
 @app.get("/health")
 async def health():
+    from mapi_ai.version import code_version
+    cv = code_version()
     return {
         "status": "ok", 
         "model_version": (v3_model.meta["model_version"] if v3_model is not None
                           else metadata["model_version"] if metadata else "unversioned"),
         "rain_model_version": rain_model.meta["model_version"] if rain_model is not None else None,
         "bucket_version": B10.VERSION,
-        "code_version": os.getenv("MAPI_CODE_VERSION", "unknown"),
-        "code_dirty": os.getenv("MAPI_CODE_DIRTY", "unknown"),
+        "code_version": cv["commit"],
+        "code_dirty": cv["dirty"],
+        "code_version_source": cv["source"],
+        "flood_version": "flood_reg_v1",
         "xgboost_loaded": model is not None,
         "lstm_loaded": lstm_model is not None
     }
