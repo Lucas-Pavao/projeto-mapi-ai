@@ -129,6 +129,10 @@ class Bucket10Input(BaseModel):
     te_min: float = Field(default=10.0, ge=5.0, le=15.0)
     forecast_1h_q50_mm: Optional[float] = Field(default=None, ge=0)
     forecast_1h_q80_mm: Optional[float] = Field(default=None, ge=0)
+    # limpeza recente (mapi_ai/entupimento.py): opcionais; sem eles a resposta é a de sempre e "limpeza" vem nulo
+    days_since_cleaning: Optional[float] = Field(default=None, ge=0, le=36500)
+    lambda_re_per_day: Optional[float] = Field(default=None, gt=0, le=10)
+    f_clogged: float = Field(default=0.0, ge=0.0, le=1.0)
 
     @field_validator("rain_10min_mm")
     @classmethod
@@ -148,6 +152,10 @@ def bucket_point10(data: Bucket10Input):
     terr = B10.Terreno(area_m2=data.point.area_m2, z_curva_m=np.asarray(data.point.z_curva_m, dtype=float),
                        v_curva_m3=np.asarray(data.point.v_curva_m3, dtype=float), rua_rel_m=data.point.rua_rel_m)
     out = B10.avaliar(np.asarray(data.rain_10min_mm, dtype=float), terr, p, data.forecast_1h_q50_mm, data.forecast_1h_q80_mm)
+    from mapi_ai import entupimento as ENT
+    out["limpeza"] = ENT.avaliar_com_limpeza(np.asarray(data.rain_10min_mm, dtype=float), terr, p, data.forecast_1h_q50_mm,
+                                             data.forecast_1h_q80_mm, data.days_since_cleaning, data.lambda_re_per_day,
+                                             data.f_clogged)
     out["slug"] = data.point.slug
     out["projection_rule"] = "chuva prevista de 1 h distribuída por igual nos 6 passos de 10 min"
     out["validated"] = False

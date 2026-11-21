@@ -135,23 +135,23 @@ def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 
 
 
 def avaliar(P_medido: np.ndarray, t: Terreno, p: Params10, chuva_prevista_1h_q50: float | None,
-            chuva_prevista_1h_q80: float | None, passos_projecao: int = 6) -> dict:
+            chuva_prevista_1h_q80: float | None, passos_projecao: int = 6, i_cap_mm_h: float | None = None) -> dict:
     """
     Lâmina medida (última posição da série) e projeção dos próximos 60 min com a chuva prevista distribuída por igual
     nos 6 passos (declarado), uma vez com q50 e outra com q80. A projeção parte do volume do fim da série medida.
     """
-    h, V, fora = simular(P_medido, t, p)
+    h, V, fora = simular(P_medido, t, p, i_cap_mm_h=i_cap_mm_h)
     h_now = float(h[-1]) if len(h) else 0.0
     V_end = float(V[-1]) if len(V) else 0.0
     out = {"version": VERSION, "h_now_mm": h_now, "h_series_mm": h.tolist(), "n_fora_da_curva": int(fora),
-           "i_cap_mm_h": p.i_cap_mm_h, "tr_anos": p.tr_anos, "te_min": p.te_min, "dt_min": p.dt_min,
+           "i_cap_mm_h": p.i_cap_mm_h if i_cap_mm_h is None else i_cap_mm_h, "tr_anos": p.tr_anos, "te_min": p.te_min, "dt_min": p.dt_min,
            "hcrit_mm": p.hcrit_mm, "projection": {}}
     for nome, q in (("q50", chuva_prevista_1h_q50), ("q80", chuva_prevista_1h_q80)):
         if q is None or not np.isfinite(q):
             out["projection"][nome] = None
             continue
         Pp = np.full(passos_projecao, float(q) / passos_projecao)
-        hp, _, fp = simular(Pp, t, p, V0=V_end)
+        hp, _, fp = simular(Pp, t, p, i_cap_mm_h=i_cap_mm_h, V0=V_end)
         cruz = np.flatnonzero(hp >= p.hcrit_mm)
         out["projection"][nome] = {"h_mm": hp.tolist(), "rain_1h_mm": float(q),
                                     "minutes_to_hcrit": int((cruz[0] + 1) * p.dt_min) if cruz.size else None,

@@ -58,3 +58,31 @@ def test_sem_limpeza_conhecida_mantem_o_comportamento_de_hoje():
     assert r["prob_lamina_ge_hcrit"] is None
     h_hoje = B.simular(P, terreno(), B.Params10())[0][-1]
     assert r["h_livre_mm"] == pytest.approx(h_hoje)
+
+
+def _req(**extra):
+    z = list(np.linspace(0, 2.0, 41))
+    body = {"rain_10min_mm": [15.0] * 6, "point": {"slug": "X", "area_m2": 1000.0, "z_curva_m": z,
+            "v_curva_m3": [100.0 * v for v in z], "rua_rel_m": 0.10}}
+    body.update(extra)
+    return body
+
+
+def test_endpoint_sem_limpeza_igual_ao_de_hoje():
+    from fastapi.testclient import TestClient
+    from mapi_ai import app as app_module
+    c = TestClient(app_module.app)
+    r0 = c.post("/v1/bucket/point10", json=_req()).json()
+    assert r0["limpeza"] is None
+    assert r0["h_now_mm"] < 150.0
+
+
+def test_endpoint_com_limpeza_recente_e_antiga():
+    from fastapi.testclient import TestClient
+    from mapi_ai import app as app_module
+    c = TestClient(app_module.app)
+    rec = c.post("/v1/bucket/point10", json=_req(days_since_cleaning=3, lambda_re_per_day=0.02337)).json()["limpeza"]
+    ant = c.post("/v1/bucket/point10", json=_req(days_since_cleaning=90, lambda_re_per_day=0.02337)).json()["limpeza"]
+    assert rec["h_now_entupida_mm"] >= 150.0
+    assert rec["prob_hcrit_agora"] == pytest.approx(rec["p_entupida"])
+    assert rec["prob_hcrit_agora"] < 0.5 <= ant["prob_hcrit_agora"]
