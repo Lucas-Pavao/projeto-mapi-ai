@@ -50,6 +50,7 @@ def main(src: pathlib.Path, dst: pathlib.Path):
                "rainStationDistanceKm": None if absent else 1.1,
                "latestReadingAgeMinutes": a.get("latest_reading_age_minutes"),
                "modelVersions": {} if not mv else {"flood": mv["flood"], "rain": mv["rain"]["version"], "bucket": mv["bucket"]["version"]},
+               "sources": a.get("sources", []), "missingInputs": a.get("missing_inputs", []),
                "codeVersion": None if sd else a.get("code_version"), "issuedAt": a.get("issued_at"),
                "evaluatedAt": "2026-11-20T17:00:00Z", "experimental": True, "shadow": True, "rule": RULE,
                "attribution": "DADOS DA REDE OBSERVACIONAL DO CEMADEN/MCTIC"}
