@@ -95,6 +95,45 @@ def simular(P_mm_passo: np.ndarray, t: Terreno, p: Params10, i_cap_mm_h: float |
     return h, Vs, fora
 
 
+def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 0.0, f: float = 1.0) -> dict:
+    """
+    Mesma conta de `simular`, devolvendo a decomposição por passo (alerta por regressão, Etapa 3.1):
+    entrada e saída em m3/h, capacidade da galeria em m3/h, volume em m3 e lâmina em mm.
+    f: fração da capacidade da galeria (1 = projeto; 0 = obstruída), só para a sensibilidade (faixa "sem fonte" de
+    docs/PARAMETROS-MODELO-FISICO.md). Com f = 1, h e V são idênticos aos de `simular`.
+    """
+    P = np.asarray(P_mm_passo, dtype=float)
+    if np.isnan(P).any():
+        raise ValueError("P com NaN: a série precisa estar completa (ausente nunca vira zero)")
+    A = t.area_m2
+    vc = t.v_curva_m3 * p.curve_scale
+    vmax, zmax = float(vc[-1]), float(t.z_curva_m[-1])
+    por_hora = 60.0 / p.dt_min
+    q = f * p.C * p.i_cap_mm_h * A / 1000.0 * p.dt_min / 60.0
+    qin = p.C * P * A / 1000.0
+    n = len(P)
+    h, Vs, qout_s = np.zeros(n), np.zeros(n), np.zeros(n)
+    V, fora = float(V0), 0
+    for k in range(n):
+        v_disp = V + qin[k]
+        qout = q if q < v_disp else v_disp
+        qout_s[k] = qout
+        V = max(0.0, v_disp - qout)
+        Vs[k] = V
+        if V <= 0.0:
+            continue
+        if V > vmax:
+            fora += 1
+            z = zmax
+        else:
+            z = float(np.interp(V, vc, t.z_curva_m))
+        d = z - t.rua_rel_m
+        if d > 0:
+            h[k] = 1000.0 * d
+    return {"h_mm": h, "V_m3": Vs, "inflow_m3_h": qin * por_hora, "outflow_m3_h": qout_s * por_hora,
+            "capacity_m3_h": q * por_hora, "n_fora_da_curva": fora}
+
+
 def avaliar(P_medido: np.ndarray, t: Terreno, p: Params10, chuva_prevista_1h_q50: float | None,
             chuva_prevista_1h_q80: float | None, passos_projecao: int = 6) -> dict:
     """

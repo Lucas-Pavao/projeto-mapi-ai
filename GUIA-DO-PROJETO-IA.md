@@ -4,6 +4,15 @@
 > Tudo aqui foi tirado do código deste repositório (`mapi_ai/`, `avaliacao/`) e dos documentos de
 > modelagem do repositório da API (`projeto-mapi-api/docs/`). Quando algo é opinião ou ponto de atenção, está marcado.
 
+> **O que o serviço serve de fato (conferido no código em 21/11/2026).**
+> - `POST /v1/predict/flood` foi **removida em 21/11** (commit `864ba40`, decisão de 20/11). Ela servia a **`logreg_v3`** (regressão logística, horizonte de 6 h), treinada com **rótulo sintético** (`NOT_VALIDATED`); o `xgb_v2` só respondia se a v3 não carregasse, e a **LSTM nunca era alcançada**. Os artefatos e relatórios ficam no git e em `reports/`.
+> - `POST /v1/forecast/rain` serve o **`rain_v1`**: previsão da chuva **medida** (quantis em 1, 3 e 6 h), validada em `reports/v4/rain/RELATORIO.md`.
+> - `POST /v1/flood/forecast` (novo, `mapi_ai/flood/`): **alerta de alagamento por regressão + física**. Chuva prevista pelo `rain_v1` → balde M1a a 10 min → `ALERTA` se a lâmina provável (q50) chega a 15 cm, `ATENCAO` se só a pessimista (q95), `SEM_ALERTA` ou `SEM_DADO` com motivo. Nenhum modelo treinado com rótulo de alagamento. **Experimental**: na validação (Etapa 2) o alerta nunca disparou em 5 anos; ver seção 4.3 e `reports/RELATORIO-REGRESSAO.md`.
+> - `POST /v1/bucket/point10` e `POST /v1/simulate/bucket`: balde M1a (físico, sem treino).
+> - `GET /health`: `rain_model_version`, `bucket_version`, `flood_version` e `code_version` (o commit: variável do build ou, rodando local, `git rev-parse HEAD`).
+>
+> As seções abaixo que descrevem XGBoost e LSTM como "modelo do serviço" contam a história do projeto e ficam para a dissertação.
+
 ---
 
 ## 0. Respostas rápidas (o que você perguntou)
@@ -11,7 +20,7 @@
 | Pergunta | Resposta curta |
 |---|---|
 | **Qual dataset é usado?** | São **dois mundos**: (1) o serviço em produção treina com a tabela `flood_scenario_labels` do banco PostgreSQL/TimescaleDB da MAPI API (ou um CSV, ou, se nada existir, **dados sintéticos inventados** pelo próprio código); (2) a avaliação científica (pasta `avaliacao/`) usa **chuva horária do Open-Meteo (reanálise)**, **terreno LiDAR do PE3D**, a **normal climatológica do INMET** e os **registros de alagamento da Defesa Civil do Recife (CKAN)** — só **18 dias** com alagamento entre 2021 e 2024. |
-| **Qual modelo "tradicional" é usado? KNN? Árvore?** | **Nenhum KNN.** O modelo tradicional é o **XGBoost**, que é um **conjunto de árvores de decisão** (técnica chamada *gradient boosting*). Além dele há uma **rede neural LSTM** (prevê nível do rio) e, na avaliação científica, um **modelo físico chamado "balde"** (não é aprendizado de máquina, é física/hidrologia). |
+| **Qual modelo "tradicional" é usado? KNN? Árvore?** | **Nenhum KNN.** O modelo tradicional **servido hoje** é a **regressão logística v3** (rótulo sintético; sai do serviço por decisão de 20/11). Antes dela, era o **XGBoost**, que é um **conjunto de árvores de decisão** (técnica chamada *gradient boosting*). Além dele há uma **rede neural LSTM** (prevê nível do rio) e, na avaliação científica, um **modelo físico chamado "balde"** (não é aprendizado de máquina, é física/hidrologia). |
 | **Por que esse e não outro?** | XGBoost é o padrão de mercado para dados em tabela (linhas × colunas), lida bem com valores faltando e com relações não lineares (ex.: "chuva forte **e** maré alta"). Mas o projeto descobriu que **há poucos exemplos de alagamento (18 dias)** para treinar qualquer modelo de ML com confiança, por isso a avaliação oficial passou a usar o modelo físico. Detalhes na seção 5. |
 | **O modelo atual está validado?** | **Não.** A própria API responde `"model_validation_status": "NOT_VALIDATED"` (`mapi_ai/app.py:211`). |
 
@@ -204,6 +213,31 @@ Se o balde não ganhar do B2 e do B3, ele não acrescenta nada.
 
 ---
 
+### 4.3 Alerta de alagamento por regressão (novo, 21/11/2026)
+
+**Por que os rótulos saíram do treino.** O classificador servido até 21/11 (`logreg_v3`) aprendia a coluna
+`is_flooded` do dataset IN1165. Essa coluna é **sintética**: os autores sortearam alagamento com uma fórmula escrita à mão
+sobre a chuva medida (`reports/synthetic_ground_truth.md`). AUC 0,92 media quanto o modelo recuperava essa fórmula, não
+alagamento. O único dado real (Defesa Civil) tem 18 dias, sem hora, e nenhum registro a menos de 500 m dos pontos.
+Com isso não se treina nada. A decisão de 20/11: prever o que tem dado medido (a chuva) e passar pela física (o balde).
+
+**Como funciona (`mapi_ai/flood/`, `POST /v1/flood/forecast`):**
+
+1. o `rain_v1` prevê quanto vai chover em 1, 3 e 6 h, em dois cenários: provável (q50) e pessimista (q95);
+2. o balde M1a a 10 min parte da água das últimas 24 h medidas e recebe a chuva prevista, espalhada por igual no prazo;
+3. regra fixa: **ALERTA** se a lâmina provável chega a 15 cm; **ATENÇÃO** se só a pessimista chega; **SEM ALERTA**
+   caso contrário; **SEM DADO** com motivo quando falta entrada (nunca vira "sem alerta").
+
+**Explicação de cada alerta:** o que mais pesou na chuva prevista (SHAP local, em mm), quantos mm a mais levariam a 15 cm
+(contrafactual calculado no balde), quanto a lâmina muda com os parâmetros sem fonte (sensibilidade) e a conta do balde
+a cada 10 min (entrada, saída, volume).
+
+**O que a validação mostrou** (`reports/RELATORIO-REGRESSAO.md`): em 5 anos o alerta **nunca disparou**. A chuva prevista,
+espalhada, chega no máximo a 60 mm/h, e a galeria do modelo escoa 125 mm/h (chuva de projeto de 10 min). O balde não
+enche. A chuva medida das últimas 6 h ≥ 25 mm pegou os 12 dias da Defesa Civil perto dos pontos, com 3,8 falsos por
+ponto-mês. Por isso o alerta é **experimental**: falta uma capacidade de galeria com fonte e uma forma de distribuir a
+chuva prevista no tempo, decididas sem olhar os 18 dias, e uma validação nova.
+
 ## 5. Comparação de algoritmos: por que usar, quando usar, por que (não) estamos usando
 
 Contexto do MAPI que pesa na escolha: **dados em tabela**, **muitas colunas (28)**, **relações que se combinam**
@@ -270,7 +304,9 @@ main.py
        5b. LSTM: monta janelas de 12 passos → treina 15 épocas → imprime MSE/MAE → salva .h5
 ```
 
-### 6.2 Fluxo de previsão (`python main.py --mode serve`, depois `POST /v1/predict/flood`)
+### 6.2 Fluxo de previsão do artefato legado (`python main.py --mode serve`, depois `POST /v1/predict/flood`)
+
+> Histórico: este é o caminho do artefato legado, que só roda sem a v3 e sem o v2. Hoje a rota serve a `logreg_v3` e não chega na LSTM.
 
 ```text
 1. Ao subir, a API carrega os modelos e o cache de pontos/sensores do banco.

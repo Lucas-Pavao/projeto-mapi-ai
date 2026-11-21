@@ -2,6 +2,15 @@
 
 O **MAPI AI** é o componente de inteligência do ecossistema MAPI, responsável pela análise avançada de séries temporais e predição de riscos de inundação urbana em tempo real.
 
+> **O que o serviço serve de fato (conferido no código em 21/11/2026).**
+> - `POST /v1/predict/flood` foi **removida em 21/11** (commit `864ba40`, decisão de 20/11). Ela servia a **`logreg_v3`** (regressão logística, horizonte de 6 h), treinada com **rótulo sintético** (`NOT_VALIDATED`); o `xgb_v2` só respondia se a v3 não carregasse, e a **LSTM nunca era alcançada**. Os artefatos e relatórios ficam no git e em `reports/`.
+> - `POST /v1/forecast/rain` serve o **`rain_v1`**: previsão da chuva **medida** (quantis em 1, 3 e 6 h), validada em `reports/v4/rain/RELATORIO.md`.
+> - `POST /v1/flood/forecast` (novo, `mapi_ai/flood/`): **alerta de alagamento por regressão + física**. Chuva prevista pelo `rain_v1` → balde M1a a 10 min → `ALERTA` se a lâmina provável (q50) chega a 15 cm, `ATENCAO` se só a pessimista (q95), `SEM_ALERTA` ou `SEM_DADO` com motivo. Nenhum modelo treinado com rótulo de alagamento. **Experimental**: na validação (Etapa 2) o alerta nunca disparou em 5 anos; ver `reports/RELATORIO-REGRESSAO.md`.
+> - `POST /v1/bucket/point10` e `POST /v1/simulate/bucket`: balde M1a (físico, sem treino).
+> - `GET /health`: `rain_model_version`, `bucket_version`, `flood_version` e `code_version` (o commit: variável do build ou, rodando local, `git rev-parse HEAD`).
+>
+> As seções abaixo que descrevem XGBoost e LSTM como "modelo do serviço" contam a história do projeto e ficam para a dissertação.
+
 ## 🌐 Ecossistema MAPI
 
 Este projeto atua como um **microserviço especializado de inferência síncrona**:
@@ -14,7 +23,7 @@ Este projeto atua como um **microserviço especializado de inferência síncrona
         │ ▲
         │ │ (Dados em Tempo Real via HTTP POST / Resposta com Probabilidade e Risco)
         ▼ │ <-- (Este Serviço interage aqui de forma síncrona)
-  [  MAPI AI  ] (Python / FastAPI / XGBoost & LSTM) 🧠
+  [  MAPI AI  ] (Python / FastAPI / rain_v1 + balde M1a) 🧠
         │
         │ (Consumo da REST API e Exibição Geoespacial)
         ▼
@@ -65,7 +74,7 @@ Para o funcionamento completo, o MAPI é dividido em três componentes principai
 ## 🔄 Comunicação entre Sistemas e Fluxo de Dados
 
 - **Treinamento:** Executa o ETL em `data_engineering.py`, puxando as séries históricas do PostgreSQL da API Central (TimescaleDB).
-- **Inferência:** A API faz uma requisição HTTP POST para `/v1/predict/flood`. O serviço processa o payload e devolve um JSON padronizado com o nível de risco (`LOW`, `MEDIUM`, `HIGH`).
+- **Inferência:** a API chama `POST /v1/forecast/rain` (chuva prevista) e `POST /v1/flood/forecast` (alerta por regressão: `ALERTA`, `ATENCAO`, `SEM_ALERTA`, `SEM_DADO`). A rota antiga `POST /v1/predict/flood` (`logreg_v3`) saiu em 21/11.
 
 ## 🚀 Como Rodar a Aplicação
 
@@ -110,7 +119,8 @@ Para rodar todo o ecossistema MAPI (API, AI e Front) de forma orquestrada, utili
 ## 🔌 Endpoints Principais
 
 - `GET /health`: Diagnóstico de saúde do modelo e status de carregamento.
-- `POST /v1/predict/flood`: Envio dos payloads de sensores e retorno dos riscos calculados.
+- `POST /v1/flood/forecast`: alerta de alagamento por regressão (experimental). Entrada: `latitude`, `longitude`, `readings` (as mesmas de `/v1/forecast/rain`), `rain_10min_mm` (chuva medida do ponto a cada 10 min, `null` = lacuna), `point` (terreno, como em `/v1/bucket/point10`), `terrain_status` (`OK`, `SEM_TERRENO`, `EM_REVISAO`). Saída: `level`, `worst_horizon_hours`, `horizons[]` (lâmina q50 e q95 em cm, chuva q50 e q95, validade), `h_now_cm`, `reason` quando `SEM_DADO`, `explanation` (SHAP local do rain_v1, contrafactual, sensibilidade, decomposição do balde a cada 10 min), versões, commit e atribuição.
+- `POST /v1/predict/flood`: removida em 21/11 (era a `logreg_v3`, rótulo sintético).
 - `POST /v1/simulate/bucket`: simulação ilustrativa (não é previsão) do balde M1a, que chama `avaliacao/balde.py` sem cópia da fórmula (ADR 0014 do backend). Sem maré, sem escrita em disco/banco.
   - Entrada: `P_mm_h` (1 a 72 valores horários, finitos, >= 0); `point` (`slug`, `area_m2` no `snap_m` padrão, `z_curva_m` estritamente crescente, `v_curva_m3` não decrescente e do mesmo tamanho, `rua_rel_m`); `params` opcional só com `f` em {0, 0.2, 0.4, 0.6, 0.8, 1.0} e `curve_scale` em [0.7, 1.3]. `C`, `iT_mm_h`, `hcrit_mm` e `snap_m` são fixos em `Params`; enviar qualquer um deles ou valor fora da faixa devolve 422.
   - Saída: `h_mm[]`, `n_fora_da_curva`, `hmax_mm`, `t_cross_h` (índice da primeira hora com `h >= hcrit_mm`, ou `null`), `params_usados`, `model = "M1a"`, `illustrative = true`.
