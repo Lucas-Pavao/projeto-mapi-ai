@@ -3,9 +3,9 @@
 O **MAPI AI** é o componente de inteligência do ecossistema MAPI, responsável pela análise avançada de séries temporais e predição de riscos de inundação urbana em tempo real.
 
 > **O que o serviço serve de fato (conferido no código em 21/11/2026).**
-> - `POST /v1/predict/flood` serve a **`logreg_v3`** (regressão logística calibrada, horizonte de 6 h, `mapi_ai/v3/`), treinada com **rótulo sintético** (`NOT_VALIDATED`). O `xgb_v2` (XGBoost) só responde se a v3 não carregar. A **LSTM não é alcançada**: a rota retorna antes de chegar nela, e o nível do rio não é servido. Decidido em 20/11: essa rota, a v3, o v2 e a LSTM **saem** do serviço (Etapa 1 do alerta por regressão, depois da conferência de quem chama).
+> - `POST /v1/predict/flood` serve a **`logreg_v3`** (regressão logística calibrada, horizonte de 6 h, `mapi_ai/v3/`), treinada com **rótulo sintético** (`NOT_VALIDATED`). O `xgb_v2` (XGBoost) só responde se a v3 não carregar. A **LSTM não é alcançada**: a rota retorna antes de chegar nela, e o nível do rio não é servido. Decidido em 20/11 e feito em 21/11 (commit `864ba40`): essa rota, a v3, o v2 e a LSTM **saíram** do serviço.
 > - `POST /v1/forecast/rain` serve o **`rain_v1`**: previsão da chuva **medida** (quantis em 1, 3 e 6 h), validada em `reports/v4/rain/RELATORIO.md`.
-> - `POST /v1/flood/forecast` (novo, `mapi_ai/flood/`): **alerta de alagamento por regressão + física**. Chuva prevista pelo `rain_v1` → balde M1a a 10 min → `ALERTA` se a lâmina provável (q50) chega a 15 cm, `ATENCAO` se só a pessimista (q95), `SEM_ALERTA` ou `SEM_DADO` com motivo. Nenhum modelo treinado com rótulo de alagamento. **Experimental**: o balde não está calibrado, e a validação externa (Etapa 2.3) ainda não foi feita.
+> - `POST /v1/flood/forecast` (novo, `mapi_ai/flood/`): **alerta de alagamento por regressão + física**. Chuva prevista pelo `rain_v1` → balde M1a a 10 min → `ALERTA` se a lâmina provável (q50) chega a 15 cm, `ATENCAO` se só a pessimista (q95), `SEM_ALERTA` ou `SEM_DADO` com motivo. Nenhum modelo treinado com rótulo de alagamento. **Experimental**: na validação (Etapa 2) o alerta nunca disparou em 5 anos; ver `reports/RELATORIO-REGRESSAO.md`.
 > - `POST /v1/bucket/point10` e `POST /v1/simulate/bucket`: balde M1a (físico, sem treino).
 > - `GET /health`: `rain_model_version`, `bucket_version`, `flood_version` e `code_version` (o commit: variável do build ou, rodando local, `git rev-parse HEAD`).
 >
@@ -74,7 +74,7 @@ Para o funcionamento completo, o MAPI é dividido em três componentes principai
 ## 🔄 Comunicação entre Sistemas e Fluxo de Dados
 
 - **Treinamento:** Executa o ETL em `data_engineering.py`, puxando as séries históricas do PostgreSQL da API Central (TimescaleDB).
-- **Inferência:** a API chama `POST /v1/forecast/rain` (chuva prevista) e `POST /v1/flood/forecast` (alerta por regressão: `ALERTA`, `ATENCAO`, `SEM_ALERTA`, `SEM_DADO`). A rota antiga `POST /v1/predict/flood` (`logreg_v3`, rótulo sintético, `LOW`/`MEDIUM`/`HIGH`) está de saída.
+- **Inferência:** a API chama `POST /v1/forecast/rain` (chuva prevista) e `POST /v1/flood/forecast` (alerta por regressão: `ALERTA`, `ATENCAO`, `SEM_ALERTA`, `SEM_DADO`). A rota antiga `POST /v1/predict/flood` (`logreg_v3`) saiu em 21/11.
 
 ## 🚀 Como Rodar a Aplicação
 
@@ -120,7 +120,7 @@ Para rodar todo o ecossistema MAPI (API, AI e Front) de forma orquestrada, utili
 
 - `GET /health`: Diagnóstico de saúde do modelo e status de carregamento.
 - `POST /v1/flood/forecast`: alerta de alagamento por regressão (experimental). Entrada: `latitude`, `longitude`, `readings` (as mesmas de `/v1/forecast/rain`), `rain_10min_mm` (chuva medida do ponto a cada 10 min, `null` = lacuna), `point` (terreno, como em `/v1/bucket/point10`), `terrain_status` (`OK`, `SEM_TERRENO`, `EM_REVISAO`). Saída: `level`, `worst_horizon_hours`, `horizons[]` (lâmina q50 e q95 em cm, chuva q50 e q95, validade), `h_now_cm`, `reason` quando `SEM_DADO`, `explanation` (SHAP local do rain_v1, contrafactual, sensibilidade, decomposição do balde a cada 10 min), versões, commit e atribuição.
-- `POST /v1/predict/flood`: `logreg_v3` com rótulo sintético (`NOT_VALIDATED`). Está de saída (decisão de 20/11).
+- `POST /v1/predict/flood`: removida em 21/11 (era a `logreg_v3`, rótulo sintético).
 - `POST /v1/simulate/bucket`: simulação ilustrativa (não é previsão) do balde M1a, que chama `avaliacao/balde.py` sem cópia da fórmula (ADR 0014 do backend). Sem maré, sem escrita em disco/banco.
   - Entrada: `P_mm_h` (1 a 72 valores horários, finitos, >= 0); `point` (`slug`, `area_m2` no `snap_m` padrão, `z_curva_m` estritamente crescente, `v_curva_m3` não decrescente e do mesmo tamanho, `rua_rel_m`); `params` opcional só com `f` em {0, 0.2, 0.4, 0.6, 0.8, 1.0} e `curve_scale` em [0.7, 1.3]. `C`, `iT_mm_h`, `hcrit_mm` e `snap_m` são fixos em `Params`; enviar qualquer um deles ou valor fora da faixa devolve 422.
   - Saída: `h_mm[]`, `n_fora_da_curva`, `hmax_mm`, `t_cross_h` (índice da primeira hora com `h >= hcrit_mm`, ou `null`), `params_usados`, `model = "M1a"`, `illustrative = true`.

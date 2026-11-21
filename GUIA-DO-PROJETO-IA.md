@@ -5,9 +5,9 @@
 > modelagem do repositório da API (`projeto-mapi-api/docs/`). Quando algo é opinião ou ponto de atenção, está marcado.
 
 > **O que o serviço serve de fato (conferido no código em 21/11/2026).**
-> - `POST /v1/predict/flood` serve a **`logreg_v3`** (regressão logística calibrada, horizonte de 6 h, `mapi_ai/v3/`), treinada com **rótulo sintético** (`NOT_VALIDATED`). O `xgb_v2` (XGBoost) só responde se a v3 não carregar. A **LSTM não é alcançada**: a rota retorna antes de chegar nela, e o nível do rio não é servido. Decidido em 20/11: essa rota, a v3, o v2 e a LSTM **saem** do serviço (Etapa 1 do alerta por regressão, depois da conferência de quem chama).
+> - `POST /v1/predict/flood` serve a **`logreg_v3`** (regressão logística calibrada, horizonte de 6 h, `mapi_ai/v3/`), treinada com **rótulo sintético** (`NOT_VALIDATED`). O `xgb_v2` (XGBoost) só responde se a v3 não carregar. A **LSTM não é alcançada**: a rota retorna antes de chegar nela, e o nível do rio não é servido. Decidido em 20/11 e feito em 21/11 (commit `864ba40`): essa rota, a v3, o v2 e a LSTM **saíram** do serviço.
 > - `POST /v1/forecast/rain` serve o **`rain_v1`**: previsão da chuva **medida** (quantis em 1, 3 e 6 h), validada em `reports/v4/rain/RELATORIO.md`.
-> - `POST /v1/flood/forecast` (novo, `mapi_ai/flood/`): **alerta de alagamento por regressão + física**. Chuva prevista pelo `rain_v1` → balde M1a a 10 min → `ALERTA` se a lâmina provável (q50) chega a 15 cm, `ATENCAO` se só a pessimista (q95), `SEM_ALERTA` ou `SEM_DADO` com motivo. Nenhum modelo treinado com rótulo de alagamento. **Experimental**: o balde não está calibrado, e a validação externa (Etapa 2.3) ainda não foi feita.
+> - `POST /v1/flood/forecast` (novo, `mapi_ai/flood/`): **alerta de alagamento por regressão + física**. Chuva prevista pelo `rain_v1` → balde M1a a 10 min → `ALERTA` se a lâmina provável (q50) chega a 15 cm, `ATENCAO` se só a pessimista (q95), `SEM_ALERTA` ou `SEM_DADO` com motivo. Nenhum modelo treinado com rótulo de alagamento. **Experimental**: na validação (Etapa 2) o alerta nunca disparou em 5 anos; ver seção 4.3 e `reports/RELATORIO-REGRESSAO.md`.
 > - `POST /v1/bucket/point10` e `POST /v1/simulate/bucket`: balde M1a (físico, sem treino).
 > - `GET /health`: `rain_model_version`, `bucket_version`, `flood_version` e `code_version` (o commit: variável do build ou, rodando local, `git rev-parse HEAD`).
 >
@@ -212,6 +212,31 @@ que viu. Faz sentido para rio, porque o nível de agora depende do que choveu na
 Se o balde não ganhar do B2 e do B3, ele não acrescenta nada.
 
 ---
+
+### 4.3 Alerta de alagamento por regressão (novo, 21/11/2026)
+
+**Por que os rótulos saíram do treino.** O classificador servido até 21/11 (`logreg_v3`) aprendia a coluna
+`is_flooded` do dataset IN1165. Essa coluna é **sintética**: os autores sortearam alagamento com uma fórmula escrita à mão
+sobre a chuva medida (`reports/synthetic_ground_truth.md`). AUC 0,92 media quanto o modelo recuperava essa fórmula, não
+alagamento. O único dado real (Defesa Civil) tem 18 dias, sem hora, e nenhum registro a menos de 500 m dos pontos.
+Com isso não se treina nada. A decisão de 20/11: prever o que tem dado medido (a chuva) e passar pela física (o balde).
+
+**Como funciona (`mapi_ai/flood/`, `POST /v1/flood/forecast`):**
+
+1. o `rain_v1` prevê quanto vai chover em 1, 3 e 6 h, em dois cenários: provável (q50) e pessimista (q95);
+2. o balde M1a a 10 min parte da água das últimas 24 h medidas e recebe a chuva prevista, espalhada por igual no prazo;
+3. regra fixa: **ALERTA** se a lâmina provável chega a 15 cm; **ATENÇÃO** se só a pessimista chega; **SEM ALERTA**
+   caso contrário; **SEM DADO** com motivo quando falta entrada (nunca vira "sem alerta").
+
+**Explicação de cada alerta:** o que mais pesou na chuva prevista (SHAP local, em mm), quantos mm a mais levariam a 15 cm
+(contrafactual calculado no balde), quanto a lâmina muda com os parâmetros sem fonte (sensibilidade) e a conta do balde
+a cada 10 min (entrada, saída, volume).
+
+**O que a validação mostrou** (`reports/RELATORIO-REGRESSAO.md`): em 5 anos o alerta **nunca disparou**. A chuva prevista,
+espalhada, chega no máximo a 60 mm/h, e a galeria do modelo escoa 125 mm/h (chuva de projeto de 10 min). O balde não
+enche. A chuva medida das últimas 6 h ≥ 25 mm pegou os 12 dias da Defesa Civil perto dos pontos, com 3,8 falsos por
+ponto-mês. Por isso o alerta é **experimental**: falta uma capacidade de galeria com fonte e uma forma de distribuir a
+chuva prevista no tempo, decididas sem olhar os 18 dias, e uma validação nova.
 
 ## 5. Comparação de algoritmos: por que usar, quando usar, por que (não) estamos usando
 

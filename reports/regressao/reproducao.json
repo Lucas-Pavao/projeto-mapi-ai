@@ -1,0 +1,46 @@
+{
+  "ponto": "CIN_UFPE",
+  "dia_local": "2026-05-01",
+  "passos": 144,
+  "sha256": "ab39332fd0000caca134e8e26900d1779535e81a3f14721b01b5ee110926f338",
+  "niveis_no_dia": {
+    "SEM_DADO": 126,
+    "SEM_ALERTA": 18
+  },
+  "lamina_max_q95_cm": 0.0,
+  "chuva_medida_no_dia_mm": 219.7,
+  "servico_x_reconstrucao": {
+    "instante": "2026-05-02 01:30:00+00:00",
+    "nivel_servico": "SEM_ALERTA",
+    "nivel_reconstrucao": "SEM_ALERTA",
+    "chuva_q50_mm": {
+      "1": [
+        0.39,
+        0.32
+      ],
+      "3": [
+        2.34,
+        1.79
+      ],
+      "6": [
+        5.27,
+        4.14
+      ]
+    },
+    "lamina_q95_cm": {
+      "1": [
+        0.0,
+        0.0
+      ],
+      "3": [
+        0.0,
+        0.0
+      ],
+      "6": [
+        0.0,
+        0.0
+      ]
+    },
+    "max_diferenca_chuva_mm": 1.13
+  }
+}
