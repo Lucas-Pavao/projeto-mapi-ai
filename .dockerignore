@@ -27,3 +27,15 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+
+# Classificadores treinados com rótulo de alagamento: saíram do serviço em 21/11/2026 (decisão de 20/11). Ficam no git
+# e em reports/ para a dissertação, fora da imagem.
+models/v3
+models/v4/f0*
+models/rain_v1b
+models/xgb_v2*.joblib
+models/flood_classifier.joblib
+models/scaler.joblib
+models/baseline_*.joblib
+models/water_level_lstm.h5
+models/metadata.json
