@@ -46,7 +46,8 @@ def main(src: pathlib.Path, dst: pathlib.Path):
                              "sheetQ50Cm": h["sheet_q50_cm"], "sheetQ95Cm": h["sheet_q95_cm"], "validUntil": h["valid_until"]}
                             for h in a.get("horizons", [])],
                "explanation": explanation(a.get("explanation")),
-               "rainStation": None if absent else "260960001A", "rainStationDistanceKm": None if absent else 1.1,
+               "rainStation": None if absent else "261160609A", "rainStationName": None if absent else "Imbiribeira",
+               "rainStationDistanceKm": None if absent else 1.1,
                "latestReadingAgeMinutes": a.get("latest_reading_age_minutes"),
                "modelVersions": {} if not mv else {"flood": mv["flood"], "rain": mv["rain"]["version"], "bucket": mv["bucket"]["version"]},
                "codeVersion": None if sd else a.get("code_version"), "issuedAt": a.get("issued_at"),
