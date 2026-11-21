@@ -3,7 +3,7 @@
 O **MAPI AI** é o componente de inteligência do ecossistema MAPI, responsável pela análise avançada de séries temporais e predição de riscos de inundação urbana em tempo real.
 
 > **O que o serviço serve de fato (conferido no código em 21/11/2026).**
-> - `POST /v1/predict/flood` serve a **`logreg_v3`** (regressão logística calibrada, horizonte de 6 h, `mapi_ai/v3/`), treinada com **rótulo sintético** (`NOT_VALIDATED`). O `xgb_v2` (XGBoost) só responde se a v3 não carregar. A **LSTM não é alcançada**: a rota retorna antes de chegar nela, e o nível do rio não é servido. Decidido em 20/11 e feito em 21/11 (commit `864ba40`): essa rota, a v3, o v2 e a LSTM **saíram** do serviço.
+> - `POST /v1/predict/flood` foi **removida em 21/11** (commit `864ba40`, decisão de 20/11). Ela servia a **`logreg_v3`** (regressão logística, horizonte de 6 h), treinada com **rótulo sintético** (`NOT_VALIDATED`); o `xgb_v2` só respondia se a v3 não carregasse, e a **LSTM nunca era alcançada**. Os artefatos e relatórios ficam no git e em `reports/`.
 > - `POST /v1/forecast/rain` serve o **`rain_v1`**: previsão da chuva **medida** (quantis em 1, 3 e 6 h), validada em `reports/v4/rain/RELATORIO.md`.
 > - `POST /v1/flood/forecast` (novo, `mapi_ai/flood/`): **alerta de alagamento por regressão + física**. Chuva prevista pelo `rain_v1` → balde M1a a 10 min → `ALERTA` se a lâmina provável (q50) chega a 15 cm, `ATENCAO` se só a pessimista (q95), `SEM_ALERTA` ou `SEM_DADO` com motivo. Nenhum modelo treinado com rótulo de alagamento. **Experimental**: na validação (Etapa 2) o alerta nunca disparou em 5 anos; ver `reports/RELATORIO-REGRESSAO.md`.
 > - `POST /v1/bucket/point10` e `POST /v1/simulate/bucket`: balde M1a (físico, sem treino).
