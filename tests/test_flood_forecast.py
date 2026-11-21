@@ -204,3 +204,19 @@ def test_health_traz_commit_real(monkeypatch):
     monkeypatch.setenv("MAPI_CODE_VERSION", "abc1234")
     assert client.get("/health").json()["code_version"] == "abc1234"
     version.code_version.cache_clear()
+
+
+def test_balde_vetorizado_da_validacao_igual_ao_simular():
+    from mapi_ai.flood.validate import VBucket, WINDOW, state, project_max_cm
+    t = B.Terreno(3000.0, np.linspace(0, 2, 41), 100.0 * np.linspace(0, 2, 41), 0.05)
+    rng = np.random.default_rng(3)
+    mm = rng.gamma(0.5, 12.0, 400)
+    mm[250] = np.nan
+    ok, V, h = state(mm, VBucket(t, B.Params10()))
+    assert not ok[250] and not ok[250 + WINDOW - 1] and ok[250 + WINDOW]
+    for i in (WINDOW - 1, 249, 399):
+        hh, VV, _ = B.simular(mm[i - WINDOW + 1:i + 1], t, B.Params10())
+        assert hh[-1] == pytest.approx(h[i], abs=1e-9) and VV[-1] == pytest.approx(V[i], abs=1e-9)
+    # projeção vetorizada = a do serviço
+    cm = project_max_cm(np.array([V[399]]), np.array([h[399]]), np.array([40.0]), 1, VBucket(t, B.Params10()))[0]
+    assert cm == pytest.approx(FX._scenario_sheet_cm(V[399], h[399] / 10, 40.0, 1, t, B.Params10()), abs=1e-9)
