@@ -1,0 +1,64 @@
+{
+  "instante": "2026-05-05 05:50:00+00:00",
+  "nivel": "SEM_ALERTA",
+  "h_now_cm": 0.0,
+  "horizons": [
+    {
+      "hours": 1,
+      "level": "SEM_ALERTA",
+      "rain_q50_mm": 16.79,
+      "rain_q95_mm": 34.76,
+      "sheet_q50_cm": 0.0,
+      "sheet_q95_cm": 0.0,
+      "valid_from": "2026-05-05T05:50:00Z",
+      "valid_until": "2026-05-05T06:50:00Z"
+    },
+    {
+      "hours": 3,
+      "level": "SEM_ALERTA",
+      "rain_q50_mm": 28.4,
+      "rain_q95_mm": 59.87,
+      "sheet_q50_cm": 0.0,
+      "sheet_q95_cm": 0.0,
+      "valid_from": "2026-05-05T05:50:00Z",
+      "valid_until": "2026-05-05T08:50:00Z"
+    },
+    {
+      "hours": 6,
+      "level": "SEM_ALERTA",
+      "rain_q50_mm": 33.91,
+      "rain_q95_mm": 97.44,
+      "sheet_q50_cm": 0.0,
+      "sheet_q95_cm": 0.0,
+      "valid_from": "2026-05-05T05:50:00Z",
+      "valid_until": "2026-05-05T11:50:00Z"
+    }
+  ],
+  "shap": [
+    "chuva média nas estações a 5–15 km na última hora: 15,3 mm (+6,9 mm na previsão)",
+    "chuva no ponto (até 5 km) nos últimos 180 min: 50,6 mm (+5,2 mm na previsão)",
+    "chuva no ponto (até 5 km) nos últimos 10 min: 8,1 mm (+4,6 mm na previsão)"
+  ],
+  "contrafactual": "mais 109,3 mm de chuva na próxima hora, além dos 16,8 mm previstos (q50), levariam a lâmina a 15 cm",
+  "sensibilidade": "lâmina máxima entre 0,0 e 108,5 cm com f, C e i_T na faixa; o nível muda",
+  "um_por_vez": {
+    "f": [
+      0.0,
+      105.5
+    ],
+    "C": [
+      0.0,
+      0.0
+    ],
+    "tr_anos": [
+      0.0,
+      0.0
+    ],
+    "te_min": [
+      0.0,
+      0.0
+    ]
+  },
+  "capacidade_m3_h": 8883.79,
+  "entrada_max_m3_h": 5527.829
+}

@@ -12,3 +12,7 @@ data/rain/predictions.pkl.gz
 data/rain_v1b/*.pkl.gz
 data/rain_v1b/relogio_ingenuo/
 models/rain_v1b/relogio_ingenuo/
+
+# Derivados do alerta por regressão (regenerar com scripts/reproduzir_regressao.sh)
+reports/regressao/*.pkl.gz
+data/rain/dataset_*.pkl.gz

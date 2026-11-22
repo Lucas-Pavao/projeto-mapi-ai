@@ -1,0 +1,26 @@
+{
+  "bloco": "C",
+  "repositorio": "projeto-mapi-ai",
+  "branch": "feat/onda15-horizontes",
+  "data": "2026-11-22",
+  "pre_registro": "mapi_ai/dayrisk/config.py @ 3d9e5af",
+  "resultado": "nao_passou",
+  "dia_de_risco_na_tela": false,
+  "motivo": "Em H = 12 h, emissão 06h, o melhor na validação (om_icon_global, BSS 0,071) tem IC 95% [-0,081; 0,260] com o zero; pela regra, fica a climatologia.",
+  "servico_day_risk": "não existe (C5 só se passasse)",
+  "para_a_api_bloco_D": {
+    "camada_dia_de_risco": "ausente",
+    "motivo_codigo": "NAO_VALIDADO",
+    "motivo_texto": "O 'dia de risco' do MAPi não venceu a climatologia na avaliação de 22/11 (reports/day_risk/RELATORIO.md). Fica só o INMET no horizonte do dia."
+  },
+  "achados_para_a_coleta_ao_vivo_bloco_B": {
+    "modelos_com_historico": ["ecmwf_ifs025 (desde 2024-02-03)", "icon_global (desde 2024-01-19)", "best_match (desde 2024-01-19)"],
+    "sem_historico": ["ecmwf_ifs (9 km)"],
+    "nao_servido_no_historico": ["relative_humidity_850hPa_previous_dayN", "wind_speed_850hPa_previous_dayN"],
+    "cape_no_historico": "só best_match (e GFS)",
+    "descontinuado": "icon_global em 2026-11-30 (página do previous-runs-api)",
+    "emissao_ao_vivo": "last_run_availability_time de https://api.open-meteo.com/data/<modelo>/static/meta.json"
+  },
+  "eventos_FORTE_teste": {"eventos": 28, "dias": 14},
+  "numeros": "reports/day_risk/evaluation.json"
+}
