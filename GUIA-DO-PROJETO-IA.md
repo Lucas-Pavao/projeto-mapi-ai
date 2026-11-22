@@ -238,6 +238,19 @@ enche. A chuva medida das últimas 6 h ≥ 25 mm pegou os 12 dias da Defesa Civi
 ponto-mês. Por isso o alerta é **experimental**: falta uma capacidade de galeria com fonte e uma forma de distribuir a
 chuva prevista no tempo, decididas sem olhar os 18 dias, e uma validação nova.
 
+### 4.4 "Dia de risco" com a previsão numérica (avaliado em 22/11/2026, não adotado)
+
+Pergunta: o ECMWF, o ICON ou o modelo atual do Open-Meteo, vistos às 06h, dizem se haverá evento FORTE no ponto nas
+próximas 6, 12 ou 24 h melhor que a climatologia? O critério foi escrito e commitado antes de baixar os dados
+(`mapi_ai/dayrisk/config.py`). O alvo é a chuva medida, sem rótulo de alagamento. Há trava de vazamento: só vale a
+rodada publicada até a emissão (`h − 24N + 8 h ≤ t`).
+
+Resultado: **não passou.** Em H = 12 h, o melhor na validação (ICON, BSS 0,071) teve IC 95% de −0,081 a 0,260. Pela
+regra, fica a climatologia. O teste tinha 28 eventos FORTE em 14 dias, então os intervalos são largos. O horizonte do
+dia fica só com o INMET na tela. Números: `reports/day_risk/RELATORIO.md`. Reproduzir:
+`python -m mapi_ai.dayrisk.fetch --parse && python -m mapi_ai.dayrisk.evaluate`. Não há serviço
+`/v1/forecast/day-risk`, porque ele só existiria se o critério passasse.
+
 ## 5. Comparação de algoritmos: por que usar, quando usar, por que (não) estamos usando
 
 Contexto do MAPI que pesa na escolha: **dados em tabela**, **muitas colunas (28)**, **relações que se combinam**
