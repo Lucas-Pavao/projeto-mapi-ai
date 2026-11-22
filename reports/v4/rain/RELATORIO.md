@@ -30,6 +30,8 @@ Entradas (30 na rede, 3 do Open-Meteo), todas com informação até `t` (teste `
 
 Open-Meteo: **rodada da véspera** (`previous-runs-api`, `precipitation_previous_day1`), emitida pelo menos 24 h antes da hora prevista. Só existe de 2024-01 em diante, então o treino tem 6 meses dela. A previsão emendada (`historical-forecast-api`) não foi usada como entrada porque não separa a emissão.
 
+Período sem arquivo (conferido em 2026-11-22, onda 16): antes de 2024-01-19 a `previous-runs-api` não tem a rodada, e `om_1h`, `om_3h` e `om_6h` ficam ausentes (NaN, nunca zero). Isso vale para **84% das linhas de treino** (só 16% têm a entrada); validação e teste têm 100%. O XGBoost aprende um ramo próprio para "ausente", o mesmo que usa no serviço quando o Open-Meteo falta. Em 2026-11-30 o `best_match` muda por dentro (ICON na grade nativa): quebra de série registrada na api (V43) e conferida toda semana (`rain_forecast_check`, V44; referência em `referencia_conferencia_semanal.json`).
+
 ## Os cinco modelos
 
 Critério fixado antes do teste: por horizonte, fica o mais simples cuja diferença de erro de quantil para o melhor, na validação, tem IC 95% contendo zero (bootstrap pareado por bloco de dia, 1.000 reamostras).

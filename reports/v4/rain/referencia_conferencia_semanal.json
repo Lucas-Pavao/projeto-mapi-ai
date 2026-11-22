@@ -1,0 +1,127 @@
+{
+ "gerado_por": "scripts/exportar_referencia_conferencia_rain.py",
+ "modelo": "rain_v1",
+ "faixas_p60_mm": {
+  "seco": "p_60 <= 0",
+  "0-1": "0 < p_60 <= 1",
+  "1-5": "1 < p_60 <= 5",
+  ">=5": "p_60 > 5",
+  "sem_dado": "p_60 ausente (usa a distribuição global do treino)"
+ },
+ "persistencia": {
+  "1h": {
+   "0-1": {
+    "q50": 0.2,
+    "q80": 0.8,
+    "q95": 3.6
+   },
+   "1-5": {
+    "q50": 0.7921,
+    "q80": 3.0,
+    "q95": 7.8764
+   },
+   ">=5": {
+    "q50": 3.2,
+    "q80": 9.2406,
+    "q95": 20.0744
+   },
+   "seco": {
+    "q50": 0.0,
+    "q80": 0.0,
+    "q95": 0.5927
+   },
+   "sem_dado": {
+    "q50": 0.0,
+    "q80": 0.2,
+    "q95": 2.9524
+   }
+  },
+  "3h": {
+   "0-1": {
+    "q50": 0.4,
+    "q80": 2.7576,
+    "q95": 9.4
+   },
+   "1-5": {
+    "q50": 2.1835,
+    "q80": 7.0874,
+    "q95": 17.0167
+   },
+   ">=5": {
+    "q50": 6.6,
+    "q80": 18.4649,
+    "q95": 38.7107
+   },
+   "seco": {
+    "q50": 0.0,
+    "q80": 0.2,
+    "q95": 3.0
+   },
+   "sem_dado": {
+    "q50": 0.0,
+    "q80": 1.1815,
+    "q95": 7.4833
+   }
+  },
+  "6h": {
+   "0-1": {
+    "q50": 1.0,
+    "q80": 5.4,
+    "q95": 16.4
+   },
+   "1-5": {
+    "q50": 3.8,
+    "q80": 11.4,
+    "q95": 27.4
+   },
+   ">=5": {
+    "q50": 9.8,
+    "q80": 27.7008,
+    "q95": 56.3397
+   },
+   "seco": {
+    "q50": 0.0,
+    "q80": 1.1805,
+    "q95": 6.8902
+   },
+   "sem_dado": {
+    "q50": 0.2,
+    "q80": 2.7615,
+    "q95": 13.3902
+   }
+  }
+ },
+ "teste": {
+  "1h": {
+   "modelo_escolhido": "gb_rede",
+   "pinball_modelo": 0.1438,
+   "pinball_persistencia": 0.1721,
+   "ganho": 0.1646,
+   "ganho_ic95": [
+    0.1482,
+    0.1852
+   ]
+  },
+  "3h": {
+   "modelo_escolhido": "gb_rede_om",
+   "pinball_modelo": 0.3806,
+   "pinball_persistencia": 0.4468,
+   "ganho": 0.1483,
+   "ganho_ic95": [
+    0.1258,
+    0.1734
+   ]
+  },
+  "6h": {
+   "modelo_escolhido": "gb_rede_om",
+   "pinball_modelo": 0.7253,
+   "pinball_persistencia": 0.8406,
+   "ganho": 0.1371,
+   "ganho_ic95": [
+    0.1146,
+    0.1595
+   ]
+  }
+ },
+ "sha256_persistencia_joblib": "5311a8ba0ee7a999bfdf17c958ab1abb7f4f70ca0fdbc6e89df18bd789bb5f68"
+}
