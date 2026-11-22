@@ -133,6 +133,9 @@ class Bucket10Input(BaseModel):
     days_since_cleaning: Optional[float] = Field(default=None, ge=0, le=36500)
     lambda_re_per_day: Optional[float] = Field(default=None, gt=0, le=10)
     f_clogged: float = Field(default=0.0, ge=0.0, le=1.0)
+    # emenda 1 da 156 (E3/E4): limpeza desconhecida -> regime permanente com o tempo médio entupida (dias)
+    clog_regime: Optional[Literal["TEMPO_DESDE_LIMPEZA", "PERMANENTE"]] = None
+    mean_clogged_days: Optional[float] = Field(default=None, ge=0, le=3650)
     # refluxo de maré (ADR 0009 emenda 3): maré prevista (m, NR DHN) em cada passo da série e nos 6 da projeção,
     # soleira e diâmetro da saída da galeria; sem eles, nenhum refluxo
     tide_nr_m: Optional[list[float]] = Field(default=None, max_length=300)
@@ -179,7 +182,8 @@ def bucket_point10(data: Bucket10Input):
     from mapi_ai import entupimento as ENT
     out["limpeza"] = ENT.avaliar_com_limpeza(np.asarray(data.rain_10min_mm, dtype=float), terr, p, data.forecast_1h_q50_mm,
                                              data.forecast_1h_q80_mm, data.days_since_cleaning, data.lambda_re_per_day,
-                                             data.f_clogged, f_medido=fm, f_projecao=fpj)
+                                             data.f_clogged, f_medido=fm, f_projecao=fpj, regime=data.clog_regime,
+                                             dias_entupida_media=data.mean_clogged_days)
     out["slug"] = data.point.slug
     out["projection_rule"] = "chuva prevista de 1 h distribuída por igual nos 6 passos de 10 min"
     out["validated"] = False

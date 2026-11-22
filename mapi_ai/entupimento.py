@@ -38,6 +38,27 @@ def p_entupida(t_dias: float | None, lambda_re_por_dia: float | None) -> float |
     return 1.0 - math.exp(-lambda_re_por_dia * t_dias)
 
 
+REGIMES = ("TEMPO_DESDE_LIMPEZA", "PERMANENTE")
+
+
+def pi_entupida_permanente(lambda_re_por_dia: float | None, dias_entupida_media: float | None) -> float | None:
+    """
+    Regime permanente (emenda 1 do pré-registro da 156, E4): renovação alternada, livre por 1/lambda_re em média e
+    entupida por D_E em média (do chamado à limpeza). pi_E = D_E / (1/lambda_re + D_E). None se faltar dado.
+    """
+    if lambda_re_por_dia is None or dias_entupida_media is None or lambda_re_por_dia <= 0 or dias_entupida_media < 0:
+        return None
+    return dias_entupida_media / (1.0 / lambda_re_por_dia + dias_entupida_media)
+
+
+def p_entupida_regime(regime: str | None, t_dias: float | None, lambda_re_por_dia: float | None,
+                      dias_entupida_media: float | None) -> float | None:
+    """TEMPO_DESDE_LIMPEZA (padrão, o de antes) usa t; PERMANENTE usa pi_E. Sem dado, None (nunca um número inventado)."""
+    if regime == "PERMANENTE":
+        return pi_entupida_permanente(lambda_re_por_dia, dias_entupida_media)
+    return p_entupida(t_dias, lambda_re_por_dia)
+
+
 def lambda_do_ponto(slug: str, caminho: Path = PARAMETROS) -> float | None:
     """Taxa de reentupimento do ponto (150 m), ou None se houver menos de MIN_LIMPEZAS limpezas casadas."""
     p = json.loads(caminho.read_text(encoding="utf-8"))["pontos"].get(slug)
@@ -75,17 +96,21 @@ def _alaga(av: dict, nome: str | None, hcrit: float) -> bool:
 def avaliar_com_limpeza(P_medido: np.ndarray, t: B.Terreno, p: B.Params10, q50: float | None, q80: float | None,
                         dias_desde_limpeza: float | None, lambda_re_por_dia: float | None,
                         f_entupida: float = F_ENTUPIDA, f_medido: np.ndarray | None = None,
-                        f_projecao: np.ndarray | None = None) -> dict | None:
+                        f_projecao: np.ndarray | None = None, regime: str | None = None,
+                        dias_entupida_media: float | None = None) -> dict | None:
     """
-    Bloco "limpeza" da resposta do /v1/bucket/point10. None se faltar a data da limpeza ou a taxa (comportamento de hoje).
+    Bloco "limpeza" da resposta do /v1/bucket/point10. None se faltar dado (comportamento de antes).
     prob_* = (1 - p_E) * 1[galeria livre alaga] + p_E * 1[galeria entupida alaga], agora e até 60 min (q50, q80).
+    regime PERMANENTE (limpeza desconhecida, emenda 1 E3/E4): p_E = pi_E, sem dias desde a limpeza.
     """
-    pe = p_entupida(dias_desde_limpeza, lambda_re_por_dia)
+    pe = p_entupida_regime(regime, dias_desde_limpeza, lambda_re_por_dia, dias_entupida_media)
     if pe is None:
         return None
     livre = B.avaliar(P_medido, t, p, q50, q80, f_medido=f_medido, f_projecao=f_projecao)
     ent = B.avaliar(P_medido, t, p, q50, q80, i_cap_mm_h=f_entupida * p.i_cap_mm_h, f_medido=f_medido, f_projecao=f_projecao)
-    out = {"dias_desde_limpeza": float(dias_desde_limpeza), "lambda_re_por_dia": float(lambda_re_por_dia),
+    out = {"regime": "PERMANENTE" if regime == "PERMANENTE" else "TEMPO_DESDE_LIMPEZA",
+           "dias_desde_limpeza": None if regime == "PERMANENTE" else float(dias_desde_limpeza),
+           "dias_entupida_media": dias_entupida_media, "lambda_re_por_dia": float(lambda_re_por_dia),
            "p_entupida": pe, "f_entupida": f_entupida, "h_now_entupida_mm": ent["h_now_mm"],
            "projection_entupida": ent["projection"]}
     for chave, nome in (("prob_hcrit_agora", None), ("prob_hcrit_60min_q50", "q50"), ("prob_hcrit_60min_q80", "q80")):

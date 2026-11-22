@@ -28,11 +28,11 @@ def test_sem_dado_nunca_vira_numero():
 
 
 def test_parametros_do_156():
-    # posições alinhadas por notícia (2026-11-21; api docs/ALINHAMENTO-PONTOS.md)
-    assert E.lambda_do_ponto("AV_RECIFE_IBURA") == pytest.approx(0.02337)
+    # posições alinhadas por notícia (2026-11-21) e emenda 1 da 156 (2026-11-22: coordenadas-padrão fora, bairro oficial)
+    assert E.lambda_do_ponto("AV_RECIFE_IBURA") == pytest.approx(0.01038)         # 19 limpezas (bairro IBURA, antes IPSEP)
     assert E.lambda_do_ponto("CIN_UFPE") is None                    # nenhuma limpeza casada
     assert E.lambda_do_ponto("MASCARENHAS_IMBIRIBEIRA") == pytest.approx(0.03331)   # 130 limpezas
-    assert E.lambda_do_ponto("AGAMENON_DERBY") == pytest.approx(0.00981)            # 35 limpezas
+    assert E.lambda_do_ponto("AGAMENON_DERBY") == pytest.approx(0.01068)            # 40 limpezas (155 em coordenada-padrão saíram)
 
 
 def test_minimo_de_limpezas(tmp_path):
@@ -86,3 +86,38 @@ def test_endpoint_com_limpeza_recente_e_antiga():
     assert rec["h_now_entupida_mm"] >= 150.0
     assert rec["prob_hcrit_agora"] == pytest.approx(rec["p_entupida"])
     assert rec["prob_hcrit_agora"] < 0.5 <= ant["prob_hcrit_agora"]
+
+
+# --- emenda 1 da 156 (E3/E4, 2026-11-22): limpeza desconhecida usa o regime permanente ---------------------------------
+
+def test_regime_permanente_e_renovacao_alternada():
+    # livre 1/lambda = 30 dias, entupida 10 dias em média -> pi_E = 10 / 40
+    assert E.pi_entupida_permanente(1 / 30, 10.0) == pytest.approx(0.25)
+    assert E.pi_entupida_permanente(None, 10.0) is None
+    assert E.pi_entupida_permanente(0.02, None) is None
+    # não depende de t: limpeza velha não satura
+    assert E.p_entupida_regime("PERMANENTE", 5000, 0.0333, 44.2) == pytest.approx(44.2 / (1 / 0.0333 + 44.2))
+    assert E.p_entupida_regime("TEMPO_DESDE_LIMPEZA", 30, 0.02, None) == pytest.approx(E.p_entupida(30, 0.02))
+    assert E.p_entupida_regime(None, 30, 0.02, None) == pytest.approx(E.p_entupida(30, 0.02))
+
+
+def test_parametros_da_emenda_1():
+    import json
+    p = json.loads(E.PARAMETROS.read_text(encoding="utf-8"))
+    assert p["coordenadas_padrao"]["n"] > 0
+    m = p["pontos"]["MASCARENHAS_IMBIRIBEIRA"]
+    assert m["limpeza_conhecida_no_fim_da_cobertura"] is False          # 2023-08-31 está a mais de 221 dias do fim
+    assert 0 < m["pi_entupida_permanente"] < 1
+    assert p["pontos"]["CIN_UFPE"]["bairro"] == "CIDADE UNIVERSITARIA"
+
+
+def test_endpoint_regime_permanente():
+    from fastapi.testclient import TestClient
+    from mapi_ai import app as app_module
+    c = TestClient(app_module.app)
+    r = c.post("/v1/bucket/point10", json=_req(lambda_re_per_day=0.0333, clog_regime="PERMANENTE",
+                                               mean_clogged_days=44.2)).json()["limpeza"]
+    assert r["regime"] == "PERMANENTE" and r["dias_desde_limpeza"] is None
+    assert r["p_entupida"] == pytest.approx(44.2 / (1 / 0.0333 + 44.2))
+    # permanente sem o tempo médio entupida: sem dado, nunca um número
+    assert c.post("/v1/bucket/point10", json=_req(lambda_re_per_day=0.0333, clog_regime="PERMANENTE")).json()["limpeza"] is None
