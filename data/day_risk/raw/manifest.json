@@ -1,0 +1,122 @@
+{
+ "prev_AV_RECIFE_IBURA_ecmwf_ifs025.json.gz": {
+  "sha256": "db69088883a908d6c162ba778303abc05cc6ecdcc28133bbb2570b1a780db076",
+  "bytes": 834366,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.10791&longitude=-34.92714&models=ecmwf_ifs025&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:03:47+00:00",
+  "slug": "AV_RECIFE_IBURA",
+  "model": "ecmwf_ifs025"
+ },
+ "prev_AV_RECIFE_IBURA_icon_global.json.gz": {
+  "sha256": "d4961df2f38e9f5a56836ddac21fc333c984c7a8b132eb822f3e2f3e6956f102",
+  "bytes": 834370,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.10791&longitude=-34.92714&models=icon_global&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:03:52+00:00",
+  "slug": "AV_RECIFE_IBURA",
+  "model": "icon_global"
+ },
+ "prev_AV_RECIFE_IBURA_best_match.json.gz": {
+  "sha256": "8d0a9a278a0755a4ce1df89537860431f408efc837050551c748b2867415c637",
+  "bytes": 1237592,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.10791&longitude=-34.92714&models=best_match&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3%2Ccape_previous_day1%2Ccape_previous_day2%2Ccape_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:08+00:00",
+  "slug": "AV_RECIFE_IBURA",
+  "model": "best_match"
+ },
+ "prev_CIN_UFPE_ecmwf_ifs025.json.gz": {
+  "sha256": "714eb6e8b5c71ee73059c7cd241161de09338e25b4339b797f85f6c93e13dac2",
+  "bytes": 834368,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.05531&longitude=-34.95116&models=ecmwf_ifs025&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:13+00:00",
+  "slug": "CIN_UFPE",
+  "model": "ecmwf_ifs025"
+ },
+ "prev_CIN_UFPE_icon_global.json.gz": {
+  "sha256": "7a20e7a2cac7e4c52729ba373a88a36016206af1afa57e209ddeb79e459a2535",
+  "bytes": 834367,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.05531&longitude=-34.95116&models=icon_global&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:18+00:00",
+  "slug": "CIN_UFPE",
+  "model": "icon_global"
+ },
+ "prev_CIN_UFPE_best_match.json.gz": {
+  "sha256": "523929d8af2b0a5c1b0329e85fd8eb64abf27934a85acc3ab3bf225731973958",
+  "bytes": 1237591,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.05531&longitude=-34.95116&models=best_match&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3%2Ccape_previous_day1%2Ccape_previous_day2%2Ccape_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:26+00:00",
+  "slug": "CIN_UFPE",
+  "model": "best_match"
+ },
+ "prev_AGAMENON_DERBY_ecmwf_ifs025.json.gz": {
+  "sha256": "2ede653bf85b7ce54d4236e704154c2960bd427079ed0aef80aeab6880d34773",
+  "bytes": 834365,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.05255&longitude=-34.89437&models=ecmwf_ifs025&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:30+00:00",
+  "slug": "AGAMENON_DERBY",
+  "model": "ecmwf_ifs025"
+ },
+ "prev_AGAMENON_DERBY_icon_global.json.gz": {
+  "sha256": "7fb7d1fc93106d5dfb00b544e3bd8a708f63c246e00c219ce4f2c4654f843eec",
+  "bytes": 834369,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.05255&longitude=-34.89437&models=icon_global&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:34+00:00",
+  "slug": "AGAMENON_DERBY",
+  "model": "icon_global"
+ },
+ "prev_AGAMENON_DERBY_best_match.json.gz": {
+  "sha256": "0a8b1394e53ab3f4251f44bd2e5873ac971d27ac7512c83e5254a823d712dacc",
+  "bytes": 1237591,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.05255&longitude=-34.89437&models=best_match&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3%2Ccape_previous_day1%2Ccape_previous_day2%2Ccape_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:40+00:00",
+  "slug": "AGAMENON_DERBY",
+  "model": "best_match"
+ },
+ "prev_JABOATAO_CENTRO_ecmwf_ifs025.json.gz": {
+  "sha256": "229ae4ebf517945a9121201b246efbf9b3275b7cf887353d3aa20dddeaeb9d21",
+  "bytes": 834368,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.10652&longitude=-35.01321&models=ecmwf_ifs025&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:46+00:00",
+  "slug": "JABOATAO_CENTRO",
+  "model": "ecmwf_ifs025"
+ },
+ "prev_JABOATAO_CENTRO_icon_global.json.gz": {
+  "sha256": "939be9851896ddfc047b17db7ae9f2a8ecd714af9e9540f2869697540caa655b",
+  "bytes": 834370,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.10652&longitude=-35.01321&models=icon_global&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:51+00:00",
+  "slug": "JABOATAO_CENTRO",
+  "model": "icon_global"
+ },
+ "prev_JABOATAO_CENTRO_best_match.json.gz": {
+  "sha256": "1fa3f736668e8076427a4e46116d5e60e10551dfd4b87e2ed137f23e504a1b02",
+  "bytes": 1237594,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.10652&longitude=-35.01321&models=best_match&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3%2Ccape_previous_day1%2Ccape_previous_day2%2Ccape_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:04:56+00:00",
+  "slug": "JABOATAO_CENTRO",
+  "model": "best_match"
+ },
+ "prev_MASCARENHAS_IMBIRIBEIRA_ecmwf_ifs025.json.gz": {
+  "sha256": "1b286084c10d41e092bc38ccc70d85cd39058cc9d41c9f719638afae76b91fd4",
+  "bytes": 834367,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.11812&longitude=-34.90494&models=ecmwf_ifs025&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:05:00+00:00",
+  "slug": "MASCARENHAS_IMBIRIBEIRA",
+  "model": "ecmwf_ifs025"
+ },
+ "prev_MASCARENHAS_IMBIRIBEIRA_icon_global.json.gz": {
+  "sha256": "7fbeda19ee2a0be23519c540e4b61a7d1c8bf59af14185837d11c3d795155eb6",
+  "bytes": 834370,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.11812&longitude=-34.90494&models=icon_global&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:05:04+00:00",
+  "slug": "MASCARENHAS_IMBIRIBEIRA",
+  "model": "icon_global"
+ },
+ "prev_MASCARENHAS_IMBIRIBEIRA_best_match.json.gz": {
+  "sha256": "78143fcf5795ae1169473de0a5d5834b849924e60d8948cf517ca2453f27413f",
+  "bytes": 1237592,
+  "url": "https://previous-runs-api.open-meteo.com/v1/forecast?latitude=-8.11812&longitude=-34.90494&models=best_match&hourly=precipitation_previous_day1%2Cprecipitation_previous_day2%2Cprecipitation_previous_day3%2Ccape_previous_day1%2Ccape_previous_day2%2Ccape_previous_day3&start_date=2024-01-15&end_date=2026-11-01&timezone=UTC",
+  "fetched_at": "2026-11-22T17:05:09+00:00",
+  "slug": "MASCARENHAS_IMBIRIBEIRA",
+  "model": "best_match"
+ }
+}

@@ -93,3 +93,12 @@ A sensibilidade mostra que tudo depende de `f`, o parâmetro sem fonte. Nenhum p
 1. Capacidade da galeria e distribuição da chuva no tempo (seção 5). Sem isso, o alerta não dispara.
 2. Corrigir ou não as duas diferenças entre treino e serviço do rain_v1 (fora deste prompt: mexer no rain_v1).
 3. `rain_alert` do ADR 0026: o orquestrador manteve na Central de alertas e no SSE, fora do card. A confirmar.
+
+## Nota de 22/11: reprodução depois da onda 14
+
+`scripts/reproduzir_regressao.sh` rodado em 22/11 sobre a main + onda 14: a conferência do alerta de CIN_UFPE em
+2026-05-01 dá o mesmo hash (OK). A validação regenerada muda porque a onda 14 pôs Ibura e Derby em revisão pela trava
+da área (ADR 0027, emenda A), e a validação só usa pontos com terreno `OK`. Com 2 pontos (CIN e Mascarenhas): 0 de 7
+eventos FORTE com lâmina ≥ 15 cm (5 dias, IC exato por dia 0–52%) e 0 de 18 ponto-dias da Defesa Civil (12 dias, IC
+0–26%). A conclusão não muda. O `reports/regressao/validacao.json` de 20/11 (4 pontos) fica como o resultado oficial
+do teste olhado uma vez.
