@@ -1,0 +1,184 @@
+{
+ "regra": "Onda 16, Fase 2.4: com a chuva MEDIDA de 5 anos, quantas vezes o refluxo de maré e a limpeza mudam a lâmina do balde a\n10 min em CIn e Mascarenhas, e em quanto. Sem dia de alagamento: nada aqui é comparado com ocorrência, nada é ajustado.\n\nEntradas (as mesmas do registro de 5 anos, mapi_ai/bucket10_5anos.py):\n- data/bucket10/serie10min_<ponto>.csv.gz (GET /api/alerta/serie-10min.csv, regra do alerta) e data/bucket10/terreno.json;\n- maré: extremos da tábua DHN do Porto do Recife 2021-2026 (projeto-mapi-api/src/main/resources/tide/dhn-pe02-AAAA.csv,\n  hora UTC-3, altura acima do NR), interpolados por meia onda de cosseno a cada 10 min (o método do TideInterpolation da\n  API). O valor de cada passo é o do fim do passo.\n- refluxo (ADR 0030): soleira e diâmetro de AlertaProperties.Refluxo; Δ = 0,821 m; cenário central (viés 0) e de viés\n  (MDT - RN = -0,369 m).\n- limpeza: regime permanente da emenda 1 da 156 (o que o ciclo usa até a carga completa da 156): π_E = D_E/(1/λ + D_E),\n  com λ e D_E de LimpezaProperties; galeria entupida com f_E = 0 (padrão, [sem fonte]) e f_E = 0,5 (ponta da faixa).\n\nSérie com lacuna: o balde roda por trecho contínuo, vazio depois de cada lacuna (ausente nunca vira zero).\nEvento = episódio com lâmina >= 15 cm, separado do seguinte por pelo menos 1 passo abaixo de 15 cm.\nUso: python -m mapi_ai.fatores_5anos",
+ "parametros": {
+  "delta_m": 0.821,
+  "vies_cenario_m": -0.369,
+  "hcrit_cm": 15.0,
+  "tr_anos": 5.0,
+  "te_min": 10.0,
+  "C": 0.86
+ },
+ "pontos": {
+  "CIN_UFPE": {
+   "anos": 5.17,
+   "passos": 271728,
+   "passos_sem_estacao_pct": 0.44,
+   "terreno": {
+    "area_m2": 82378,
+    "rua_rel_m": 0.109
+   },
+   "sem_fatores": {
+    "eventos_ge_15cm": 0,
+    "lamina_max_cm": 0.0,
+    "passos_com_lamina_gt_0": 0,
+    "datas": []
+   },
+   "refluxo": {
+    "status": "NAO_SE_APLICA",
+    "motivo": "ponto sem saída de galeria cadastrada no ESIG"
+   },
+   "limpeza": {
+    "status": "SEM_DADO",
+    "motivo": "0 limpezas casadas a 150 m (mínimo 10): sem taxa"
+   }
+  },
+  "MASCARENHAS_IMBIRIBEIRA": {
+   "anos": 5.17,
+   "passos": 271728,
+   "passos_sem_estacao_pct": 3.64,
+   "terreno": {
+    "area_m2": 713,
+    "rua_rel_m": 0.126
+   },
+   "sem_fatores": {
+    "eventos_ge_15cm": 0,
+    "lamina_max_cm": 0.0,
+    "passos_com_lamina_gt_0": 0,
+    "datas": []
+   },
+   "refluxo": {
+    "status": "OK",
+    "passos_sem_mare": 0,
+    "cenarios": {
+     "central": {
+      "soleira_nr_m": 1.459,
+      "diametro_m": 0.6,
+      "tempo_com_saida_reduzida_pct": 42.3,
+      "tempo_com_saida_fechada_pct": 10.7,
+      "passos_com_chuva_e_saida_reduzida_pct": 42.2,
+      "com_refluxo": {
+       "eventos_ge_15cm": 0,
+       "lamina_max_cm": 10.6,
+       "passos_com_lamina_gt_0": 1214,
+       "datas": []
+      },
+      "mudanca_vs_sem_refluxo": {
+       "passos_com_mudanca_gt_1mm": 1162,
+       "episodios_com_mudanca": 113,
+       "episodios_por_ano": 21.87,
+       "mudanca_cm_mediana": 2.74,
+       "mudanca_cm_p95": 8.18,
+       "mudanca_cm_max": 10.62
+      }
+     },
+     "vies_-0,369": {
+      "soleira_nr_m": 1.828,
+      "diametro_m": 0.6,
+      "tempo_com_saida_reduzida_pct": 21.5,
+      "tempo_com_saida_fechada_pct": 1.0,
+      "passos_com_chuva_e_saida_reduzida_pct": 20.8,
+      "com_refluxo": {
+       "eventos_ge_15cm": 0,
+       "lamina_max_cm": 6.4,
+       "passos_com_lamina_gt_0": 73,
+       "datas": []
+      },
+      "mudanca_vs_sem_refluxo": {
+       "passos_com_mudanca_gt_1mm": 71,
+       "episodios_com_mudanca": 12,
+       "episodios_por_ano": 2.32,
+       "mudanca_cm_mediana": 2.52,
+       "mudanca_cm_p95": 4.93,
+       "mudanca_cm_max": 6.35
+      }
+     }
+    }
+   },
+   "limpeza": {
+    "status": "OK",
+    "regime": "PERMANENTE",
+    "lambda_re_por_dia": 0.03331,
+    "dias_entupida_media": 44.2,
+    "p_entupida": 0.5955,
+    "f_E_0,0": {
+     "galeria_entupida": {
+      "eventos_ge_15cm": 41,
+      "lamina_max_cm": 187.4,
+      "passos_com_lamina_gt_0": 233406,
+      "datas": [
+       "2021-09-30 03:30:00+00:00",
+       "2021-12-05 01:30:00+00:00",
+       "2022-02-17 10:00:00+00:00",
+       "2022-06-03 10:10:00+00:00",
+       "2022-07-02 04:10:00+00:00",
+       "2022-07-20 23:40:00+00:00",
+       "2022-08-02 10:10:00+00:00",
+       "2022-09-07 03:20:00+00:00",
+       "2022-11-22 08:30:00+00:00",
+       "2023-01-01 22:40:00+00:00",
+       "2023-02-06 08:50:00+00:00",
+       "2023-05-10 12:30:00+00:00",
+       "2023-06-11 09:20:00+00:00",
+       "2023-07-26 01:10:00+00:00",
+       "2023-08-14 18:20:00+00:00"
+      ]
+     },
+     "mudanca_vs_livre": {
+      "passos_com_mudanca_gt_1mm": 233333,
+      "episodios_com_mudanca": 60,
+      "episodios_por_ano": 11.61,
+      "mudanca_cm_mediana": 20.82,
+      "mudanca_cm_p95": 115.48,
+      "mudanca_cm_max": 187.4
+     },
+     "passos_em_que_a_mistura_chega_a_0,5": 149857,
+     "passos_so_entupida_alaga": 149857
+    },
+    "f_E_0,5": {
+     "galeria_entupida": {
+      "eventos_ge_15cm": 0,
+      "lamina_max_cm": 2.3,
+      "passos_com_lamina_gt_0": 12,
+      "datas": []
+     },
+     "mudanca_vs_livre": {
+      "passos_com_mudanca_gt_1mm": 12,
+      "episodios_com_mudanca": 8,
+      "episodios_por_ano": 1.55,
+      "mudanca_cm_mediana": 1.04,
+      "mudanca_cm_p95": 2.02,
+      "mudanca_cm_max": 2.27
+     },
+     "passos_em_que_a_mistura_chega_a_0,5": 0,
+     "passos_so_entupida_alaga": 0
+    }
+   }
+  }
+ },
+ "mare_fonte": [
+  {
+   "arquivo": "dhn-pe02-2021.csv",
+   "sha256": "70ba18a5ffd851ce6da27f5da2545ccad35605ef25bab98b18c4c4e7cb530c16"
+  },
+  {
+   "arquivo": "dhn-pe02-2022.csv",
+   "sha256": "ce89e220471378646b029b10594f41527ce978f42c32c3ee69734d4dfb61b064"
+  },
+  {
+   "arquivo": "dhn-pe02-2023.csv",
+   "sha256": "b5b772138f6f9848c550b011bea4689a94eb898c6905b1ecf59db4f32ca8f0d8"
+  },
+  {
+   "arquivo": "dhn-pe02-2024.csv",
+   "sha256": "4e1c2e26e87be757ae8c62af8f36007031599ebef49f603852d968bd59fdcb97"
+  },
+  {
+   "arquivo": "dhn-pe02-2025.csv",
+   "sha256": "6086ee27e1c68952bab58cb7adc06ca6578f8d236ea8a6b43bc03a792217c849"
+  },
+  {
+   "arquivo": "dhn-pe02-2026.csv",
+   "sha256": "14508eaa31c4c084cf94b45e52f8d7da54dd21e3714f864dfcfe69ca9f7ccaa3"
+  }
+ ]
+}
