@@ -5,7 +5,7 @@ Caminho: chuva medida (rede Cemaden/PED) -> rain_v1 (quantis de chuva em 1, 3 e 
 (físico, sem treino, não calibrado) -> regra fixa sobre a lâmina. Nenhum artefato aqui é treinado com rótulo de
 alagamento, sintético ou real.
 """
-VERSION = "flood_reg_v1"
+VERSION = "flood_reg_v2"   # v2 (onda 16, Fase 4): capacidade efetiva em faixa e pico de 10 min previsto
 
 # Lâmina que define alagamento no MAPi: 15 cm (docs/PARAMETROS-MODELO-FISICO.md do projeto-mapi-api, "h_crit = 15 cm",
 # faixa 10 a 30 só como sensibilidade). Definição física, congelada; não é ajustada para acertar frequência.
@@ -22,13 +22,15 @@ RULE = {
     "SEM_ALERTA": "nenhum dos dois cenários chega a 15 cm no horizonte (não quer dizer sem risco)",
     "SEM_DADO": "falta entrada para calcular; nunca vira SEM_ALERTA",
 }
-RULE_TEXT = ("ALERTA se a lâmina do cenário q50 chega a 15 cm; ATENÇÃO se só a do cenário q95 chega; SEM ALERTA caso "
-             "contrário. Limiar e regra fixados antes do teste (20/11).")
+RULE_TEXT = ("ALERTA se a lâmina do cenário q50 chega a 15 cm com a capacidade máxima da faixa; ATENÇÃO se a do cenário q95 "
+             "chega com a capacidade mínima; SEM ALERTA caso contrário. Limiar fixado em 20/11; capacidade em faixa pelo "
+             "pré-registro de 23/11.")
 
 # Como a chuva prevista entra no balde: o rain_v1 prevê o ACUMULADO em (t, t+h]; sem previsão da distribuição no
 # tempo, o acumulado é espalhado por igual nos passos de 10 min do horizonte. Declarado: isso dilui o pico nos
 # horizontes de 3 e 6 h (limitação para o relatório).
-DISTRIBUTION = "chuva prevista em (t, t+h] distribuída por igual nos passos de 10 min do horizonte"
+DISTRIBUTION = ("chuva prevista em (t, t+h]: pico de 10 min previsto (rain_v1p, limitado ao acumulado) no passo do meio e o "
+                "resto por igual nos outros passos; sem o modelo do pico, por igual (PRE-REGISTRO-PERFIL-CHUVA.md)")
 # A lâmina máxima do horizonte inclui a lâmina de agora (o alerta "já agora" não some porque a galeria escoa).
 SHEET_MAX = "máximo entre a lâmina de agora e a lâmina prevista a cada 10 min no horizonte"
 

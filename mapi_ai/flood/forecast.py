@@ -21,6 +21,7 @@ from mapi_ai import bucket10 as B10
 from mapi_ai.feature_engineering import MissingFeaturesError
 from mapi_ai.flood import config as C
 from mapi_ai.flood import explain as X
+from mapi_ai.flood import capacidade as CAP
 from mapi_ai.flood import fatores as FT
 from mapi_ai.rain import config as RC
 from mapi_ai.version import code_version
@@ -75,7 +76,8 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
         return sem_dado("SERIE_INCOMPLETA", f"{len(gaps)} passo(s) de 10 min sem leitura na série do ponto "
                         f"(o mais recente a {(len(rain_10min_mm) - 1 - gaps[-1]) * 10} min de agora)", meta, **extra)
 
-    p = B10.Params10(tr_anos=tr_anos, te_min=te_min)
+    faixa = CAP.faixa(slug)
+    p_min, p_max = CAP.params(faixa, tr_anos, te_min)
     observed = np.asarray(rain_10min_mm, dtype=float)
     ref = FT.prepare_refluxo(refluxo, len(observed))
     limp = FT.prepare_limpeza(limpeza)
@@ -85,10 +87,13 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
     f_obs = ref["f_obs"] if ref_on else None
     f_fut = ref["f_fut"] if ref_on else None
 
-    obs = B10.simular_passos(observed, terrain, p, f_passo=f_obs)
+    # estado de agora com a galeria no melhor estado com fonte (Q_max) e no pior (Q_min)
+    obs = B10.simular_passos(observed, terrain, p_max, f_passo=f_obs)
+    obs_min = B10.simular_passos(observed, terrain, p_min, f_passo=f_obs)
     V_end = float(obs["V_m3"][-1])
     h_now_cm = round(float(obs["h_mm"][-1]) / 10.0, 2)
-    extra.update({"h_now_cm": h_now_cm, "rain_now_10min_mm": float(observed[-1]),
+    extra.update({"h_now_cm": h_now_cm, "h_now_cm_qmin": round(float(obs_min["h_mm"][-1]) / 10.0, 2),
+                  "rain_now_10min_mm": float(observed[-1]),
                   "rain_last_60min_measured_mm": round(float(observed[-6:].sum()), 2)})
 
     if rain_model is None:
@@ -100,46 +105,73 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
     except Exception as e:  # rain_v1 quebrado conta como fora do ar, nunca como "sem alerta"
         return sem_dado("PREVISAO_INDISPONIVEL", f"falha no rain_v1: {type(e).__name__}", meta, **extra)
 
+    try:
+        peaks = rain_model.peaks(x) if hasattr(rain_model, "peaks") else None
+    except Exception:
+        peaks = None   # sem o pico, o acumulado vai por igual (declarado em explanation.profile)
+    perfil = CAP.Perfil(peaks)
     t = pd.Timestamp(rain["issued_at"])
     scen = {s: {h["horizon_hours"]: float(h["quantiles_mm"][s]) for h in rain["horizons"]} for s in C.SCENARIOS}
-    ev = FT.evaluate(observed, scen, terrain, p, f_obs, f_fut, limp)
+    ev_max = FT.evaluate(observed, scen, terrain, p_max, f_obs, f_fut, limp, perfil)
+    ev_min = ev_max if p_min == p_max else FT.evaluate(observed, scen, terrain, p_min, f_obs, f_fut, limp, perfil)
     horizons = []
     for h in C.HORIZONS:
-        cm = {s: ev["free"]["sheets"][s][h] for s in C.SCENARIOS}
-        horizons.append({"hours": h, "level": ev["levels"][h], "rain_q50_mm": round(scen["q50"][h], 2),
-                         "rain_q95_mm": round(scen["q95"][h], 2), "sheet_q50_cm": round(cm["q50"], 1),
-                         "sheet_q95_cm": round(cm["q95"], 1), "valid_from": _iso(t),
-                         "valid_until": _iso(t + pd.Timedelta(hours=h))})
+        # regra do pré-registro da capacidade: ALERTA com Q_max no q50; ATENÇÃO com Q_min no q95
+        lvl = ("ALERTA" if ev_max["levels"][h] == "ALERTA"
+               else "ATENCAO" if ev_min["levels"][h] in ("ALERTA", "ATENCAO") else "SEM_ALERTA")
+        horizons.append({"hours": h, "level": lvl, "rain_q50_mm": round(scen["q50"][h], 2),
+                         "rain_q95_mm": round(scen["q95"][h], 2),
+                         "sheet_q50_cm": round(ev_max["free"]["sheets"]["q50"][h], 1),
+                         "sheet_q95_cm": round(ev_min["free"]["sheets"]["q95"][h], 1),
+                         "sheet_q50_cm_qmin": round(ev_min["free"]["sheets"]["q50"][h], 1),
+                         "sheet_q95_cm_qmax": round(ev_max["free"]["sheets"]["q95"][h], 1),
+                         "peak10_q50_mm": None if not peaks else round(min(peaks["q50"][h], scen["q50"][h]), 2),
+                         "peak10_q95_mm": None if not peaks else round(min(peaks["q95"][h], scen["q95"][h]), 2),
+                         "valid_from": _iso(t), "valid_until": _iso(t + pd.Timedelta(hours=h))})
     worst = min(horizons, key=lambda r: (ORDER[r["level"]], r["hours"] if r["level"] != "SEM_ALERTA" else -r["hours"]))
     level, wh = worst["level"], worst["hours"]
     scenario = "q95" if level == "ATENCAO" else "q50"
+    p_srv, ev_srv, obs_srv = (p_min, ev_min, obs_min) if scenario == "q95" else (p_max, ev_max, obs)
+    V_srv = float(obs_srv["V_m3"][-1])
 
-    # decomposição: 3 h medidas + o horizonte servido previsto, no cenário servido (galeria livre)
+    # decomposição: 3 h medidas + o horizonte servido previsto, no cenário e na ponta da capacidade servidos
     n = int(wh * 60 / C.DT_MIN)
-    proj = B10.simular_passos(np.full(n, scen[scenario][wh] / n), terrain, p, V0=V_end,
-                              f_passo=None if f_fut is None else f_fut[:n])
+    serie = perfil.serie(scen[scenario][wh], wh, scenario)
+    proj = B10.simular_passos(serie, terrain, p_srv, V0=V_srv, f_passo=None if f_fut is None else f_fut[:n])
     tide = ref.get("tide")
     k0 = max(0, len(observed) - C.DECOMP_HISTORY_STEPS)
     decomposition = []
     for i in range(k0, len(observed)):
         m = (i - (len(observed) - 1)) * int(C.DT_MIN)
-        decomposition.append(_step(t, m, "medido", observed[i], obs, i, None if tide is None else tide[i]))
+        decomposition.append(_step(t, m, "medido", observed[i], obs_srv, i, None if tide is None else tide[i]))
     for i in range(n):
-        decomposition.append(_step(t, (i + 1) * int(C.DT_MIN), "previsto", scen[scenario][wh] / n, proj, i,
+        decomposition.append(_step(t, (i + 1) * int(C.DT_MIN), "previsto", serie[i], proj, i,
                                    None if tide is None else tide[len(observed) + i]))
 
     model = rain_model.models[rain_model.chosen[wh]]
+    area = terrain.area_m2
+    cap = {"base": faixa.base if faixa else "capacidade de projeto: IDF de Silva e Araújo (2013), Te 10 min",
+           "q_min_m3s": round(p_min.q_passo_m3(area) / (p_min.dt_min * 60), 4),
+           "q_max_m3s": round(p_max.q_passo_m3(area) / (p_max.dt_min * 60), 4),
+           "kappa_calibrado": faixa.kappa if faixa else None,
+           "rule": "ALERTA: lâmina q50 com Q_max >= 15 cm; ATENÇÃO: lâmina q95 com Q_min >= 15 cm"}
+    cap["i_eq_min_mm_h"] = round(cap["q_min_m3s"] / (p_max.C * area) * 3.6e6, 1)
+    cap["i_eq_max_mm_h"] = round(cap["q_max_m3s"] / (p_max.C * area) * 3.6e6, 1)
     explanation = {
         "served_scenario": scenario, "served_horizon_hours": wh,
+        "served_capacity": "q_min" if scenario == "q95" else "q_max",
         "shap": X.local_shap(model, x, wh, scenario),
-        "counterfactual": X.counterfactual_mm(V_end, h_now_cm, scen["q50"][1], terrain, p, f_fut=f_fut),
-        "sensitivity": X.sensitivity(observed, terrain, scen, wh, scenario, level, f_obs=f_obs, f_fut=f_fut),
+        "counterfactual": X.counterfactual_mm(V_end, h_now_cm, scen["q50"][1], terrain, p_max, f_fut=f_fut, perfil=perfil),
+        "sensitivity": X.sensitivity(observed, terrain, scen, wh, scenario, level, f_obs=f_obs, f_fut=f_fut, perfil=perfil,
+                                     q_range=None if faixa is None else (cap["q_min_m3s"], cap["q_max_m3s"])),
         "decomposition": decomposition,
-        "capacity_m3_h": round(float(obs["capacity_m3_h"]), 2),
+        "capacity_m3_h": round(float(obs_srv["capacity_m3_h"]), 2),
+        "capacity": cap,
+        "profile": {"method": perfil.metodo, "model": "rain_v1p" if peaks else None},
         "initial_state": {"volume_m3": round(V_end, 2), "h_now_cm": h_now_cm, "steps_measured": int(len(observed)),
                           "n_fora_da_curva": int(obs["n_fora_da_curva"])},
-        "factors": {"refluxo": FT.refluxo_block(refluxo, ref, observed, scen, terrain, p, limp, t, (scenario, wh)),
-                    "limpeza": FT.limpeza_block(limpeza, limp, ev, (scenario, wh)), "rule": C.FACTOR_NOTE},
+        "factors": {"refluxo": FT.refluxo_block(refluxo, ref, observed, scen, terrain, p_srv, limp, t, (scenario, wh), perfil),
+                    "limpeza": FT.limpeza_block(limpeza, limp, ev_srv, (scenario, wh)), "rule": C.FACTOR_NOTE},
     }
     out = _base(meta, rain["issued_at"])
     out.update(extra)
@@ -148,7 +180,8 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
                 "missing_inputs": rain["missing_inputs"], "latest_reading_utc": rain["latest_reading_utc"],
                 "latest_reading_age_minutes": rain["latest_reading_age_minutes"],
                 "stations_valid_near": rain["stations_valid_near"], "bucket_params": {
-                    "C": p.C, "tr_anos": p.tr_anos, "te_min": p.te_min, "i_cap_mm_h": round(p.i_cap_mm_h, 2), "f": 1.0}})
+                    "C": p_max.C, "tr_anos": p_max.tr_anos, "te_min": p_max.te_min, "i_cap_mm_h": round(p_max.i_cap_mm_h, 2),
+                    "f": 1.0, "q_cap_min_m3s": cap["q_min_m3s"], "q_cap_max_m3s": cap["q_max_m3s"]}})
     return out
 
 

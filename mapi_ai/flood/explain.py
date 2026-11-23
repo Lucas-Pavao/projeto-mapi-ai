@@ -112,19 +112,20 @@ def local_shap(model, x: pd.DataFrame, horizon: int, quantile: str, k: int = 3) 
 
 
 def _scenario_sheet_cm(V_end: float, h_now_cm: float, rain_mm: float, horizon: int, terr: B10.Terreno,
-                       p: B10.Params10, f: float = 1.0, f_fut=None) -> float:
-    """f_fut: fator de saída por passo do horizonte (refluxo de maré, ADR 0030); usa os primeiros passos do horizonte."""
+                       p: B10.Params10, f: float = 1.0, f_fut=None, perfil=None, s: str = "q50") -> float:
+    """f_fut: fator de saída por passo do horizonte (refluxo de maré, ADR 0030); usa os primeiros passos do horizonte.
+    perfil: série da chuva prevista (Fase 4.2); None = por igual."""
     n = int(horizon * 60 / C.DT_MIN)
-    P = np.full(n, float(rain_mm) / n)
+    P = perfil.serie(rain_mm, horizon, s) if perfil is not None else np.full(n, float(rain_mm) / n)
     fp = None if f_fut is None else np.asarray(f_fut[:n], dtype=float)
     out = B10.simular_passos(P, terr, p, V0=V_end, f=f, f_passo=fp)
     return max(h_now_cm, float(out["h_mm"].max()) / 10.0 if n else 0.0)
 
 
 def counterfactual_mm(V_end: float, h_now_cm: float, q50_1h_mm: float, terr: B10.Terreno, p: B10.Params10,
-                      f_fut=None) -> dict:
-    """Quantos mm a mais em 1 h (sobre o q50 de 1 h, por igual nos 6 passos) levam a lâmina a 15 cm. Bissecção no balde."""
-    sheet = lambda extra: _scenario_sheet_cm(V_end, h_now_cm, q50_1h_mm + extra, 1, terr, p, f_fut=f_fut)
+                      f_fut=None, perfil=None) -> dict:
+    """Quantos mm a mais em 1 h (sobre o q50 de 1 h, com o perfil servido) levam a lâmina a 15 cm. Bissecção no balde."""
+    sheet = lambda extra: _scenario_sheet_cm(V_end, h_now_cm, q50_1h_mm + extra, 1, terr, p, f_fut=f_fut, perfil=perfil)
     if sheet(0.0) >= C.HCRIT_CM:
         return {"extra_mm": 0.0, "reached": True, "text": "a lâmina provável já chega a 15 cm na próxima hora"}
     if sheet(C.CF_MAX_MM) < C.HCRIT_CM:
@@ -147,19 +148,43 @@ def _level(q50_cm: float, q95_cm: float) -> str:
 
 
 def sensitivity(observed: np.ndarray, terr: B10.Terreno, scenarios: dict, horizon: int, scenario: str,
-                served_level: str, f_obs=None, f_fut=None) -> dict:
+                served_level: str, f_obs=None, f_fut=None, perfil=None, q_range=None) -> dict:
     """
     Lâmina máxima do cenário servido no horizonte servido com f, C e i_T (TR, Te) nas faixas; o nível muda?
     scenarios: {"q50": {h: mm}, "q95": {h: mm}}. Grade completa + uma variação por vez (qual parâmetro pesa).
     f_obs, f_fut: fator de saída por passo (refluxo de maré, ADR 0030) quando ele entra no nível; multiplica f.
     """
-    def run(f, c, tr, te):
-        p = B10.Params10(C=c, tr_anos=tr, te_min=te)
+    def run(f, c, tr, te, q=None):
+        p = B10.Params10(C=c, tr_anos=tr, te_min=te, q_cap_m3s=q)
         obs = B10.simular_passos(observed, terr, p, f=f, f_passo=f_obs)
         V_end = float(obs["V_m3"][-1]) if len(observed) else 0.0
         h_now = float(obs["h_mm"][-1]) / 10.0 if len(observed) else 0.0
-        cm = {s: _scenario_sheet_cm(V_end, h_now, scenarios[s][horizon], horizon, terr, p, f, f_fut) for s in C.SCENARIOS}
+        cm = {s: _scenario_sheet_cm(V_end, h_now, scenarios[s][horizon], horizon, terr, p, f, f_fut, perfil, s)
+              for s in C.SCENARIOS}
         return cm[scenario], _level(cm["q50"], cm["q95"])
+
+    if q_range is not None:
+        # capacidade efetiva (Fase 4.1): Q varia na faixa com fonte; TR e Te não mexem na capacidade
+        qmin, qmax = q_range
+        S = {"f": C.SENSITIVITY["f"], "C": C.SENSITIVITY["C"], "q_m3s": (qmin, float(np.sqrt(qmin * qmax)), qmax)}
+        central = {"f": 1.0, "C": C.CENTRAL["C"], "q_m3s": float(np.sqrt(qmin * qmax))}
+        grid = [run(f, c, 5.0, 10.0, q) for f, c, q in itertools.product(S["f"], S["C"], S["q_m3s"])]
+        vals = [g[0] for g in grid]
+        levels = sorted({g[1] for g in grid})
+        one = {}
+        for k, values in S.items():
+            cms = []
+            for v in values:
+                kw = dict(central, **{k: v})
+                cms.append(run(kw["f"], kw["C"], 5.0, 10.0, kw["q_m3s"])[0])
+            one[k] = {"values": [round(x, 4) for x in values], "min_cm": round(min(cms), 1), "max_cm": round(max(cms), 1),
+                      "source": C.SENSITIVITY_SOURCES.get(k, "faixa da capacidade efetiva (docs/PRE-REGISTRO-CAPACIDADE-EFETIVA.md)")}
+        heaviest = max(one, key=lambda k: one[k]["max_cm"] - one[k]["min_cm"])
+        return {"horizon_hours": horizon, "scenario": scenario, "min_cm": round(min(vals), 1), "max_cm": round(max(vals), 1),
+                "levels_seen": levels, "level_changes": levels != [served_level], "n_combinations": len(grid),
+                "ranges": {k: list(v) for k, v in S.items()}, "one_at_a_time": one, "heaviest_parameter": heaviest,
+                "text": (f"lâmina máxima entre {_num(min(vals))} e {_num(max(vals))} cm com f, C e a capacidade na faixa; "
+                         + ("o nível muda" if levels != [served_level] else "o nível não muda"))}
 
     S = C.SENSITIVITY
     grid = [run(*combo) for combo in itertools.product(S["f"], S["C"], S["tr_anos"], S["te_min"])]

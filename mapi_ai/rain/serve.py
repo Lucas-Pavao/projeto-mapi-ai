@@ -21,6 +21,20 @@ class RainForecaster:
         self.chosen = {int(h[:-1]): v["model"] for h, v in self.meta["horizons"].items()}
         self.alert = {int(h[:-1]): v["alert_threshold_FORTE"] for h, v in self.meta["horizons"].items()}
         self.models = {n: joblib.load(C.MODELS_DIR / f"{n}.joblib") for n in set(self.chosen.values())}
+        # pico de 10 min por horizonte (rain_v1p; onda 16, Fase 4.2); ausente = acumulado espalhado por igual
+        pk = C.MODELS_DIR / "rain_v1p_pico10.joblib"
+        self.peak = joblib.load(pk) if pk.exists() else None
+
+    def peaks(self, x) -> dict | None:
+        """{"q50": {h: mm}, "q95": {h: mm}} do pico de 10 min em (t, t+h], ou None sem o modelo do pico."""
+        if self.peak is None:
+            return None
+        out = {"q50": {}, "q95": {}}
+        for h, r in self.peak["models"].items():
+            feats = self.peak["chosen_features"][h]
+            q = np.sort(np.clip(r.predict(x[feats]), 0, None), axis=1)[0]
+            out["q50"][int(h)], out["q95"][int(h)] = float(q[0]), float(q[1])
+        return out
 
     def forecast(self, latitude: float, longitude: float, readings: list, open_meteo: list | None = None,
                  issued_at: str | None = None, now: str | None = None) -> dict:

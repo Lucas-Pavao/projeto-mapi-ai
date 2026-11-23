@@ -1,0 +1,404 @@
+{
+ "pre_registro": "projeto-mapi-api/docs/PRE-REGISTRO-CALIBRACAO-INVERSA.md",
+ "kappas": [
+  0.0,
+  0.05,
+  0.1,
+  0.15,
+  0.2,
+  0.25,
+  0.3,
+  0.35,
+  0.4,
+  0.45,
+  0.5,
+  0.55,
+  0.6,
+  0.65,
+  0.7,
+  0.75,
+  0.8,
+  0.85,
+  0.9,
+  0.95,
+  1.0
+ ],
+ "regra_adocao": {
+  "min_positivos": 3,
+  "max_largura_ic": 0.5,
+  "min_ganho_vs_meio": 0.05
+ },
+ "pontos": {
+  "AV_RECIFE_IBURA": {
+   "faixa_m3s": [
+    0.0837,
+    0.3346
+   ],
+   "base": "ESIG: mínimo entre entrada e cano",
+   "positivos": 11,
+   "negativos_controle": 167,
+   "dias_positivos": [
+    "2023-02-06",
+    "2023-05-24",
+    "2023-06-14",
+    "2023-06-27",
+    "2024-02-16",
+    "2024-02-27",
+    "2024-04-04",
+    "2024-05-07",
+    "2024-05-28",
+    "2024-06-15",
+    "2024-06-25"
+   ],
+   "acuracia_balanceada": {
+    "0.00": 0.5,
+    "0.05": 0.5,
+    "0.10": 0.5,
+    "0.15": 0.5,
+    "0.20": 0.5,
+    "0.25": 0.5,
+    "0.30": 0.5,
+    "0.35": 0.5,
+    "0.40": 0.5,
+    "0.45": 0.5,
+    "0.50": 0.5,
+    "0.55": 0.5,
+    "0.60": 0.5,
+    "0.65": 0.5,
+    "0.70": 0.5,
+    "0.75": 0.5,
+    "0.80": 0.5,
+    "0.85": 0.5,
+    "0.90": 0.5,
+    "0.95": 0.5,
+    "1.00": 0.5
+   },
+   "sensibilidade_e_especificidade": {
+    "0.00": [
+     0.0,
+     1.0
+    ],
+    "0.50": [
+     0.0,
+     1.0
+    ],
+    "1.00": [
+     0.0,
+     1.0
+    ]
+   },
+   "lamina_max_cm_nos_dias_positivos": {
+    "0.0": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "0.5": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "1.0": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "kappa_hat": 0.5,
+   "ic95_kappa": [
+    0.5,
+    0.5
+   ],
+   "acuracia_em_kappa_hat": 0.5,
+   "ganho_vs_kappa_0,5": 0.0,
+   "criterios": {
+    "positivos_ge_3": true,
+    "largura_ic_le_0,5": true,
+    "ganho_vs_kappa_0,5_ge_0,05": false
+   },
+   "adotado": false,
+   "q_calibrado_m3s": 0.1673
+  },
+  "CIN_UFPE": {
+   "faixa_m3s": [
+    2.0664,
+    2.8223
+   ],
+   "base": "sem cadastro: capacidade de projeto, IDF TR 2 a 10 anos em Te = 10 min",
+   "positivos": 6,
+   "negativos_controle": 184,
+   "dias_positivos": [
+    "2023-02-06",
+    "2023-06-27",
+    "2024-02-27",
+    "2024-04-04",
+    "2024-06-15",
+    "2024-06-25"
+   ],
+   "acuracia_balanceada": {
+    "0.00": 0.5,
+    "0.05": 0.5,
+    "0.10": 0.5,
+    "0.15": 0.5,
+    "0.20": 0.5,
+    "0.25": 0.5,
+    "0.30": 0.5,
+    "0.35": 0.5,
+    "0.40": 0.5,
+    "0.45": 0.5,
+    "0.50": 0.5,
+    "0.55": 0.5,
+    "0.60": 0.5,
+    "0.65": 0.5,
+    "0.70": 0.5,
+    "0.75": 0.5,
+    "0.80": 0.5,
+    "0.85": 0.5,
+    "0.90": 0.5,
+    "0.95": 0.5,
+    "1.00": 0.5
+   },
+   "sensibilidade_e_especificidade": {
+    "0.00": [
+     0.0,
+     1.0
+    ],
+    "0.50": [
+     0.0,
+     1.0
+    ],
+    "1.00": [
+     0.0,
+     1.0
+    ]
+   },
+   "lamina_max_cm_nos_dias_positivos": {
+    "0.0": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "0.5": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ],
+    "1.0": [
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "kappa_hat": 0.5,
+   "ic95_kappa": [
+    0.5,
+    0.5
+   ],
+   "acuracia_em_kappa_hat": 0.5,
+   "ganho_vs_kappa_0,5": 0.0,
+   "criterios": {
+    "positivos_ge_3": true,
+    "largura_ic_le_0,5": true,
+    "ganho_vs_kappa_0,5_ge_0,05": false
+   },
+   "adotado": false,
+   "q_calibrado_m3s": 2.415
+  },
+  "MASCARENHAS_IMBIRIBEIRA": {
+   "faixa_m3s": [
+    0.1377,
+    0.2648
+   ],
+   "base": "ESIG: limite superior (entrada sem cadastro)",
+   "positivos": 10,
+   "negativos_controle": 140,
+   "dias_positivos": [
+    "2023-02-06",
+    "2023-05-24",
+    "2023-06-14",
+    "2023-06-27",
+    "2024-02-16",
+    "2024-02-27",
+    "2024-04-04",
+    "2024-05-07",
+    "2024-06-15",
+    "2024-06-25"
+   ],
+   "acuracia_balanceada": {
+    "0.00": 0.6,
+    "0.05": 0.611,
+    "0.10": 0.611,
+    "0.15": 0.618,
+    "0.20": 0.625,
+    "0.25": 0.625,
+    "0.30": 0.643,
+    "0.35": 0.6,
+    "0.40": 0.607,
+    "0.45": 0.618,
+    "0.50": 0.625,
+    "0.55": 0.625,
+    "0.60": 0.629,
+    "0.65": 0.632,
+    "0.70": 0.632,
+    "0.75": 0.643,
+    "0.80": 0.646,
+    "0.85": 0.65,
+    "0.90": 0.607,
+    "0.95": 0.618,
+    "1.00": 0.618
+   },
+   "sensibilidade_e_especificidade": {
+    "0.00": [
+     0.8,
+     0.4
+    ],
+    "0.50": [
+     0.7,
+     0.55
+    ],
+    "1.00": [
+     0.6,
+     0.636
+    ]
+   },
+   "lamina_max_cm_nos_dias_positivos": {
+    "0.0": [
+     69.6,
+     67.0,
+     47.9,
+     10.5,
+     39.0,
+     30.9,
+     55.9,
+     18.4,
+     14.2,
+     41.3
+    ],
+    "0.5": [
+     63.2,
+     64.2,
+     45.8,
+     0.0,
+     33.1,
+     21.6,
+     50.6,
+     12.7,
+     10.0,
+     39.7
+    ],
+    "1.0": [
+     55.3,
+     60.4,
+     44.8,
+     0.0,
+     31.2,
+     12.8,
+     41.8,
+     3.3,
+     6.8,
+     38.2
+    ]
+   },
+   "kappa_hat": 0.85,
+   "ic95_kappa": [
+    0.3,
+    0.95
+   ],
+   "acuracia_em_kappa_hat": 0.65,
+   "ganho_vs_kappa_0,5": 0.025,
+   "criterios": {
+    "positivos_ge_3": true,
+    "largura_ic_le_0,5": false,
+    "ganho_vs_kappa_0,5_ge_0,05": false
+   },
+   "adotado": false,
+   "q_calibrado_m3s": 0.2401
+  },
+  "JABOATAO_CENTRO": {
+   "faixa_m3s": [
+    0.0775,
+    0.1058
+   ],
+   "base": "sem cadastro: capacidade de projeto, IDF TR 2 a 10 anos em Te = 10 min",
+   "positivos": 0,
+   "negativos_controle": 172,
+   "dias_positivos": [],
+   "acuracia_balanceada": {
+    "0.00": null,
+    "0.05": null,
+    "0.10": null,
+    "0.15": null,
+    "0.20": null,
+    "0.25": null,
+    "0.30": null,
+    "0.35": null,
+    "0.40": null,
+    "0.45": null,
+    "0.50": null,
+    "0.55": null,
+    "0.60": null,
+    "0.65": null,
+    "0.70": null,
+    "0.75": null,
+    "0.80": null,
+    "0.85": null,
+    "0.90": null,
+    "0.95": null,
+    "1.00": null
+   },
+   "sensibilidade_e_especificidade": {
+    "0.00": [
+     null,
+     1.0
+    ],
+    "0.50": [
+     null,
+     1.0
+    ],
+    "1.00": [
+     null,
+     1.0
+    ]
+   },
+   "lamina_max_cm_nos_dias_positivos": {
+    "0.0": [],
+    "0.5": [],
+    "1.0": []
+   },
+   "status": "sem positivo ou sem negativo: não calibrável"
+  }
+ }
+}

@@ -38,10 +38,18 @@ class Params10:
     dt_min: float = 10.0
     hcrit_mm: float = 150.0
     curve_scale: float = 1.0
+    # capacidade efetiva da galeria (m3/s; onda 16, Fase 4.1). None = capacidade de projeto C·i(TR, Te)·A
+    q_cap_m3s: float | None = None
 
     @property
     def i_cap_mm_h(self) -> float:
         return idf_silva_araujo(self.tr_anos, self.te_min)
+
+    def q_passo_m3(self, area_m2: float) -> float:
+        """Capacidade da galeria por passo, em m3."""
+        if self.q_cap_m3s is not None:
+            return self.q_cap_m3s * self.dt_min * 60.0
+        return self.C * self.i_cap_mm_h * area_m2 / 1000.0 * self.dt_min / 60.0
 
     def com(self, **kw) -> "Params10":
         return replace(self, **kw)
@@ -82,7 +90,7 @@ def simular(P_mm_passo: np.ndarray, t: Terreno, p: Params10, i_cap_mm_h: float |
     vc = t.v_curva_m3 * p.curve_scale
     vmax = float(vc[-1])
     zmax = float(t.z_curva_m[-1])
-    q = p.C * i_cap * A / 1000.0 * p.dt_min / 60.0
+    q = p.C * i_cap * A / 1000.0 * p.dt_min / 60.0 if (i_cap_mm_h is not None or p.q_cap_m3s is None) else p.q_passo_m3(A)
     qin = p.C * P * A / 1000.0
     n = len(P)
     h = np.zeros(n)
@@ -130,7 +138,7 @@ def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 
     vc = t.v_curva_m3 * p.curve_scale
     vmax, zmax = float(vc[-1]), float(t.z_curva_m[-1])
     por_hora = 60.0 / p.dt_min
-    q = f * p.C * p.i_cap_mm_h * A / 1000.0 * p.dt_min / 60.0
+    q = f * p.q_passo_m3(A)
     qin = p.C * P * A / 1000.0
     n = len(P)
     fp = np.ones(n) if f_passo is None else np.asarray(f_passo, dtype=float)

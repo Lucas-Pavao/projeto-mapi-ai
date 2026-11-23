@@ -83,8 +83,9 @@ def prepare_limpeza(lz: Limpeza | None) -> dict:
 
 
 def run_point(observed: np.ndarray, scen: dict, terr: B10.Terreno, p: B10.Params10, f_obs=None, f_fut=None,
-              f_state: float = 1.0) -> dict:
-    """Balde na série medida e nos cenários de cada horizonte. sheets[s][h] = lâmina máxima (cm), incluindo a de agora."""
+              f_state: float = 1.0, perfil=None) -> dict:
+    """Balde na série medida e nos cenários de cada horizonte. sheets[s][h] = lâmina máxima (cm), incluindo a de agora.
+    perfil: mapi_ai.flood.capacidade.Perfil (série da chuva prevista); None = acumulado por igual."""
     obs = B10.simular_passos(observed, terr, p, f=f_state, f_passo=f_obs)
     V_end = float(obs["V_m3"][-1])
     h_now = float(obs["h_mm"][-1]) / 10.0
@@ -92,7 +93,7 @@ def run_point(observed: np.ndarray, scen: dict, terr: B10.Terreno, p: B10.Params
     for s in C.SCENARIOS:
         for h in C.HORIZONS:
             n = int(h * 60 / C.DT_MIN)
-            P = np.full(n, float(scen[s][h]) / n)
+            P = perfil.serie(scen[s][h], h, s) if perfil is not None else np.full(n, float(scen[s][h]) / n)
             fut = None if f_fut is None else np.asarray(f_fut[:n], dtype=float)
             sim = B10.simular_passos(P, terr, p, V0=V_end, f=f_state, f_passo=fut)
             sheets[s][h] = max(h_now, float(sim["h_mm"].max()) / 10.0)
@@ -113,12 +114,12 @@ def level_mixture(prob: dict, h: int, prob_on: float) -> str:
     return "ALERTA" if prob["q50"][h] >= prob_on else "ATENCAO" if prob["q95"][h] >= prob_on else "SEM_ALERTA"
 
 
-def evaluate(observed, scen, terr, p, f_obs, f_fut, limp: dict) -> dict:
+def evaluate(observed, scen, terr, p, f_obs, f_fut, limp: dict, perfil=None) -> dict:
     """Lâminas com a galeria livre, e (limpeza OK) entupida, probabilidade da mistura e o nível de cada horizonte."""
-    free = run_point(observed, scen, terr, p, f_obs, f_fut)
+    free = run_point(observed, scen, terr, p, f_obs, f_fut, perfil=perfil)
     out = {"free": free, "clog": None, "prob": None}
     if limp["status"] == "OK":
-        out["clog"] = run_point(observed, scen, terr, p, f_obs, f_fut, f_state=limp["f_e"])
+        out["clog"] = run_point(observed, scen, terr, p, f_obs, f_fut, f_state=limp["f_e"], perfil=perfil)
         out["prob"] = mixture(free, out["clog"], limp["p_e"])
     use_mix = limp["status"] == "OK" and limp["mode"] == "NIVEL"
     out["levels"] = {h: (level_mixture(out["prob"], h, limp["prob_on"]) if use_mix
@@ -175,7 +176,7 @@ def _sheets(r: dict) -> dict:
 
 
 def refluxo_block(r: Refluxo | None, prep: dict, observed, scen, terr, p, limp: dict, t0: pd.Timestamp,
-                  served: tuple[str, int]) -> dict:
+                  served: tuple[str, int], perfil=None) -> dict:
     """Contribuição do refluxo para a tela: períodos, diferença de lâmina com e sem maré e cenário de viés."""
     base = {"mode": prep["mode"], "status": prep["status"], "applied_to_level": False,
             "reason": prep.get("reason"), "reason_detail": prep.get("reason_detail")}
@@ -185,8 +186,8 @@ def refluxo_block(r: Refluxo | None, prep: dict, observed, scen, terr, p, limp: 
                         "SEM_DADO": "maré prevista indisponível"}[prep["status"]]
         return base
     scenario, wh = served
-    with_tide = run_point(observed, scen, terr, p, prep["f_obs"], prep["f_fut"])
-    without = run_point(observed, scen, terr, p, None, None)
+    with_tide = run_point(observed, scen, terr, p, prep["f_obs"], prep["f_fut"], perfil=perfil)
+    without = run_point(observed, scen, terr, p, None, None, perfil=perfil)
     per = periods(prep["f_fut"], t0)
     now_red = round(100 * (1 - float(prep["f_obs"][-1])), 1)
     d = _deltas(with_tide, without)
@@ -199,7 +200,7 @@ def refluxo_block(r: Refluxo | None, prep: dict, observed, scen, terr, p, limp: 
                 "sheet_with_tide_cm": _sheets(with_tide), "sheet_without_tide_cm": _sheets(without),
                 "served_delta_cm": d[scenario][str(wh)], "rule": "capacidade x clamp((soleira_NR + D - maré_NR)/D, 0, 1)"})
     if "f_obs_bias" in prep:
-        ev = evaluate(observed, scen, terr, p, prep["f_obs_bias"], prep["f_fut_bias"], limp)
+        ev = evaluate(observed, scen, terr, p, prep["f_obs_bias"], prep["f_fut_bias"], limp, perfil=perfil)
         lvl, h = worst(ev["levels"])
         out["bias_scenario"] = {"mdt_bias_m": r.mdt_bias_scenario_m, "sill_nr_m": round(r.sill_nr(r.mdt_bias_scenario_m), 3),
                                 "sheet_cm": _sheets(ev["free"]), "level": lvl, "worst_horizon_hours": h,
