@@ -1,0 +1,11 @@
+{
+ "nota": "Obras que mudam a física de um ponto (onda 16, Fase 3.4). inicio_operacao vazio = ainda não opera (tudo é ANTES). A mesma lista está em projeto-mapi-api ObrasProperties (mapi.obras).",
+ "pontos": {
+  "MASCARENHAS_IMBIRIBEIRA": [
+   {"nome": "Reservatório ProMorar da Rua Muritiba",
+    "descricao": "reservatório de 6.400 m³ com bombeamento para o Canal da Mauricéia",
+    "fonte": "Prefeitura do Recife, 10/09/2026 (prompt da onda 16, Fase 3.4)",
+    "inicio_operacao": null}
+  ]
+ }
+}

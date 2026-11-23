@@ -37,8 +37,8 @@
    "passos": 271728,
    "passos_sem_estacao_pct": 3.64,
    "terreno": {
-    "area_m2": 713,
-    "rua_rel_m": 0.126
+    "area_m2": 40159,
+    "rua_rel_m": 0.23
    },
    "sem_fatores": {
     "eventos_ge_15cm": 0,
@@ -57,18 +57,34 @@
       "tempo_com_saida_fechada_pct": 10.7,
       "passos_com_chuva_e_saida_reduzida_pct": 42.2,
       "com_refluxo": {
-       "eventos_ge_15cm": 0,
-       "lamina_max_cm": 10.6,
-       "passos_com_lamina_gt_0": 1214,
-       "datas": []
+       "eventos_ge_15cm": 185,
+       "lamina_max_cm": 56.5,
+       "passos_com_lamina_gt_0": 5666,
+       "datas": [
+        "2021-10-23 08:20:00+00:00",
+        "2021-11-18 18:40:00+00:00",
+        "2021-12-04 06:40:00+00:00",
+        "2021-12-05 21:10:00+00:00",
+        "2021-12-06 09:10:00+00:00",
+        "2021-12-16 05:20:00+00:00",
+        "2022-01-03 07:10:00+00:00",
+        "2022-01-04 09:30:00+00:00",
+        "2022-01-06 10:20:00+00:00",
+        "2022-01-20 07:30:00+00:00",
+        "2022-02-17 07:20:00+00:00",
+        "2022-03-02 07:20:00+00:00",
+        "2022-03-04 19:50:00+00:00",
+        "2022-03-05 19:30:00+00:00",
+        "2022-03-06 07:50:00+00:00"
+       ]
       },
       "mudanca_vs_sem_refluxo": {
-       "passos_com_mudanca_gt_1mm": 1162,
-       "episodios_com_mudanca": 113,
-       "episodios_por_ano": 21.87,
-       "mudanca_cm_mediana": 2.74,
-       "mudanca_cm_p95": 8.18,
-       "mudanca_cm_max": 10.62
+       "passos_com_mudanca_gt_1mm": 5659,
+       "episodios_com_mudanca": 474,
+       "episodios_por_ano": 91.75,
+       "mudanca_cm_mediana": 8.92,
+       "mudanca_cm_p95": 37.48,
+       "mudanca_cm_max": 56.5
       }
      },
      "vies_-0,369": {
@@ -78,18 +94,34 @@
       "tempo_com_saida_fechada_pct": 1.0,
       "passos_com_chuva_e_saida_reduzida_pct": 20.8,
       "com_refluxo": {
-       "eventos_ge_15cm": 0,
-       "lamina_max_cm": 6.4,
-       "passos_com_lamina_gt_0": 73,
-       "datas": []
+       "eventos_ge_15cm": 17,
+       "lamina_max_cm": 43.4,
+       "passos_com_lamina_gt_0": 350,
+       "datas": [
+        "2021-12-04 06:40:00+00:00",
+        "2022-01-03 07:20:00+00:00",
+        "2022-03-05 19:50:00+00:00",
+        "2022-04-17 07:00:00+00:00",
+        "2022-05-03 07:30:00+00:00",
+        "2022-07-16 08:50:00+00:00",
+        "2023-02-22 08:40:00+00:00",
+        "2023-02-22 21:40:00+00:00",
+        "2023-03-21 19:50:00+00:00",
+        "2023-03-22 06:20:00+00:00",
+        "2023-07-07 09:20:00+00:00",
+        "2023-09-02 09:00:00+00:00",
+        "2024-01-13 08:20:00+00:00",
+        "2024-03-26 06:20:00+00:00",
+        "2024-05-08 06:40:00+00:00"
+       ]
       },
       "mudanca_vs_sem_refluxo": {
-       "passos_com_mudanca_gt_1mm": 71,
-       "episodios_com_mudanca": 12,
-       "episodios_por_ano": 2.32,
-       "mudanca_cm_mediana": 2.52,
-       "mudanca_cm_p95": 4.93,
-       "mudanca_cm_max": 6.35
+       "passos_com_mudanca_gt_1mm": 350,
+       "episodios_com_mudanca": 53,
+       "episodios_por_ano": 10.26,
+       "mudanca_cm_mediana": 8.07,
+       "mudanca_cm_p95": 34.54,
+       "mudanca_cm_max": 43.39
       }
      }
     }
@@ -102,55 +134,67 @@
     "p_entupida": 0.5955,
     "f_E_0,0": {
      "galeria_entupida": {
-      "eventos_ge_15cm": 41,
-      "lamina_max_cm": 187.4,
-      "passos_com_lamina_gt_0": 233406,
+      "eventos_ge_15cm": 61,
+      "lamina_max_cm": 177.0,
+      "passos_com_lamina_gt_0": 251843,
       "datas": [
-       "2021-09-30 03:30:00+00:00",
-       "2021-12-05 01:30:00+00:00",
-       "2022-02-17 10:00:00+00:00",
-       "2022-06-03 10:10:00+00:00",
-       "2022-07-02 04:10:00+00:00",
-       "2022-07-20 23:40:00+00:00",
-       "2022-08-02 10:10:00+00:00",
-       "2022-09-07 03:20:00+00:00",
-       "2022-11-22 08:30:00+00:00",
-       "2023-01-01 22:40:00+00:00",
-       "2023-02-06 08:50:00+00:00",
-       "2023-05-10 12:30:00+00:00",
-       "2023-06-11 09:20:00+00:00",
-       "2023-07-26 01:10:00+00:00",
-       "2023-08-14 18:20:00+00:00"
+       "2021-09-03 10:50:00+00:00",
+       "2021-10-23 08:20:00+00:00",
+       "2021-10-31 13:30:00+00:00",
+       "2022-02-12 01:00:00+00:00",
+       "2022-06-01 05:10:00+00:00",
+       "2022-06-27 19:20:00+00:00",
+       "2022-07-13 07:10:00+00:00",
+       "2022-07-30 09:50:00+00:00",
+       "2022-09-01 05:50:00+00:00",
+       "2022-10-05 17:50:00+00:00",
+       "2022-10-15 05:40:00+00:00",
+       "2022-11-06 07:30:00+00:00",
+       "2022-12-04 05:30:00+00:00",
+       "2022-12-07 15:00:00+00:00",
+       "2022-12-12 11:00:00+00:00"
       ]
      },
      "mudanca_vs_livre": {
-      "passos_com_mudanca_gt_1mm": 233333,
-      "episodios_com_mudanca": 60,
-      "episodios_por_ano": 11.61,
-      "mudanca_cm_mediana": 20.82,
-      "mudanca_cm_p95": 115.48,
-      "mudanca_cm_max": 187.4
+      "passos_com_mudanca_gt_1mm": 251842,
+      "episodios_com_mudanca": 71,
+      "episodios_por_ano": 13.74,
+      "mudanca_cm_mediana": 75.32,
+      "mudanca_cm_p95": 177.0,
+      "mudanca_cm_max": 177.0
      },
-     "passos_em_que_a_mistura_chega_a_0,5": 149857,
-     "passos_so_entupida_alaga": 149857
+     "passos_em_que_a_mistura_chega_a_0,5": 239909,
+     "passos_so_entupida_alaga": 239909
     },
     "f_E_0,5": {
      "galeria_entupida": {
-      "eventos_ge_15cm": 0,
-      "lamina_max_cm": 2.3,
-      "passos_com_lamina_gt_0": 12,
-      "datas": []
+      "eventos_ge_15cm": 11,
+      "lamina_max_cm": 28.4,
+      "passos_com_lamina_gt_0": 56,
+      "datas": [
+       "2022-01-03 08:00:00+00:00",
+       "2022-03-06 05:10:00+00:00",
+       "2022-03-22 14:10:00+00:00",
+       "2022-05-25 02:50:00+00:00",
+       "2022-05-25 09:10:00+00:00",
+       "2022-06-11 05:00:00+00:00",
+       "2022-06-22 19:30:00+00:00",
+       "2023-02-06 06:10:00+00:00",
+       "2023-02-09 16:40:00+00:00",
+       "2024-02-16 04:30:00+00:00",
+       "2024-03-26 06:20:00+00:00"
+      ]
      },
      "mudanca_vs_livre": {
-      "passos_com_mudanca_gt_1mm": 12,
-      "episodios_com_mudanca": 8,
-      "episodios_por_ano": 1.55,
-      "mudanca_cm_mediana": 1.04,
-      "mudanca_cm_p95": 2.02,
-      "mudanca_cm_max": 2.27
+      "passos_com_mudanca_gt_1mm": 56,
+      "episodios_com_mudanca": 35,
+      "episodios_por_ano": 6.77,
+      "mudanca_cm_mediana": 10.31,
+      "mudanca_cm_p95": 27.09,
+      "mudanca_cm_max": 28.38
      },
-     "passos_em_que_a_mistura_chega_a_0,5": 0,
-     "passos_so_entupida_alaga": 0
+     "passos_em_que_a_mistura_chega_a_0,5": 16,
+     "passos_so_entupida_alaga": 16
     }
    }
   }

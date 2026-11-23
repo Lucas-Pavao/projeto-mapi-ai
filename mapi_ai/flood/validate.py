@@ -245,6 +245,8 @@ def run() -> dict:
     pred = {n: joblib.load(RC.MODELS_DIR / f"{n}.joblib").predict(ds) for n in sorted(set(CHOSEN.values()))}
     terr = {t["slug"]: t for t in json.loads((SERIES / "terreno.json").read_text()) if t["status"] == "OK" and t["z"]}
     rec = reconstruct(rows, pred, terr)
+    from mapi_ai import obras as OB
+    rec = OB.garante_sem_mistura(rec)   # onda 16, Fase 3.4: nunca mistura antes e depois de uma obra no ponto
     test = rec.part == "test"
     ev = json.loads((RC.REPORTS_DIR / "evaluation.json").read_text())
     cal = {h: {k: round(ev["horizons"][f"{h}h"]["teste"][CHOSEN[h]]["todas"][f"cobertura_{k}"], 4) for k in ("q50", "q80", "q95")}

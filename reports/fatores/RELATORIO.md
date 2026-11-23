@@ -48,3 +48,22 @@ Maré em Mascarenhas, cenário central: a saída fica reduzida em 42,3% do tempo
 - A maré é a da tábua (previsão), não o nível observado no porto.
 - A soleira vem do cadastro ESIG (um ponto de galeria a até 150 m); o tubo real de saída para o canal não foi conferido em
   campo.
+
+## Atualização da Fase 3 (terreno novo de 22/11)
+
+Na Fase 3 a posição de Mascarenhas foi projetada no eixo da avenida (estava 24,4 m fora dela, no centro dos lotes do
+Nominatim) e o exutório passou a seguir a via citada (regra R2; `projeto-mapi-api/docs/ONDA16-FASE3-PONTOS.md`). O ponto agora
+fica dentro de uma depressão real do MDT (0,20 m no ponto; 0,62 m no fundo, 9.243 m²) e a área de contribuição vai de 713 para
+40.159 m². Rodado de novo com o mesmo script (`fatores_5anos.json` regenerado):
+
+| Mascarenhas | Sem fatores | Maré, central | Maré, viés −0,369 m | Galeria entupida f_E = 0,5 |
+|---|---|---|---|---|
+| Eventos ≥ 15 cm em 5,17 anos | 0 (lâmina máx. 0,0 cm) | **185** (35,8 por ano; lâmina máx. 56,5 cm) | 17 (3,3 por ano; máx. 43,4 cm) | 11 (máx. 28,4 cm) |
+| Episódios com a lâmina mudando | — | 474 (mediana +8,9 cm) | 53 (mediana +8,1 cm) | 35 (mediana +10,3 cm) |
+
+Leitura: com o terreno certo, a maré deixa de ser um ajuste pequeno e passa a decidir quase todo episódio de lâmina em
+Mascarenhas. O cenário de viés do MDT divide os eventos por 11: a soleira real da saída é o número que mais pesa depois da
+capacidade. Isso é **frequência de lâmina na física**, não acerto: nenhum dia de alagamento foi olhado. A comparação com
+alagamento fica para a validação pré-registrada (Fase 9). O registro de 5 anos sem fatores (`reports/bucket10/balde10_5anos.json`)
+também foi regenerado: Ibura (1.146 m²) e Jaboatão (3.088 m²) entram com terreno; TR 5 continua com 0 evento em todos os
+pontos (a capacidade é a Fase 4).
