@@ -67,8 +67,12 @@ def grid(readings: pd.DataFrame, station_ids: list, start: pd.Timestamp, end: pd
     return m, valid
 
 
+SUM_DECIMALS = 6   # onda 16, Fase 7.2: a soma móvel sobre anos acumula erro de ponto flutuante (~1e-12); arredondar a 1e-6 mm
+                   # deixa o treino (5 anos) e o serviço (6 h) com o mesmo valor e a comparação ">= 0,2 mm" estável
+
+
 def _window(m: pd.DataFrame, valid: pd.DataFrame, n: int) -> pd.DataFrame:
-    s = m.fillna(0.0).rolling(n, min_periods=1).sum()
+    s = m.fillna(0.0).rolling(n, min_periods=1).sum().round(SUM_DECIMALS)
     return s.where(valid)
 
 

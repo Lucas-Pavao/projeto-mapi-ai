@@ -16,13 +16,17 @@ from mapi_ai.flood.forecast import forecast_point
 client = TestClient(app_module.app)
 LAT, LON = -8.05531, -34.95116
 T = pd.Timestamp("2025-05-10T12:00:00Z")
-STATIONS = [("perto", LAT + 0.01, LON), ("norte", LAT + 0.1, LON), ("oeste", LAT, LON - 0.1)]
+from tests.rede_real import estacoes as _estacoes  # noqa: E402
+
+_REAL = _estacoes(LAT, LON)
+STATIONS = [_REAL[k] for k in ("perto", "norte", "oeste")]   # estações reais da rede do treino (onda 16, Fase 7.2)
+PERTO = _REAL["perto"][0]
 
 
 def readings(mm_per_10min: float, hours=6, missing=()):
     ts = pd.date_range(T - pd.Timedelta(hours=hours) + pd.Timedelta("10min"), T, freq="10min")
     return [{"station_id": s, "latitude": la, "longitude": lo, "ts": t.isoformat(),
-             "mm": None if s in missing else mm_per_10min} for s, la, lo in STATIONS for t in ts]
+             "mm": None if s in {_REAL[k][0] if k in _REAL else k for k in missing} else mm_per_10min} for s, la, lo in STATIONS for t in ts]
 
 
 def point(area=20000.0, rua_rel=0.10):

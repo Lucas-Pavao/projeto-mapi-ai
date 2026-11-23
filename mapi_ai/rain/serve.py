@@ -22,6 +22,9 @@ class RainForecaster:
         self.alert = {int(h[:-1]): v["alert_threshold_FORTE"] for h, v in self.meta["horizons"].items()}
         self.models = {n: joblib.load(C.MODELS_DIR / f"{n}.joblib") for n in set(self.chosen.values())}
         # pico de 10 min por horizonte (rain_v1p; onda 16, Fase 4.2); ausente = acumulado espalhado por igual
+        # rede do treino (46 estações da PED): estação sem leitura fica no denominador da fração de rede válida, como no
+        # treino; estação que só existe ao vivo fica de fora até o próximo treino (onda 16, Fase 7.2)
+        self.network = pd.read_csv(C.STATIONS)[["station_id", "lat", "lon"]]
         pk = C.MODELS_DIR / "rain_v1p_pico10.joblib"
         self.peak = joblib.load(pk) if pk.exists() else None
 
@@ -48,8 +51,12 @@ class RainForecaster:
         if r.empty:
             raise MissingFeaturesError(F.POINT_FEATURES)
         r["ts"] = pd.to_datetime(r.ts, utc=True)
-        stations = r.groupby("station_id")[["latitude", "longitude"]].first().reset_index().rename(
-            columns={"latitude": "lat", "longitude": "lon"})
+        known = set(self.network.station_id)
+        ignored = sorted(set(r.station_id) - known)
+        r = r[r.station_id.isin(known)]
+        if r.empty:
+            raise MissingFeaturesError(F.POINT_FEATURES)
+        stations = self.network
         latest = r.ts.max()
         t = pd.Timestamp(issued_at).tz_convert("UTC").floor(F.SLOT) if issued_at else latest.ceil(F.SLOT)
         r = r[r.ts <= t]                                              # nada posterior ao instante da previsão
@@ -83,7 +90,9 @@ class RainForecaster:
                 "latest_reading_utc": _iso(latest), "latest_reading_age_minutes": round((ref - latest).total_seconds() / 60, 1),
                 "stations_valid_near": int(row["n_near_valid"]), "network_valid_fraction": round(float(row["net_valid_frac"]), 3),
                 "rain_last_60min_mm": None if pd.isna(row["p_60"]) else round(float(row["p_60"]), 2),
-                "thresholds_mm_h": C.THRESHOLDS, "target": "MEASURED", "attribution": C.ATTRIBUTION}, x
+                "thresholds_mm_h": C.THRESHOLDS, "target": "MEASURED", "attribution": C.ATTRIBUTION,
+                "stations_ignored_live_only": ignored,
+                "stations_ignored_note": "estações que só existem ao vivo ficam fora das entradas até o próximo treino"}, x
 
 
 def _iso(t: pd.Timestamp) -> str:

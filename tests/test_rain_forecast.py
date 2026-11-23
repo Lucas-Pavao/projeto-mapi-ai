@@ -9,7 +9,13 @@ from mapi_ai.rain import config as C
 from mapi_ai.rain import features as F
 
 LAT, LON = -8.05531, -34.95116
-ST = pd.DataFrame({"station_id": ["perto", "norte", "oeste"], "lat": [LAT + 0.01, LAT + 0.1, LAT], "lon": [LON, LON, LON - 0.1]})
+from tests.rede_real import estacoes as _estacoes  # noqa: E402
+
+_REAL = _estacoes(LAT, LON)
+# estações reais da rede do treino (onda 16, Fase 7.2): "perto" a até 5 km, "norte" e "oeste" a mais de 6 km
+ST = pd.DataFrame({"station_id": [_REAL[k][0] for k in ("perto", "norte", "oeste")],
+                   "lat": [_REAL[k][1] for k in ("perto", "norte", "oeste")], "lon": [_REAL[k][2] for k in ("perto", "norte", "oeste")]})
+PERTO = _REAL["perto"][0]
 T = pd.Timestamp("2025-05-10T12:00:00Z")
 
 
@@ -35,13 +41,13 @@ def test_alvo_usa_so_o_futuro():
     r2.loc[r2.ts <= T, "mm"] = 0.0                                     # mexer no passado não muda o alvo
     y2 = F.point_targets(r2, ST, LAT, LON, [T], C.HORIZONS, C.THRESHOLDS)
     assert np.allclose(y1[[f"y_{h}h" for h in C.HORIZONS]], y2[[f"y_{h}h" for h in C.HORIZONS]])
-    near = r[(r.station_id == "perto") & (r.ts > T) & (r.ts <= T + pd.Timedelta("1h"))].mm.sum()
+    near = r[(r.station_id == PERTO) & (r.ts > T) & (r.ts <= T + pd.Timedelta("1h"))].mm.sum()
     assert y1["y_1h"].iloc[0] == pytest.approx(near)
 
 
 def test_estacao_sem_leitura_fica_ausente_e_nao_zero():
     r = readings(T)
-    r = r[~((r.station_id == "perto") & (r.ts > T - pd.Timedelta("3h")))]   # a estação do ponto parou há 3 h
+    r = r[~((r.station_id == PERTO) & (r.ts > T - pd.Timedelta("3h")))]   # a estação do ponto parou há 3 h
     x = F.features_at(r, ST, LAT, LON, [T])
     assert np.isnan(x["p_60"].iloc[0]) and x["n_near_valid"].iloc[0] == 0
 
@@ -85,7 +91,7 @@ def test_rota_devolve_quantis_e_probabilidades_por_horizonte(client):
 @needs_model
 def test_sem_estacao_valida_perto_do_ponto_e_422(client):
     r = readings(T)
-    r = r[r.station_id != "perto"]
+    r = r[r.station_id != PERTO]
     resp = client.post("/v1/forecast/rain", json=payload(r))
     assert resp.status_code == 422 and "p_60" in resp.json()["missing_features"]
 

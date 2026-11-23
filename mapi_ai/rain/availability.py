@@ -76,6 +76,7 @@ def _visible_sum(m: pd.DataFrame, k: pd.DataFrame, n: int) -> pd.DataFrame:
     que atraso zero reproduza o laboratório bit a bit) menos as leituras ainda não chegadas (idade a < atraso k).
     """
     full = m.fillna(0.0).rolling(n, min_periods=1).sum()
+    from mapi_ai.rain.features import SUM_DECIMALS   # mesmo arredondamento do laboratório (onda 16, Fase 7.2)
     mv = np.nan_to_num(m.to_numpy(dtype=float), nan=0.0)
     kv = np.nan_to_num(k.to_numpy(dtype=float), nan=0.0)
     hidden = np.zeros_like(mv)
@@ -84,8 +85,8 @@ def _visible_sum(m: pd.DataFrame, k: pd.DataFrame, n: int) -> pd.DataFrame:
         h = np.where(kv > a, mv, 0.0)
         hidden[a:] += h[:len(h) - a] if a else h
     if not hidden.any():
-        return full
-    return full - pd.DataFrame(hidden, index=m.index, columns=m.columns)
+        return full.round(SUM_DECIMALS)
+    return (full - pd.DataFrame(hidden, index=m.index, columns=m.columns)).round(SUM_DECIMALS)
 
 
 def _visible_valid(m: pd.DataFrame, k: pd.DataFrame) -> pd.DataFrame:
