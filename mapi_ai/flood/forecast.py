@@ -7,6 +7,9 @@ Alerta de alagamento por regressão (Etapa 1): um único caminho.
 3. lâmina máxima de cada horizonte, em cm;
 4. regra fixa (config.RULE): ALERTA (q50 >= 15 cm), ATENCAO (só q95 >= 15 cm), SEM_ALERTA.
 
+Fatores por ponto (ADR 0030, alerta único): refluxo de maré a cada passo da série e do horizonte e limpeza (Central 156),
+cada um em OFF / INFO / NIVEL, com a contribuição devolvida em explanation.factors (mapi_ai/flood/fatores.py).
+
 Falta de dado devolve SEM_DADO com motivo (config.REASONS), nunca SEM_ALERTA e nunca chuva zero.
 """
 from __future__ import annotations
@@ -18,6 +21,7 @@ from mapi_ai import bucket10 as B10
 from mapi_ai.feature_engineering import MissingFeaturesError
 from mapi_ai.flood import config as C
 from mapi_ai.flood import explain as X
+from mapi_ai.flood import fatores as FT
 from mapi_ai.rain import config as RC
 from mapi_ai.version import code_version
 
@@ -56,7 +60,8 @@ def sem_dado(reason: str, detail: str | None = None, rain_meta: dict | None = No
 def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10min_mm: list | None,
                    terrain: B10.Terreno | None, terrain_status: str = "OK", open_meteo: list | None = None,
                    issued_at: str | None = None, rain_model=None, now: str | None = None,
-                   tr_anos: float = 5.0, te_min: float = 10.0, slug: str | None = None) -> dict:
+                   tr_anos: float = 5.0, te_min: float = 10.0, slug: str | None = None,
+                   refluxo: FT.Refluxo | None = None, limpeza: FT.Limpeza | None = None) -> dict:
     meta = getattr(rain_model, "meta", None)
     extra = {"slug": slug}
     if terrain_status == "EM_REVISAO":
@@ -72,7 +77,15 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
 
     p = B10.Params10(tr_anos=tr_anos, te_min=te_min)
     observed = np.asarray(rain_10min_mm, dtype=float)
-    obs = B10.simular_passos(observed, terrain, p)
+    ref = FT.prepare_refluxo(refluxo, len(observed))
+    limp = FT.prepare_limpeza(limpeza)
+    if ref["status"] == "SEM_DADO" and ref["mode"] == "NIVEL":
+        return sem_dado("MARE_AUSENTE", ref["reason_detail"], meta, **extra)
+    ref_on = ref["status"] == "OK" and ref["mode"] == "NIVEL"
+    f_obs = ref["f_obs"] if ref_on else None
+    f_fut = ref["f_fut"] if ref_on else None
+
+    obs = B10.simular_passos(observed, terrain, p, f_passo=f_obs)
     V_end = float(obs["V_m3"][-1])
     h_now_cm = round(float(obs["h_mm"][-1]) / 10.0, 2)
     extra.update({"h_now_cm": h_now_cm, "rain_now_10min_mm": float(observed[-1]),
@@ -89,11 +102,11 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
 
     t = pd.Timestamp(rain["issued_at"])
     scen = {s: {h["horizon_hours"]: float(h["quantiles_mm"][s]) for h in rain["horizons"]} for s in C.SCENARIOS}
+    ev = FT.evaluate(observed, scen, terrain, p, f_obs, f_fut, limp)
     horizons = []
     for h in C.HORIZONS:
-        cm = {s: X._scenario_sheet_cm(V_end, h_now_cm, scen[s][h], h, terrain, p) for s in C.SCENARIOS}
-        lvl = X._level(cm["q50"], cm["q95"])
-        horizons.append({"hours": h, "level": lvl, "rain_q50_mm": round(scen["q50"][h], 2),
+        cm = {s: ev["free"]["sheets"][s][h] for s in C.SCENARIOS}
+        horizons.append({"hours": h, "level": ev["levels"][h], "rain_q50_mm": round(scen["q50"][h], 2),
                          "rain_q95_mm": round(scen["q95"][h], 2), "sheet_q50_cm": round(cm["q50"], 1),
                          "sheet_q95_cm": round(cm["q95"], 1), "valid_from": _iso(t),
                          "valid_until": _iso(t + pd.Timedelta(hours=h))})
@@ -101,27 +114,32 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
     level, wh = worst["level"], worst["hours"]
     scenario = "q95" if level == "ATENCAO" else "q50"
 
-    # decomposição: 3 h medidas + o horizonte servido previsto, no cenário servido
+    # decomposição: 3 h medidas + o horizonte servido previsto, no cenário servido (galeria livre)
     n = int(wh * 60 / C.DT_MIN)
-    proj = B10.simular_passos(np.full(n, scen[scenario][wh] / n), terrain, p, V0=V_end)
+    proj = B10.simular_passos(np.full(n, scen[scenario][wh] / n), terrain, p, V0=V_end,
+                              f_passo=None if f_fut is None else f_fut[:n])
+    tide = ref.get("tide")
     k0 = max(0, len(observed) - C.DECOMP_HISTORY_STEPS)
     decomposition = []
     for i in range(k0, len(observed)):
         m = (i - (len(observed) - 1)) * int(C.DT_MIN)
-        decomposition.append(_step(t, m, "medido", observed[i], obs, i))
+        decomposition.append(_step(t, m, "medido", observed[i], obs, i, None if tide is None else tide[i]))
     for i in range(n):
-        decomposition.append(_step(t, (i + 1) * int(C.DT_MIN), "previsto", scen[scenario][wh] / n, proj, i))
+        decomposition.append(_step(t, (i + 1) * int(C.DT_MIN), "previsto", scen[scenario][wh] / n, proj, i,
+                                   None if tide is None else tide[len(observed) + i]))
 
     model = rain_model.models[rain_model.chosen[wh]]
     explanation = {
         "served_scenario": scenario, "served_horizon_hours": wh,
         "shap": X.local_shap(model, x, wh, scenario),
-        "counterfactual": X.counterfactual_mm(V_end, h_now_cm, scen["q50"][1], terrain, p),
-        "sensitivity": X.sensitivity(observed, terrain, scen, wh, scenario, level),
+        "counterfactual": X.counterfactual_mm(V_end, h_now_cm, scen["q50"][1], terrain, p, f_fut=f_fut),
+        "sensitivity": X.sensitivity(observed, terrain, scen, wh, scenario, level, f_obs=f_obs, f_fut=f_fut),
         "decomposition": decomposition,
         "capacity_m3_h": round(float(obs["capacity_m3_h"]), 2),
         "initial_state": {"volume_m3": round(V_end, 2), "h_now_cm": h_now_cm, "steps_measured": int(len(observed)),
                           "n_fora_da_curva": int(obs["n_fora_da_curva"])},
+        "factors": {"refluxo": FT.refluxo_block(refluxo, ref, observed, scen, terrain, p, limp, t, (scenario, wh)),
+                    "limpeza": FT.limpeza_block(limpeza, limp, ev, (scenario, wh)), "rule": C.FACTOR_NOTE},
     }
     out = _base(meta, rain["issued_at"])
     out.update(extra)
@@ -134,9 +152,12 @@ def forecast_point(*, latitude: float, longitude: float, readings: list, rain_10
     return out
 
 
-def _step(t: pd.Timestamp, minutes: int, kind: str, rain_mm: float, sim: dict, i: int) -> dict:
+def _step(t: pd.Timestamp, minutes: int, kind: str, rain_mm: float, sim: dict, i: int, tide_nr_m=None) -> dict:
     return {"t": _iso(t + pd.Timedelta(minutes=minutes)), "minutes_from_now": minutes, "kind": kind,
             "rain_mm": round(float(rain_mm), 3), "inflow_m3_h": round(float(sim["inflow_m3_h"][i]), 3),
             "outflow_m3_h": round(float(sim["outflow_m3_h"][i]), 3),
             "capacity_m3_h": round(float(sim["capacity_m3_h"]), 3),
+            "capacity_step_m3_h": round(float(sim["capacity_step_m3_h"][i]), 3),
+            "outflow_factor": round(float(sim["outflow_factor"][i]), 4),
+            "tide_nr_m": None if tide_nr_m is None else round(float(tide_nr_m), 3),
             "volume_m3": round(float(sim["V_m3"][i]), 3), "sheet_cm": round(float(sim["h_mm"][i]) / 10.0, 2)}

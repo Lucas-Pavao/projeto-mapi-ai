@@ -113,12 +113,15 @@ def simular(P_mm_passo: np.ndarray, t: Terreno, p: Params10, i_cap_mm_h: float |
     return h, Vs, fora
 
 
-def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 0.0, f: float = 1.0) -> dict:
+def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 0.0, f: float = 1.0,
+                   f_passo: np.ndarray | None = None) -> dict:
     """
     Mesma conta de `simular`, devolvendo a decomposição por passo (alerta por regressão, Etapa 3.1):
     entrada e saída em m3/h, capacidade da galeria em m3/h, volume em m3 e lâmina em mm.
-    f: fração da capacidade da galeria (1 = projeto; 0 = obstruída), só para a sensibilidade (faixa "sem fonte" de
-    docs/PARAMETROS-MODELO-FISICO.md). Com f = 1, h e V são idênticos aos de `simular`.
+    f: fração da capacidade da galeria (1 = projeto; 0 = obstruída): sensibilidade (faixa "sem fonte" de
+    docs/PARAMETROS-MODELO-FISICO.md) e galeria entupida (limpeza). Com f = 1, h e V são idênticos aos de `simular`.
+    f_passo: fração da capacidade por passo (refluxo de maré, ADR 0030), multiplicada por f; None = 1 em todos os passos.
+    Com f_passo, h e V são idênticos aos de `simular(..., f_passo=f * f_passo)`.
     """
     P = np.asarray(P_mm_passo, dtype=float)
     if np.isnan(P).any():
@@ -130,11 +133,15 @@ def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 
     q = f * p.C * p.i_cap_mm_h * A / 1000.0 * p.dt_min / 60.0
     qin = p.C * P * A / 1000.0
     n = len(P)
+    fp = np.ones(n) if f_passo is None else np.asarray(f_passo, dtype=float)
+    if len(fp) != n:
+        raise ValueError("f_passo precisa ter um valor por passo")
     h, Vs, qout_s = np.zeros(n), np.zeros(n), np.zeros(n)
     V, fora = float(V0), 0
     for k in range(n):
         v_disp = V + qin[k]
-        qout = q if q < v_disp else v_disp
+        qk = q * fp[k]
+        qout = qk if qk < v_disp else v_disp
         qout_s[k] = qout
         V = max(0.0, v_disp - qout)
         Vs[k] = V
@@ -149,7 +156,8 @@ def simular_passos(P_mm_passo: np.ndarray, t: Terreno, p: Params10, V0: float = 
         if d > 0:
             h[k] = 1000.0 * d
     return {"h_mm": h, "V_m3": Vs, "inflow_m3_h": qin * por_hora, "outflow_m3_h": qout_s * por_hora,
-            "capacity_m3_h": q * por_hora, "n_fora_da_curva": fora}
+            "capacity_m3_h": q * por_hora, "capacity_step_m3_h": q * fp * por_hora, "outflow_factor": fp,
+            "n_fora_da_curva": fora}
 
 
 def avaliar(P_medido: np.ndarray, t: Terreno, p: Params10, chuva_prevista_1h_q50: float | None,

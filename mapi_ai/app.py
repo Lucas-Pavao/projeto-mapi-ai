@@ -241,6 +241,23 @@ class FloodForecastInput(BaseModel):
     terrain_status: Literal["OK", "SEM_TERRENO", "EM_REVISAO"] = "OK"
     tr_anos: float = Field(default=5.0, ge=2.0, le=10.0)
     te_min: float = Field(default=10.0, ge=5.0, le=15.0)
+    # Fatores por ponto (ADR 0030, alerta único). Sem eles (OFF), a resposta é a de antes.
+    refluxo_mode: Literal["OFF", "INFO", "NIVEL"] = "OFF"
+    tide_nr_m: Optional[List[Optional[float]]] = Field(
+        None, max_length=288 + 36, description="maré prevista (m, NR DHN) no fim de cada passo da série e dos 36 passos das "
+                                               "próximas 6 h; null = sem maré naquele passo (nunca maré baixa)")
+    outlet_sill_mdt_m: Optional[float] = Field(None, ge=-5, le=10, description="soleira da saída no referencial do MDT")
+    outlet_diameter_m: Optional[float] = Field(None, gt=0, le=5)
+    delta_m: Optional[float] = Field(None, ge=0, le=3, description="NR <-> SGB (ADR 0009 emenda 1)")
+    mdt_bias_m: float = Field(0.0, ge=-2, le=2, description="MDT - RN no cenário central (soleira_NR = soleira_MDT - viés + Δ)")
+    mdt_bias_scenario_m: Optional[float] = Field(-0.369, ge=-2, le=2, description="cenário de viés (só sensibilidade)")
+    limpeza_mode: Literal["OFF", "INFO", "NIVEL"] = "OFF"
+    days_since_cleaning: Optional[float] = Field(default=None, ge=0, le=36500)
+    lambda_re_per_day: Optional[float] = Field(default=None, gt=0, le=10)
+    clog_regime: Optional[Literal["TEMPO_DESDE_LIMPEZA", "PERMANENTE"]] = None
+    mean_clogged_days: Optional[float] = Field(default=None, ge=0, le=3650)
+    f_clogged: float = Field(default=0.0, ge=0.0, le=1.0)
+    clog_prob_on: float = Field(default=0.5, gt=0.0, le=1.0)
 
     @field_validator("rain_10min_mm")
     @classmethod
@@ -258,7 +275,15 @@ def flood_forecast(data: FloodForecastInput):
     if data.point is not None:
         terr = B10.Terreno(area_m2=data.point.area_m2, z_curva_m=np.asarray(data.point.z_curva_m, dtype=float),
                            v_curva_m3=np.asarray(data.point.v_curva_m3, dtype=float), rua_rel_m=data.point.rua_rel_m)
+    from mapi_ai.flood import fatores as FT
+    refluxo = FT.Refluxo(mode=data.refluxo_mode, tide_nr_m=data.tide_nr_m, sill_mdt_m=data.outlet_sill_mdt_m,
+                         diameter_m=data.outlet_diameter_m, delta_m=data.delta_m, mdt_bias_m=data.mdt_bias_m,
+                         mdt_bias_scenario_m=data.mdt_bias_scenario_m)
+    limpeza = FT.Limpeza(mode=data.limpeza_mode, days_since_cleaning=data.days_since_cleaning,
+                         lambda_re_per_day=data.lambda_re_per_day, regime=data.clog_regime,
+                         mean_clogged_days=data.mean_clogged_days, f_clogged=data.f_clogged, prob_on=data.clog_prob_on)
     return forecast_point(
+        refluxo=refluxo, limpeza=limpeza,
         latitude=data.latitude, longitude=data.longitude,
         readings=[{"station_id": r.station_id, "latitude": r.latitude, "longitude": r.longitude, "ts": r.ts, "mm": r.mm}
                   for r in data.readings],

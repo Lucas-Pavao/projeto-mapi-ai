@@ -112,16 +112,19 @@ def local_shap(model, x: pd.DataFrame, horizon: int, quantile: str, k: int = 3) 
 
 
 def _scenario_sheet_cm(V_end: float, h_now_cm: float, rain_mm: float, horizon: int, terr: B10.Terreno,
-                       p: B10.Params10, f: float = 1.0) -> float:
+                       p: B10.Params10, f: float = 1.0, f_fut=None) -> float:
+    """f_fut: fator de saída por passo do horizonte (refluxo de maré, ADR 0030); usa os primeiros passos do horizonte."""
     n = int(horizon * 60 / C.DT_MIN)
     P = np.full(n, float(rain_mm) / n)
-    out = B10.simular_passos(P, terr, p, V0=V_end, f=f)
+    fp = None if f_fut is None else np.asarray(f_fut[:n], dtype=float)
+    out = B10.simular_passos(P, terr, p, V0=V_end, f=f, f_passo=fp)
     return max(h_now_cm, float(out["h_mm"].max()) / 10.0 if n else 0.0)
 
 
-def counterfactual_mm(V_end: float, h_now_cm: float, q50_1h_mm: float, terr: B10.Terreno, p: B10.Params10) -> dict:
+def counterfactual_mm(V_end: float, h_now_cm: float, q50_1h_mm: float, terr: B10.Terreno, p: B10.Params10,
+                      f_fut=None) -> dict:
     """Quantos mm a mais em 1 h (sobre o q50 de 1 h, por igual nos 6 passos) levam a lâmina a 15 cm. Bissecção no balde."""
-    sheet = lambda extra: _scenario_sheet_cm(V_end, h_now_cm, q50_1h_mm + extra, 1, terr, p)
+    sheet = lambda extra: _scenario_sheet_cm(V_end, h_now_cm, q50_1h_mm + extra, 1, terr, p, f_fut=f_fut)
     if sheet(0.0) >= C.HCRIT_CM:
         return {"extra_mm": 0.0, "reached": True, "text": "a lâmina provável já chega a 15 cm na próxima hora"}
     if sheet(C.CF_MAX_MM) < C.HCRIT_CM:
@@ -144,17 +147,18 @@ def _level(q50_cm: float, q95_cm: float) -> str:
 
 
 def sensitivity(observed: np.ndarray, terr: B10.Terreno, scenarios: dict, horizon: int, scenario: str,
-                served_level: str) -> dict:
+                served_level: str, f_obs=None, f_fut=None) -> dict:
     """
     Lâmina máxima do cenário servido no horizonte servido com f, C e i_T (TR, Te) nas faixas; o nível muda?
     scenarios: {"q50": {h: mm}, "q95": {h: mm}}. Grade completa + uma variação por vez (qual parâmetro pesa).
+    f_obs, f_fut: fator de saída por passo (refluxo de maré, ADR 0030) quando ele entra no nível; multiplica f.
     """
     def run(f, c, tr, te):
         p = B10.Params10(C=c, tr_anos=tr, te_min=te)
-        obs = B10.simular_passos(observed, terr, p, f=f)
+        obs = B10.simular_passos(observed, terr, p, f=f, f_passo=f_obs)
         V_end = float(obs["V_m3"][-1]) if len(observed) else 0.0
         h_now = float(obs["h_mm"][-1]) / 10.0 if len(observed) else 0.0
-        cm = {s: _scenario_sheet_cm(V_end, h_now, scenarios[s][horizon], horizon, terr, p, f) for s in C.SCENARIOS}
+        cm = {s: _scenario_sheet_cm(V_end, h_now, scenarios[s][horizon], horizon, terr, p, f, f_fut) for s in C.SCENARIOS}
         return cm[scenario], _level(cm["q50"], cm["q95"])
 
     S = C.SENSITIVITY

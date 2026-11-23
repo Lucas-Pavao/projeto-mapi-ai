@@ -41,7 +41,19 @@ REASONS = {
     "SEM_TERRENO": "sem terreno do ponto",
     "TERRENO_EM_REVISAO": "terreno do ponto em revisão",
     "SERIE_INCOMPLETA": "série de chuva de 10 min com lacuna",
+    "MARE_AUSENTE": "sem maré prevista para algum passo (refluxo ligado no nível)",
 }
+
+# Fatores por ponto (ADR 0030): refluxo de maré e limpeza (Central 156), cada um com um modo.
+# OFF: não calcula. INFO: calcula e devolve a contribuição, sem mudar o nível. NIVEL: muda o nível.
+FACTOR_MODES = ("OFF", "INFO", "NIVEL")
+HORIZON_STEPS = int(max(HORIZONS) * 60 / DT_MIN)   # 36 passos de 10 min: a maré vai até o fim do maior horizonte
+# Cenário de viés do MDT (ADR 0030, item 2): MDT - RN = -0,369 m, mediana em 17 RRNN em terra
+# (projeto-mapi-api/docs/extratos/referencia-vertical.md:101). A soleira no NR sobe 0,369 m. Só sensibilidade.
+MDT_BIAS_SCENARIO_M = -0.369
+FACTOR_NOTE = ("refluxo: capacidade x clamp((soleira_NR + D - maré_NR)/D, 0, 1), soleira_NR = soleira_MDT - viés_MDT + Δ "
+               "(ADR 0009 emenda 3); limpeza: P(lâmina >= 15 cm) = (1 - p_E)·1[livre] + p_E·1[entupida] "
+               "(docs/PRE-REGISTRO-ENTUPIMENTO-156.md)")
 
 # Contrafactual: busca por bissecção da chuva extra em 1 h (somada ao cenário q50 de 1 h) que leva a lâmina a 15 cm.
 CF_MAX_MM = 300.0
