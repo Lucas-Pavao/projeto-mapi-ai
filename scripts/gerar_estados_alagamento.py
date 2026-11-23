@@ -2,7 +2,12 @@
 Gera as respostas de POST /v1/flood/forecast para os 10 estados da prancha "Nível 6" (contrato da API e mocks do front).
 Roda o código de verdade (mapi_ai.flood.forecast.forecast_point) com entradas controladas: um rain_v1 de mentira com
 quantis fixos (o SHAP local usa o modelo real sobre leituras sintéticas) e um terreno raso de teste. NÃO são previsões:
-são formas de resposta para testes. As chuvas dos cenários saem de lâminas-alvo (by_sheet), por bissecção no próprio balde. Uso: python -I scripts/gerar_estados_alagamento.py <pasta de saída>
+são formas de resposta para testes. As chuvas dos cenários saem de lâminas-alvo (by_sheet), por bissecção no próprio balde.
+Fatores do alerta único (ADR 0030): todo estado com terreno leva o refluxo em NIVEL com a soleira de Mascarenhas (0,638 m
+no MDT + Δ 0,821 = 1,459 m NR) e a limpeza em INFO no regime permanente (λ 0,03331/dia, D_E 44,2 dias). Nos 10 estados de
+antes a maré fica parada em 0,9 m NR (abaixo da soleira: as lâminas não mudam); "alerta_mare_3h" fecha a saída da 2ª à 4ª
+hora num terreno raso e "sem_dado_mare_ausente" tira a maré de um passo.
+Uso: python -I scripts/gerar_estados_alagamento.py <pasta de saída>
 """
 import json
 import sys
@@ -15,6 +20,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from mapi_ai import bucket10 as B  # noqa: E402
+from mapi_ai.flood import fatores as FT  # noqa: E402
 from mapi_ai.flood.forecast import forecast_point  # noqa: E402
 from mapi_ai.rain.serve import RainForecaster  # noqa: E402
 
@@ -22,6 +28,16 @@ LAT, LON = -8.118123, -34.904945          # Mascarenhas/Imbiribeira
 T = pd.Timestamp("2026-11-20T17:00:00Z")
 REAL = RainForecaster()
 TERRAIN = B.Terreno(20000.0, np.linspace(0, 2, 41), 3000.0 * np.linspace(0, 2, 41), 0.10)
+RASO = B.Terreno(20000.0, np.linspace(0, 2, 41), 100.0 * np.linspace(0, 2, 41), 0.10)
+SILL_MDT, D, DELTA = 0.638, 0.6, 0.821      # Mascarenhas (CG 88084; AlertaProperties.Refluxo)
+LIMPEZA = FT.Limpeza(mode="INFO", lambda_re_per_day=0.03331, regime="PERMANENTE", mean_clogged_days=44.2)
+
+
+def refluxo(n_obs: int, fut=None, obs: float = 0.9, hole: int | None = None):
+    tide = [obs] * n_obs + (fut if fut is not None else [obs] * 36)
+    if hole is not None:
+        tide[hole] = None
+    return FT.Refluxo(mode="NIVEL", tide_nr_m=tide, sill_mdt_m=SILL_MDT, diameter_m=D, delta_m=DELTA)
 
 
 def rain_for(cm: float, h: int, series) -> float:
@@ -98,6 +114,10 @@ STATES = {
                                  status="SEM_TERRENO"),
     "sem_dado_terreno_em_revisao": dict(series=SECO, rd=readings(0.0), rain=Fixed(q(0, 0, 0), q(0, 0, 0)),
                                         status="EM_REVISAO"),
+    # maré baixa na 1ª hora, saída fechada (2,2 m NR, acima do topo do tubo em 2,059 m) da 2ª à 4ª hora
+    "alerta_mare_3h": dict(series=CHUVA, rd=readings(7.5), rain=Fixed(q(0.5, 3.0, 4.0), q(1.0, 6.0, 8.0)), terrain=RASO,
+                           tide_fut=[0.9] * 6 + [2.2] * 18 + [1.2] * 12),
+    "sem_dado_mare_ausente": dict(series=SECO, rd=readings(0.0), rain=Fixed(q(0, 0, 0), q(0, 0, 0)), tide_hole=150),
 }
 
 
@@ -105,9 +125,11 @@ def main(out: Path):
     out.mkdir(parents=True, exist_ok=True)
     summary = {}
     for name, s in STATES.items():
+        n = len(s["series"])
         r = forecast_point(latitude=LAT, longitude=LON, readings=s["rd"], rain_10min_mm=s["series"],
                            terrain=s.get("terrain", TERRAIN), terrain_status=s.get("status", "OK"),
-                           issued_at=T.isoformat(), rain_model=s["rain"], now=T.isoformat(), slug="MASCARENHAS_IMBIRIBEIRA")
+                           issued_at=T.isoformat(), rain_model=s["rain"], now=T.isoformat(), slug="MASCARENHAS_IMBIRIBEIRA",
+                           refluxo=refluxo(n, s.get("tide_fut"), hole=s.get("tide_hole")), limpeza=LIMPEZA)
         r["code_version"] = "0000000000000000000000000000000000000000"   # fixo: o arquivo não muda a cada commit
         r["code_dirty"] = "false"
         (out / f"{name}.json").write_text(json.dumps(r, indent=1, ensure_ascii=False))

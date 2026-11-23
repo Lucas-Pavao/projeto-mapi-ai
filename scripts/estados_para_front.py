@@ -9,11 +9,37 @@ import sys
 
 REASONS = {"CHUVA_AUSENTE": "sem leitura de chuva válida perto do ponto",
            "PREVISAO_INDISPONIVEL": "previsão de chuva (rain_v1) fora do ar", "SEM_TERRENO": "sem terreno do ponto",
-           "TERRENO_EM_REVISAO": "terreno do ponto em revisão", "SERIE_INCOMPLETA": "série de chuva de 10 min com lacuna"}
+           "TERRENO_EM_REVISAO": "terreno do ponto em revisão", "SERIE_INCOMPLETA": "série de chuva de 10 min com lacuna",
+           "MARE_AUSENTE": "sem maré prevista para algum passo (refluxo ligado no nível)"}
 RULE = "ALERTA se a lâmina provável (q50) chega a 15 cm; ATENÇÃO se só a pessimista (q95) chega. Experimental."
 # chuva medida da última hora que a API acrescenta (a IA não devolve): a mesma das séries do gerador
 RAIN_HOUR = {"alerta_agora": 180.0, "alerta_1h": 45.0, "atencao_3h": 45.0, "chuva_forte_sem_encher": 45.0,
-             "atencao_6h": 45.0, "sem_dado_previsao_fora": 45.0}
+             "atencao_6h": 45.0, "sem_dado_previsao_fora": 45.0, "alerta_mare_3h": 45.0}
+
+
+def factors(f):
+    """Mesmas regras de FloodForecastMapper.factors (ADR 0030)."""
+    if not f:
+        return None
+    r, l_ = f.get("refluxo"), f.get("limpeza")
+    rf = None if not r else {
+        "mode": r.get("mode"), "status": r.get("status"), "appliedToLevel": bool(r.get("applied_to_level")),
+        "reason": r.get("reason"), "text": r.get("text"), "sillNrM": r.get("sill_nr_m"), "tideNowNrM": r.get("tide_now_nr_m"),
+        "tideMaxHorizonNrM": r.get("tide_max_horizon_nr_m"), "reductionNowPct": r.get("reduction_now_pct"),
+        "periods": [{"from": x["from"], "to": x["to"], "meanReductionPct": x["mean_reduction_pct"],
+                     "maxReductionPct": x["max_reduction_pct"]} for x in r.get("periods", [])],
+        "servedDeltaCm": r.get("served_delta_cm"), "deltaSheetCm": r.get("delta_sheet_cm", {}),
+        "biasScenario": None if not r.get("bias_scenario") else {
+            "mdtBiasM": r["bias_scenario"]["mdt_bias_m"], "sillNrM": r["bias_scenario"]["sill_nr_m"],
+            "level": r["bias_scenario"]["level"], "worstHorizonHours": r["bias_scenario"]["worst_horizon_hours"],
+            "sheetCm": r["bias_scenario"]["sheet_cm"]}}
+    lz = None if not l_ else {
+        "mode": l_.get("mode"), "status": l_.get("status"), "appliedToLevel": bool(l_.get("applied_to_level")),
+        "reason": l_.get("reason"), "text": l_.get("text"), "regime": l_.get("regime"),
+        "daysSinceCleaning": l_.get("days_since_cleaning"), "pClogged": l_.get("p_clogged"), "fClogged": l_.get("f_clogged"),
+        "mixtureLevel": l_.get("mixture_level"), "sheetCloggedCm": l_.get("sheet_clogged_cm", {}),
+        "probHcrit": l_.get("prob_hcrit", {})}
+    return {"refluxo": rf, "limpeza": lz}
 
 
 def explanation(e):
@@ -27,8 +53,9 @@ def explanation(e):
                             "heaviestParameter": e["sensitivity"]["heaviest_parameter"], "text": e["sensitivity"]["text"]},
             "decomposition": [{"t": d["t"], "minutesFromNow": d["minutes_from_now"], "kind": d["kind"], "rainMm": d["rain_mm"],
                                "inflowM3H": d["inflow_m3_h"], "outflowM3H": d["outflow_m3_h"], "volumeM3": d["volume_m3"],
-                               "sheetCm": d["sheet_cm"]} for d in e["decomposition"]],
-            "capacityM3H": e["capacity_m3_h"]}
+                               "sheetCm": d["sheet_cm"], "tideNrM": d.get("tide_nr_m"),
+                               "outflowFactor": d.get("outflow_factor")} for d in e["decomposition"]],
+            "capacityM3H": e["capacity_m3_h"], "factors": factors(e.get("factors"))}
 
 
 def main(src: pathlib.Path, dst: pathlib.Path):
