@@ -1,0 +1,105 @@
+{
+ "pre_registro": "projeto-mapi-api/docs/PRE-REGISTRO-PERFIL-CHUVA.md",
+ "versao_a": "rain_v1p",
+ "criterio": "menor MAE médio do pico de 10 min (q50) nos 3 horizontes entre (a) e (b); empate (IC95 da diferença com zero) fica (b)",
+ "horizontes": {
+  "1h": {
+   "linhas_com_chuva": 26075,
+   "dias": 323,
+   "pico_medido_mm": {
+    "mediana": 1.57,
+    "p95": 6.0
+   },
+   "mae_mm": {
+    "u": 1.933,
+    "b": 1.752,
+    "a": 1.618
+   },
+   "vies_mm": {
+    "u": -1.928,
+    "b": -1.679,
+    "a": -1.456
+   },
+   "diferenca_mae_a_menos_b": {
+    "valor": -0.133,
+    "ic95": [
+     -0.143,
+     -0.124
+    ]
+   },
+   "cobertura_q95_pico_a": 0.708,
+   "best_iteration_a": 232
+  },
+  "3h": {
+   "linhas_com_chuva": 53414,
+   "dias": 337,
+   "pico_medido_mm": {
+    "mediana": 1.6,
+    "p95": 6.49
+   },
+   "mae_mm": {
+    "u": 2.161,
+    "b": 1.872,
+    "a": 1.69
+   },
+   "vies_mm": {
+    "u": -2.16,
+    "b": -1.782,
+    "a": -1.492
+   },
+   "diferenca_mae_a_menos_b": {
+    "valor": -0.183,
+    "ic95": [
+     -0.195,
+     -0.169
+    ]
+   },
+   "cobertura_q95_pico_a": 0.831,
+   "best_iteration_a": 108
+  },
+  "6h": {
+   "linhas_com_chuva": 80188,
+   "dias": 349,
+   "pico_medido_mm": {
+    "mediana": 1.79,
+    "p95": 6.9
+   },
+   "mae_mm": {
+    "u": 2.364,
+    "b": 1.986,
+    "a": 1.761
+   },
+   "vies_mm": {
+    "u": -2.364,
+    "b": -1.903,
+    "a": -1.506
+   },
+   "diferenca_mae_a_menos_b": {
+    "valor": -0.225,
+    "ic95": [
+     -0.244,
+     -0.208
+    ]
+   },
+   "cobertura_q95_pico_a": 0.887,
+   "best_iteration_a": 81
+  }
+ },
+ "fracao_bloco_alternado": {
+  "1h": 0.3479,
+  "3h": 0.2347,
+  "6h": 0.1931
+ },
+ "resultado": {
+  "mae_medio": {
+   "a": 1.69,
+   "b": 1.87
+  },
+  "diferenca_media_a_menos_b_ic95": [
+   -0.189,
+   -0.172
+  ],
+  "empate": false,
+  "escolha": "a"
+ }
+}

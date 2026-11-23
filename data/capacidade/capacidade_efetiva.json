@@ -1,0 +1,117 @@
+{
+ "pre_registro": "projeto-mapi-api/docs/PRE-REGISTRO-CAPACIDADE-EFETIVA.md",
+ "fontes": {
+  "fator_reducao_bl": "Prefeitura de Suzano, Manual de Manejo das Águas Pluviais (2022), Tabela 10, p. 36 do PDF, citando DAEE/CETESB (1980)",
+  "vertedor_guia": "HEC-22, Eq. 4-30 (SI): Q = 1,60 L d^1,5",
+  "manning_n": "Suzano (2022), Tabela 8, p. 31 do PDF; Silva et al. (2020), Revista DAE 225, p. 156 (n = 0,014)",
+  "sedimento_20cm": "Silva et al. (2020), Revista DAE v. 68 n. 225, p. 156, DOI 10.36659/dae.2020.059",
+  "idf": "Silva e Araújo (2013), Eq. 16 (PARAMETROS-MODELO-FISICO.md)",
+  "comprimento_abertura_L": "prior sem medição (0,6 a 1,5 m): o ESIG não traz o comprimento"
+ },
+ "constantes": {
+  "C": 0.86,
+  "d_bl_m": 0.15,
+  "L_m": [
+   0.6,
+   1.5
+  ],
+  "fator_bl": [
+   0.5,
+   0.8
+  ],
+  "n": [
+   0.013,
+   0.015
+  ],
+  "sedimento_m": 0.2,
+  "tr_anos_sem_cadastro": [
+   2.0,
+   10.0
+  ],
+  "te_min": 10.0
+ },
+ "terreno": {
+  "arquivo": "ponto_terreno.csv",
+  "sha256": "4ba35f4fb305d2ac991a9684464097e851cdb51e3d28afbc0b9f2872889599c7"
+ },
+ "pontos": {
+  "AV_RECIFE_IBURA": {
+   "componentes": {
+    "entrada": {
+     "bocas": 3,
+     "objectids": "3600 3601 3602",
+     "q_min_m3s": 0.0837,
+     "q_max_m3s": 0.3346
+    },
+    "cano": {
+     "diametros_m": [
+      0.6
+     ],
+     "declividade_m_m": 0.02129,
+     "q_min_m3s": 0.4658,
+     "q_max_m3s": 0.8959,
+     "perda_pela_geometria_com_20cm": {
+      "0.6": 0.4
+     }
+    }
+   },
+   "observacao": [],
+   "base": "ESIG: mínimo entre entrada e cano",
+   "q_min_m3s": 0.0837,
+   "q_max_m3s": 0.3346,
+   "area_m2": 1146.0,
+   "i_eq_min_mm_h": 305.6,
+   "i_eq_max_mm_h": 1222.3,
+   "i_projeto_tr5_mm_h": 125.4,
+   "motivos_sem_dado_esig": ""
+  },
+  "CIN_UFPE": {
+   "componentes": {},
+   "observacao": [],
+   "base": "sem cadastro: capacidade de projeto, IDF TR 2 a 10 anos em Te = 10 min",
+   "q_min_m3s": 2.0664,
+   "q_max_m3s": 2.8223,
+   "area_m2": 82378.0,
+   "i_eq_min_mm_h": 105.0,
+   "i_eq_max_mm_h": 143.4,
+   "i_projeto_tr5_mm_h": 125.4,
+   "motivos_sem_dado_esig": "cano: nenhum nó com tubo a 30 m do ponto baixo; entrada: nenhuma BL cadastrada no alcance (50 m e cota ≤ fundo + 0,15 m)"
+  },
+  "MASCARENHAS_IMBIRIBEIRA": {
+   "componentes": {
+    "cano": {
+     "diametros_m": [
+      0.6
+     ],
+     "declividade_m_m": 0.00186,
+     "q_min_m3s": 0.1377,
+     "q_max_m3s": 0.2648,
+     "perda_pela_geometria_com_20cm": {
+      "0.6": 0.4
+     }
+    }
+   },
+   "observacao": [],
+   "base": "ESIG: limite superior (entrada sem cadastro)",
+   "q_min_m3s": 0.1377,
+   "q_max_m3s": 0.2648,
+   "area_m2": 40159.0,
+   "i_eq_min_mm_h": 14.4,
+   "i_eq_max_mm_h": 27.6,
+   "i_projeto_tr5_mm_h": 125.4,
+   "motivos_sem_dado_esig": "entrada: nenhuma BL cadastrada no alcance (50 m e cota ≤ fundo + 0,15 m)"
+  },
+  "JABOATAO_CENTRO": {
+   "componentes": {},
+   "observacao": [],
+   "base": "sem cadastro: capacidade de projeto, IDF TR 2 a 10 anos em Te = 10 min",
+   "q_min_m3s": 0.0775,
+   "q_max_m3s": 0.1058,
+   "area_m2": 3088.0,
+   "i_eq_min_mm_h": 105.0,
+   "i_eq_max_mm_h": 143.4,
+   "i_projeto_tr5_mm_h": 125.4,
+   "motivos_sem_dado_esig": "fora do cadastro ESIG (Jaboatão)"
+  }
+ }
+}
