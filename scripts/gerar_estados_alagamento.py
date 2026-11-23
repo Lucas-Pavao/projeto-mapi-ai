@@ -20,6 +20,7 @@ import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from mapi_ai import bucket10 as B  # noqa: E402
+from mapi_ai.flood import capacidade as CAP  # noqa: E402
 from mapi_ai.flood import fatores as FT  # noqa: E402
 from mapi_ai.flood.forecast import forecast_point  # noqa: E402
 from mapi_ai.rain.serve import RainForecaster  # noqa: E402
@@ -118,7 +119,13 @@ STATES = {
     "alerta_mare_3h": dict(series=CHUVA, rd=readings(7.5), rain=Fixed(q(0.5, 3.0, 4.0), q(1.0, 6.0, 8.0)), terrain=RASO,
                            tide_fut=[0.9] * 6 + [2.2] * 18 + [1.2] * 12),
     "sem_dado_mare_ausente": dict(series=SECO, rd=readings(0.0), rain=Fixed(q(0, 0, 0), q(0, 0, 0)), tide_hole=150),
+    # capacidade efetiva em faixa (Fase 4.1): com Q_max o q50 não chega a 15 cm; com Q_min o q95 chega
+    "atencao_faixa_capacidade": dict(series=SECO, rd=readings(0.0), rain=Fixed(q(3.0, 4.0, 5.0), q(6.0, 8.0, 10.0)), terrain=RASO,
+                                     faixa=(0.004, 0.5)),
 }
+
+
+ORIG_CAP = (CAP.ARQUIVO, CAP.CALIBRACAO)
 
 
 def main(out: Path):
@@ -126,10 +133,21 @@ def main(out: Path):
     summary = {}
     for name, s in STATES.items():
         n = len(s["series"])
+        # slug próprio do gerador: fora de data/capacidade, a capacidade é a de projeto (IDF) nas duas pontas, como antes;
+        # o estado "atencao_faixa_capacidade" aponta o arquivo da faixa para um temporário
+        tmp = out / "_cap.json"
+        if "faixa" in s:
+            tmp.write_text(json.dumps({"pontos": {"ESTADOS": {"q_min_m3s": s["faixa"][0], "q_max_m3s": s["faixa"][1],
+                                                              "base": "ESIG: limite superior (entrada sem cadastro)"}}}))
+            CAP.ARQUIVO, CAP.CALIBRACAO = tmp, out / "_cal_inexistente.json"
         r = forecast_point(latitude=LAT, longitude=LON, readings=s["rd"], rain_10min_mm=s["series"],
                            terrain=s.get("terrain", TERRAIN), terrain_status=s.get("status", "OK"),
-                           issued_at=T.isoformat(), rain_model=s["rain"], now=T.isoformat(), slug="MASCARENHAS_IMBIRIBEIRA",
+                           issued_at=T.isoformat(), rain_model=s["rain"], now=T.isoformat(), slug="ESTADOS",
                            refluxo=refluxo(n, s.get("tide_fut"), hole=s.get("tide_hole")), limpeza=LIMPEZA)
+        if "faixa" in s:
+            tmp.unlink()
+            CAP.ARQUIVO, CAP.CALIBRACAO = ORIG_CAP
+        r["slug"] = "MASCARENHAS_IMBIRIBEIRA"
         r["code_version"] = "0000000000000000000000000000000000000000"   # fixo: o arquivo não muda a cada commit
         r["code_dirty"] = "false"
         (out / f"{name}.json").write_text(json.dumps(r, indent=1, ensure_ascii=False))

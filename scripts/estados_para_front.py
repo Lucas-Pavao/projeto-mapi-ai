@@ -17,6 +17,13 @@ RAIN_HOUR = {"alerta_agora": 180.0, "alerta_1h": 45.0, "atencao_3h": 45.0, "chuv
              "atencao_6h": 45.0, "sem_dado_previsao_fora": 45.0, "alerta_mare_3h": 45.0}
 
 
+def capacity(c):
+    if not c:
+        return None
+    return {"base": c.get("base"), "qMinM3s": c.get("q_min_m3s"), "qMaxM3s": c.get("q_max_m3s"),
+            "iEqMinMmH": c.get("i_eq_min_mm_h"), "iEqMaxMmH": c.get("i_eq_max_mm_h"), "kappa": c.get("kappa_calibrado")}
+
+
 def factors(f):
     """Mesmas regras de FloodForecastMapper.factors (ADR 0030)."""
     if not f:
@@ -55,7 +62,9 @@ def explanation(e):
                                "inflowM3H": d["inflow_m3_h"], "outflowM3H": d["outflow_m3_h"], "volumeM3": d["volume_m3"],
                                "sheetCm": d["sheet_cm"], "tideNrM": d.get("tide_nr_m"),
                                "outflowFactor": d.get("outflow_factor")} for d in e["decomposition"]],
-            "capacityM3H": e["capacity_m3_h"], "factors": factors(e.get("factors"))}
+            "capacityM3H": e["capacity_m3_h"], "factors": factors(e.get("factors")),
+            "capacity": capacity(e.get("capacity")), "servedCapacity": e.get("served_capacity"),
+            "profileMethod": (e.get("profile") or {}).get("method")}
 
 
 def main(src: pathlib.Path, dst: pathlib.Path):
@@ -70,7 +79,10 @@ def main(src: pathlib.Path, dst: pathlib.Path):
                "reasonText": REASONS[a["reason"]] if sd else None, "hNowCm": a.get("h_now_cm"),
                "rainLastHourMm": None if absent else RAIN_HOUR.get(name, 0.0),
                "horizons": [{"hours": h["hours"], "level": h["level"], "rainQ50Mm": h["rain_q50_mm"], "rainQ95Mm": h["rain_q95_mm"],
-                             "sheetQ50Cm": h["sheet_q50_cm"], "sheetQ95Cm": h["sheet_q95_cm"], "validUntil": h["valid_until"]}
+                             "sheetQ50Cm": h["sheet_q50_cm"], "sheetQ95Cm": h["sheet_q95_cm"],
+                             "sheetQ50CmQmin": h.get("sheet_q50_cm_qmin"), "sheetQ95CmQmax": h.get("sheet_q95_cm_qmax"),
+                             "peak10Q50Mm": h.get("peak10_q50_mm"), "peak10Q95Mm": h.get("peak10_q95_mm"),
+                             "validUntil": h["valid_until"]}
                             for h in a.get("horizons", [])],
                "explanation": explanation(a.get("explanation")),
                "rainStation": None if absent else "261160609A", "rainStationName": None if absent else "Imbiribeira",
