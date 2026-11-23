@@ -67,3 +67,11 @@ capacidade. Isso é **frequência de lâmina na física**, não acerto: nenhum d
 alagamento fica para a validação pré-registrada (Fase 9). O registro de 5 anos sem fatores (`reports/bucket10/balde10_5anos.json`)
 também foi regenerado: Ibura (1.146 m²) e Jaboatão (3.088 m²) entram com terreno; TR 5 continua com 0 evento em todos os
 pontos (a capacidade é a Fase 4).
+
+### Ibura (entrou na Fase 3)
+
+Soleira da saída (PV 31398) em 0,10 m NR, abaixo do nível médio do mar. Em 5 anos de tábua a saída fica reduzida 99,5% do
+tempo e fechada 81,3%; com a chuva medida, o balde com refluxo dá 494 eventos ≥ 15 cm (95 por ano; lâmina máx. 99,5 cm). Sem
+refluxo: 0. Um tubo de saída abaixo do mar médio viveria cheio de água do mar se não houvesse comporta ou bomba, que o modelo
+não tem. Por isso o refluxo de Ibura fica em `INFO` no alerta (ADR 0030, emenda 1). Limpeza de Ibura (regime permanente,
+π_E = 0,44): com f_E = 0,5, 4 eventos em 5 anos.

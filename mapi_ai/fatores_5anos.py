@@ -35,9 +35,10 @@ HCRIT = 150.0
 DELTA = 0.821
 BIAS = -0.369
 # AlertaProperties.Refluxo (soleira no MDT, diâmetro) e LimpezaProperties (λ, limpezas, D_E), emenda 1 da 156
-SAIDA = {"MASCARENHAS_IMBIRIBEIRA": (0.638, 0.6)}
-LIMPEZA = {"MASCARENHAS_IMBIRIBEIRA": (0.03331, 130, 44.2), "CIN_UFPE": (None, 0, 185.5)}
-PONTOS = ("CIN_UFPE", "MASCARENHAS_IMBIRIBEIRA")
+SAIDA = {"MASCARENHAS_IMBIRIBEIRA": (0.638, 0.6), "AV_RECIFE_IBURA": (-0.72, 0.6)}
+LIMPEZA = {"MASCARENHAS_IMBIRIBEIRA": (0.03331, 130, 44.2), "CIN_UFPE": (None, 0, 185.5), "AV_RECIFE_IBURA": (0.01038, 19, 75.9)}
+# Ibura entrou na Fase 3 (terreno pela via citada); Jaboatão fica fora: a série de 10 min é da posição antiga
+PONTOS = ("CIN_UFPE", "MASCARENHAS_IMBIRIBEIRA", "AV_RECIFE_IBURA")
 
 
 def tide_10min(index: pd.DatetimeIndex) -> tuple[np.ndarray, list[dict]]:

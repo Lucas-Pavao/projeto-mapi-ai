@@ -197,6 +197,165 @@
      "passos_so_entupida_alaga": 16
     }
    }
+  },
+  "AV_RECIFE_IBURA": {
+   "anos": 5.17,
+   "passos": 271728,
+   "passos_sem_estacao_pct": 4.22,
+   "terreno": {
+    "area_m2": 1146,
+    "rua_rel_m": 0.16
+   },
+   "sem_fatores": {
+    "eventos_ge_15cm": 0,
+    "lamina_max_cm": 0.0,
+    "passos_com_lamina_gt_0": 0,
+    "datas": []
+   },
+   "refluxo": {
+    "status": "OK",
+    "passos_sem_mare": 0,
+    "cenarios": {
+     "central": {
+      "soleira_nr_m": 0.101,
+      "diametro_m": 0.6,
+      "tempo_com_saida_reduzida_pct": 99.5,
+      "tempo_com_saida_fechada_pct": 81.3,
+      "passos_com_chuva_e_saida_reduzida_pct": 99.8,
+      "com_refluxo": {
+       "eventos_ge_15cm": 494,
+       "lamina_max_cm": 99.5,
+       "passos_com_lamina_gt_0": 105660,
+       "datas": [
+        "2021-09-01 14:00:00+00:00",
+        "2021-09-04 02:40:00+00:00",
+        "2021-09-05 02:30:00+00:00",
+        "2021-09-09 07:30:00+00:00",
+        "2021-09-13 09:30:00+00:00",
+        "2021-09-24 10:20:00+00:00",
+        "2021-09-26 23:10:00+00:00",
+        "2021-10-14 06:40:00+00:00",
+        "2021-10-16 18:30:00+00:00",
+        "2021-10-23 08:20:00+00:00",
+        "2021-10-26 14:00:00+00:00",
+        "2021-10-29 09:00:00+00:00",
+        "2021-11-11 09:00:00+00:00",
+        "2021-11-17 19:40:00+00:00",
+        "2021-11-18 20:20:00+00:00"
+       ]
+      },
+      "mudanca_vs_sem_refluxo": {
+       "passos_com_mudanca_gt_1mm": 105552,
+       "episodios_com_mudanca": 997,
+       "episodios_por_ano": 192.98,
+       "mudanca_cm_mediana": 26.85,
+       "mudanca_cm_p95": 79.75,
+       "mudanca_cm_max": 99.49
+      }
+     },
+     "vies_-0,369": {
+      "soleira_nr_m": 0.47,
+      "diametro_m": 0.6,
+      "tempo_com_saida_reduzida_pct": 91.5,
+      "tempo_com_saida_fechada_pct": 60.4,
+      "passos_com_chuva_e_saida_reduzida_pct": 92.5,
+      "com_refluxo": {
+       "eventos_ge_15cm": 574,
+       "lamina_max_cm": 81.6,
+       "passos_com_lamina_gt_0": 41160,
+       "datas": [
+        "2021-09-04 02:40:00+00:00",
+        "2021-09-05 02:30:00+00:00",
+        "2021-09-13 09:30:00+00:00",
+        "2021-09-14 04:00:00+00:00",
+        "2021-09-24 10:20:00+00:00",
+        "2021-09-29 05:10:00+00:00",
+        "2021-09-29 05:50:00+00:00",
+        "2021-09-29 11:00:00+00:00",
+        "2021-09-30 00:20:00+00:00",
+        "2021-10-02 01:20:00+00:00",
+        "2021-10-16 18:30:00+00:00",
+        "2021-10-23 08:20:00+00:00",
+        "2021-10-29 15:00:00+00:00",
+        "2021-11-17 19:40:00+00:00",
+        "2021-11-18 20:20:00+00:00"
+       ]
+      },
+      "mudanca_vs_sem_refluxo": {
+       "passos_com_mudanca_gt_1mm": 41005,
+       "episodios_com_mudanca": 1301,
+       "episodios_por_ano": 251.82,
+       "mudanca_cm_mediana": 11.62,
+       "mudanca_cm_p95": 40.34,
+       "mudanca_cm_max": 81.64
+      }
+     }
+    }
+   },
+   "limpeza": {
+    "status": "OK",
+    "regime": "PERMANENTE",
+    "lambda_re_por_dia": 0.01038,
+    "dias_entupida_media": 75.9,
+    "p_entupida": 0.4407,
+    "f_E_0,0": {
+     "galeria_entupida": {
+      "eventos_ge_15cm": 83,
+      "lamina_max_cm": 184.0,
+      "passos_com_lamina_gt_0": 242803,
+      "datas": [
+       "2021-09-01 14:00:00+00:00",
+       "2021-10-21 10:30:00+00:00",
+       "2021-10-29 09:00:00+00:00",
+       "2022-06-01 05:30:00+00:00",
+       "2022-06-27 19:30:00+00:00",
+       "2022-07-13 07:40:00+00:00",
+       "2022-07-30 03:10:00+00:00",
+       "2022-09-01 07:20:00+00:00",
+       "2022-10-05 18:00:00+00:00",
+       "2022-10-15 05:50:00+00:00",
+       "2022-11-06 08:10:00+00:00",
+       "2022-12-03 15:40:00+00:00",
+       "2022-12-10 04:00:00+00:00",
+       "2022-12-20 04:30:00+00:00",
+       "2022-12-24 05:30:00+00:00"
+      ]
+     },
+     "mudanca_vs_livre": {
+      "passos_com_mudanca_gt_1mm": 242800,
+      "episodios_com_mudanca": 104,
+      "episodios_por_ano": 20.13,
+      "mudanca_cm_mediana": 76.92,
+      "mudanca_cm_p95": 184.0,
+      "mudanca_cm_max": 184.0
+     },
+     "passos_em_que_a_mistura_chega_a_0,5": 0,
+     "passos_so_entupida_alaga": 230481
+    },
+    "f_E_0,5": {
+     "galeria_entupida": {
+      "eventos_ge_15cm": 4,
+      "lamina_max_cm": 19.8,
+      "passos_com_lamina_gt_0": 51,
+      "datas": [
+       "2022-03-06 05:10:00+00:00",
+       "2023-02-09 16:50:00+00:00",
+       "2024-03-26 06:20:00+00:00",
+       "2026-04-23 21:10:00+00:00"
+      ]
+     },
+     "mudanca_vs_livre": {
+      "passos_com_mudanca_gt_1mm": 51,
+      "episodios_com_mudanca": 31,
+      "episodios_por_ano": 6.0,
+      "mudanca_cm_mediana": 7.91,
+      "mudanca_cm_p95": 18.94,
+      "mudanca_cm_max": 19.79
+     },
+     "passos_em_que_a_mistura_chega_a_0,5": 0,
+     "passos_so_entupida_alaga": 7
+    }
+   }
   }
  },
  "mare_fonte": [
